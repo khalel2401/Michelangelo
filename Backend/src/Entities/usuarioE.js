@@ -24,6 +24,11 @@ module.exports = new EntitySchema({
 			length: 100,
 			nullable: false,
 		},
+        telefono: {
+            type: "varchar",
+            length: 15,
+            nullable: true,
+        },
 		rol: {
 			type: "enum",
 			enum: ["admin", "usuario"],

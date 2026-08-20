@@ -40,6 +40,7 @@ const updateUsuarioSchema = Joi.object({
 		.email({ tlds: { allow: false } })
 		.optional(),
 	contrasena: Joi.string().min(8).optional(),
+    telefono: Joi.string().max(15).optional(),
 	rol: Joi.string().valid("admin", "usuario").optional(),
 }).min(1);
 
