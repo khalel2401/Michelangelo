@@ -14,7 +14,7 @@ export default function App() {
         
         {/* asi es como se pone un texto random  */}
         <Typography variant="h4" component="h1" gutterBottom>
-          HOLA MUNDO
+          HOLA MUNDOS
         </Typography>
         
         {/* Aca esta la sección de tabs */}
