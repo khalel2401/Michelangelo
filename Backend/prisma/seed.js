@@ -9,11 +9,11 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function main() {
-    // Limpiamos la base de datos antes de generar nuevos datos
-    // al ingresar otro tipo de datos, añadir linea para eliminar la tabla correspondiente
+    // Limpiamos la base de datos antes de generar nuevos datos.
+    // En PostgreSQL, deleteMany no reinicia la secuencia autoincremental,
+    // por eso usamos TRUNCATE con RESTART IDENTITY para resetear los IDs.
     console.log('Limpiando la base de datos...');
-    await prisma.usuario.deleteMany();
-    // y aca añadir los subsecuentes para cada tabla que se quiera limpiar antes de generar nuevos datos
+    await prisma.$executeRaw`TRUNCATE TABLE "usuarios", "eventos" RESTART IDENTITY CASCADE;`;
 
 
     //generacion de datos falsos de usuario
@@ -34,8 +34,31 @@ async function main() {
             })
         )
     );
-    console.log('Datos generados:');
-    console.log(usuarios);
+
+
+    const cantidadEventos = 10; // Cambiar valor dependiendo de la cantidad de eventos que se quieran generar
+    console.log('Generando datos falsos de evento...');
+    const eventos = await Promise.all(
+        Array.from({ length: cantidadEventos }).map(() =>
+            prisma.evento.create({
+            data: {
+                nombre: faker.lorem.words(3),
+                tipo: faker.helpers.arrayElement(['concierto', 'cumpleaños', 'deportivo', 'conferencia', 'otro']),
+                fecha: faker.date.future(),
+                cantidadPersonas: faker.number.int({ min: 10, max: 1000 }),
+                valorTotal: parseFloat(faker.commerce.price({ min: 100, max: 10000 })),
+                abono: parseFloat(faker.commerce.price({ min: 50, max: 5000 })),
+                confirmado: faker.datatype.boolean(),
+            },
+            })
+        )
+    );
+
+
+    console.log('Datos falsos generados exitosamente.');
+    console.log('Usuarios generados:', usuarios);
+    console.log('Eventos generados:', eventos);
+    
 
 
     // seguir el mismo patron al añadir mas tablas de datos.
