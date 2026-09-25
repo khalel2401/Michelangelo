@@ -14,4 +14,4 @@ export const eventoSchema = z.object({
   path: ['abono'], 
 });
 
-export const updateEventoSchema = eventoSchema.partial();
+export const updateEventoSchema = eventoSchema;
