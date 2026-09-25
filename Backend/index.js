@@ -1,20 +1,18 @@
 import 'dotenv/config';
 import express from 'express';
 import cors from 'cors';
-import usuarioRoutes from './Routes/usuarioR.js';
-import errorHandler from './Middlewares/errorM.js';
+import { PrismaClient } from '@prisma/client';
+import usuarioRoutes from './src/Routes/usuarioR.js';
+import errorHandler from './src/Middlewares/errorM.js';
 
+const prisma = new PrismaClient();
 const app = express();
+
 app.use(cors());
 app.use(express.json());
 
 app.use(usuarioRoutes);
 app.use(errorHandler);
-
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Servidor corriendo en el puerto ${PORT}`);
-});
 
 async function testDatabaseConnection() {
   try {
@@ -28,3 +26,8 @@ async function testDatabaseConnection() {
 }
 
 testDatabaseConnection();
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`Servidor corriendo en el puerto ${PORT}`);
+});
