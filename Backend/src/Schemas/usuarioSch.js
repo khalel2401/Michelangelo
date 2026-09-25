@@ -6,7 +6,7 @@ export const usuarioSchema = z.object({
   nombre: z.string().min(2).max(100),
   apellido: z.string().min(2).max(100),
   telefono: z.string().regex(/^\+?[1-9]\d{1,14}$/).optional(),
-  rol: z.enum(['admin', 'cliente','externo']),
+  rol: z.enum(['admin', 'cliente']),
 });
 
 export const updateUsuarioSchema = usuarioSchema.partial();
