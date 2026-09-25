@@ -18,6 +18,7 @@ import { validateSchema } from "../Middlewares/validarM.js";
 
 const router = Router();
 
+router.get("/usuarios", getUsuarios);
 router.post("/usuarios", validateSchema(usuarioSchema), crearUsuario);
 router.get("/usuarios/:id", getUsuarioPorId);
 router.put("/usuarios/:id", validateSchema(updateUsuarioSchema), actualizarUsuario);
