@@ -18,14 +18,14 @@ export const createUsuario = async (usuarioData) => {
 
 export const updateUsuario = async (id, usuarioData) => {
   return await prisma.usuario.update({
-    where: { id },
+    where: { id: parseInt(id) },
     data: usuarioData,
   });
 }
 
 export const deleteUsuario = async (id) => {
   return await prisma.usuario.delete({
-    where: { id },
+    where: { id: parseInt(id) },
   });
 }
 
