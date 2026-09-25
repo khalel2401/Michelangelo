@@ -13,3 +13,18 @@ datasource db {
   provider = "postgresql"
   url      = env("DATABASE_URL")
 }
+
+model Evento {
+  id               Int      @id @default(autoincrement())
+  nombre           String   @db.VarChar(100)
+  tipo             String   @db.VarChar(100)
+  fecha            DateTime
+  cantidadPersonas Int
+  valorTotal       Float
+  abono            Float
+  confirmado       Boolean  @default(false)
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  @@map("eventos")
+}
