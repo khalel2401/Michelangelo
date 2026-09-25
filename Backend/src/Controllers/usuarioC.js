@@ -11,9 +11,8 @@ export const getUsuarios = async (req, res) => {
 };
 
 export const getUsuarioPorId = async (req, res) => {
-  const { id } = req.params;
   try {
-    const usuario = await usuarioService.getUsuarioById(id);
+    const usuario = await usuarioService.getUsuarioById(req.params.id);
     if (!usuario) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
