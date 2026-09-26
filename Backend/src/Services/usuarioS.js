@@ -34,3 +34,9 @@ export const getUsuarioByNombre = async (nombre) => {
     where: { nombre },
   });
 }
+
+export const getUsuarioByCorreo = async (email) => {
+  return await prisma.usuario.findUnique({
+    where: { email },
+  });
+}
