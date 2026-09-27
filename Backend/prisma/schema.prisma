@@ -31,6 +31,7 @@ model Evento {
 enum Rol {
   admin
   cliente
+  externo
 }
 
 model Usuario {
