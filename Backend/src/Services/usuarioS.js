@@ -1,36 +1,42 @@
-const { QueryFailedError } = require("typeorm");
-const db = require("../conf/db");
+import prisma from "../Config/prisma.js";
 
-async function createUsuario(usuario) {
-    const { nombre, correo, contrasena, rol } = usuario;
-}
-
-async function getUsuarioById(id) {
-    const usuarioRepository = db.getRepository("Usuario");
-    const usuario = await usuarioRepository.findOne({ where: { id } });
-    return usuario;
-}
-
-async function getUsuarioByCorreo(correo) {
-    const usuarioRepository = db.getRepository("Usuario");
-    const usuario = await usuarioRepository.findOne({ where: { correo } });
-    return usuario;
-}
-
-async function updateUsuario(id, updatedFields) {
-    const usuarioRepository = db.getRepository("Usuario");
-    await usuarioRepository.update(id, updatedFields);
-}
-
-async function deleteUsuario(id) {
-    const usuarioRepository = db.getRepository("Usuario");
-    await usuarioRepository.delete(id);
-}
-
-module.exports = {
-    createUsuario,
-    getUsuarioById,
-    getUsuarioByCorreo,
-    updateUsuario,
-    deleteUsuario,
+export const getAllUsuarios = async () => {
+  return await prisma.usuario.findMany();
 };
+
+export const getUsuarioById = async (id) => {
+  return await prisma.usuario.findUnique({
+    where: { id: parseInt(id) },
+  });
+}
+
+export const createUsuario = async (usuarioData) => {
+  return await prisma.usuario.create({
+    data: usuarioData,
+  });
+}
+
+export const updateUsuario = async (id, usuarioData) => {
+  return await prisma.usuario.update({
+    where: { id: parseInt(id) },
+    data: usuarioData,
+  });
+}
+
+export const deleteUsuario = async (id) => {
+  return await prisma.usuario.delete({
+    where: { id: parseInt(id) },
+  });
+}
+
+export const getUsuarioByNombre = async (nombre) => {
+  return await prisma.usuario.findMany({
+    where: { nombre },
+  });
+}
+
+export const getUsuarioByCorreo = async (email) => {
+  return await prisma.usuario.findUnique({
+    where: { email },
+  });
+}
