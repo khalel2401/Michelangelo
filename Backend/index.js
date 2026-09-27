@@ -4,6 +4,7 @@ import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import usuarioRoutes from './src/Routes/usuarioR.js';
 import eventoRoutes from './src/Routes/eventoR.js';
+import valoracionesRoutes from './src/Routes/valoracionesR.js';
 import authRoutes from './src/Routes/authR.js';
 import errorHandler from './src/Middlewares/errorM.js';
 
@@ -15,6 +16,7 @@ app.use(express.json());
 
 app.use(usuarioRoutes);
 app.use(eventoRoutes);
+app.use(valoracionesRoutes);
 app.use(authRoutes);
 app.use(errorHandler);
 

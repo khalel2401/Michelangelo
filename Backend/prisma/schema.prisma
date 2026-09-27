@@ -47,3 +47,19 @@ model Usuario {
 
   @@map("usuarios")
 }
+
+model valoracion {
+  id            Int @id @default(autoincrement())
+  rol           String @default("cliente")
+  calificacion  Int
+  comentario    String @db.Text
+  objetivoId    Int
+  autorId       Int
+  autor         Usuario  @relation(fields: [autorId], references: [id])
+  eventoId    Int?
+  evento    Evento? @ealtion(fields: [eventoId], references: [id])
+   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("valoraciones")
+}
