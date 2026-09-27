@@ -5,6 +5,7 @@ import { PrismaClient } from '@prisma/client';
 import usuarioRoutes from './src/Routes/usuarioR.js';
 import eventoRoutes from './src/Routes/eventoR.js';
 import errorHandler from './src/Middlewares/errorM.js';
+import personalRoutes from './src/Routes/personalR.js';
 
 const prisma = new PrismaClient();
 const app = express();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use(usuarioRoutes);
 app.use(eventoRoutes);
+app.use(personalRoutes);
 app.use(errorHandler);
 
 async function testDatabaseConnection() {
