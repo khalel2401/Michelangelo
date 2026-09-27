@@ -4,7 +4,7 @@ export const getValoraciones = async (req, res) => {
   try {
     const valoraciones = await valoracionService.getAllValoraciones();
     res.status(200).json(valoraciones);
-  } catch (err) {
+  } catch (error) {
     console.error(err);
     res.status(500).json({ message: "Error interno del servidor" });
   }
@@ -23,8 +23,8 @@ export const getValoracionPorId = async (req, res) => {
   }
 };
 
-//listas d parametros
-// GET /valoraciones/objetivo/empleado/5
+
+//busqueda GET/valoraciones/objetivo/empleado/5
 export const getValoracionesPorObjetivo = async (req, res) => {
   const { rol, objetivoId } = req.params;
   try {
@@ -56,6 +56,20 @@ export const actualizarValoracion = async (req, res) => {
       return res.status(404).json({ message: "Valoración no encontrada" });
     }
     res.status(200).json(valoracionActualizada);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Error interno del servidor" });
+  }
+};
+
+export const eliminarValoracion = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const valoracionEliminada = await valoracionService.deleteValoracion(id);
+    if (!valoracionEliminada) {
+      return res.status(404).json({ message: "Valoración no encontrada" });
+    }
+    res.status(200).json({ message: "Valoración eliminada correctamente" });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: "Error interno del servidor" });
