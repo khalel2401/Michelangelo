@@ -4,6 +4,7 @@ import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import usuarioRoutes from './src/Routes/usuarioR.js';
 import eventoRoutes from './src/Routes/eventoR.js';
+import articuloRoutes from './src/Routes/articuloR.js';
 import errorHandler from './src/Middlewares/errorM.js';
 
 const prisma = new PrismaClient();
@@ -14,6 +15,7 @@ app.use(express.json());
 
 app.use(usuarioRoutes);
 app.use(eventoRoutes);
+app.use(articuloRoutes);
 app.use(errorHandler);
 
 async function testDatabaseConnection() {
