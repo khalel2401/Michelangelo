@@ -1,0 +1,1 @@
+import prisma from '../Config/prisma.js';
