@@ -17,5 +17,12 @@ import {
 import { validateSchema } from "../Middlewares/validarM.js";
 
 const router = Router();
-//rehacer rutas para valoraciones
+//rehacer rutas para valoraciones(revisar)
+router.get("/valoraciones", getValoraciones);
+router.get("/valoraciones/objetivo/:rol/:objetivoId", getValoracionesPorObjetivo);
+router.delete("/valoraciones/:id", eliminarValoracion);
+router.get("/valoraciones/:id", getValoracionPorId);
+router.post("/valoraciones", validateSchema(valoracionSchema), crearValoracion);
+router.put("/valoraciones/:id", validateSchema(updateValoracionSchema), actualizarValoracion);
+
 export default router;
