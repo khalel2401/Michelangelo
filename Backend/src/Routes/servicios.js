@@ -5,11 +5,11 @@ import {
   crearServicio,
   actualizarServicio,
   eliminarServicio,
-} from "../Controllers/servicioC.js";
+} from "../Controllers/servicios.js";
 import {
   servicioSchema,
   updateServicioSchema,
-} from "../Schemas/servicioSch.js";
+} from "../Schemas/servicios.js";
 import { validateSchema } from "../Middlewares/validarM.js";
 
 const router = Router();

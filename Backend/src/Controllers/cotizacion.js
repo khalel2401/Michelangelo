@@ -1,4 +1,4 @@
-import * as cotizacionService from "../Services/cotizacionS.js";
+import * as cotizacionService from "../Services/cotizacion.js";
 
 export const getCotizaciones = async (req, res) => {
   try {
