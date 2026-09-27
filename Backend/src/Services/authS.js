@@ -1,8 +1,8 @@
-const { 
+import { 
     getUsuarioByCorreo,
     getUsuarioById
-} = require("./usuarioS.js");
-const jwt = require("jsonwebtoken");
+} from "./usuarioS.js";
+import jwt from "jsonwebtoken";
 
 export const login = async (correo, contrasena) => {
     const usuario = await getUsuarioByCorreo(correo);
@@ -10,7 +10,7 @@ export const login = async (correo, contrasena) => {
         throw new Error("Usuario no encontrado");
     }
 
-    const contrasenaValida = usuario.contraseña === contrasena;
+    const contrasenaValida = usuario.password === contrasena;
     if (!contrasenaValida) {
         throw new Error("Contraseña incorrecta");
     };
@@ -19,8 +19,8 @@ export const login = async (correo, contrasena) => {
         throw new Error("Contraseña incorrecta");
     }
 
-    const token = jwt.sign({ id: usuario.id, correo: usuario.correo }
-        , process.env.JWT_SECRET, { expiresIn: "1h" });
+    const token = jwt.sign({ id: usuario.id, correo: usuario.email }
+        , process.env.JWT_SECRET, { expiresIn: "1h" },);
 
     return { token };
 };
