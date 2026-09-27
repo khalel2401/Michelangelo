@@ -23,7 +23,6 @@ export const getValoracionPorId = async (req, res) => {
   }
 };
 
-
 //busqueda GET/valoraciones/objetivo/empleado/5
 export const getValoracionesPorObjetivo = async (req, res) => {
   const { rol, objetivoId } = req.params;
