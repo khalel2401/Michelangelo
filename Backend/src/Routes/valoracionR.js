@@ -2,6 +2,7 @@ import { Router } from 'express';
 
 import {
   getValoraciones,
+  getMisValoraciones,
   getValoracionPorId,
   getValoracionesPorObjetivo,
   crearValoracion,
@@ -11,18 +12,23 @@ import {
 
 import {
   valoracionSchema,
-  updateValoracionSchema
+  updateValoracionSchema,
+  objetivoParamsSchema,
+  idParamsSchema
 } from "../Schemas/valoracionSch.js";
 
 import { validateSchema } from "../Middlewares/validarM.js";
+import { verificarAuth } from "../Middlewares/authM.js";
 
 const router = Router();
-//rehacer rutas para valoraciones(revisar)
+
+router.use("/valoraciones", verificarAuth);
 router.get("/valoraciones", getValoraciones);
-router.get("/valoraciones/objetivo/:rol/:objetivoId", getValoracionesPorObjetivo);
-router.delete("/valoraciones/:id", eliminarValoracion);
-router.get("/valoraciones/:id", getValoracionPorId);
+router.get("/valoraciones/mias", getMisValoraciones);
+router.get("/valoraciones/objetivo/:rol/:objetivoId", validateSchema(objetivoParamsSchema, 'params'), getValoracionesPorObjetivo);
 router.post("/valoraciones", validateSchema(valoracionSchema), crearValoracion);
-router.put("/valoraciones/:id", validateSchema(updateValoracionSchema), actualizarValoracion);
+router.get("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), getValoracionPorId);
+router.put("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), validateSchema(updateValoracionSchema), actualizarValoracion);
+router.delete("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), eliminarValoracion);
 
 export default router;
