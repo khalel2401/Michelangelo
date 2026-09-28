@@ -62,6 +62,7 @@ model Evento {
 enum Rol {
   admin
   cliente
+  externo
 }
 
 model Usuario {
@@ -76,4 +77,23 @@ model Usuario {
   updatedAt DateTime @updatedAt
 
   @@map("usuarios")
+}
+
+model Articulo {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @db.VarChar(100)
+  cantidad  Int       
+  enUso     Boolean  @default(true)
+
+  @@map("articulos")
+}
+
+model Vehiculo {
+  id        Int      @id @default(autoincrement())
+  marca     String   @db.VarChar(100)
+  modelo    String   @db.VarChar(100)
+  patente   String   @db.VarChar(100)
+  disponible Boolean  @default(true)
+
+  @@map("vehiculos")
 }
