@@ -1,11 +1,13 @@
-const { sendSucces, sendError } = require ("../Handlers/responseHandler.js");
-const authService = require("../Services/authS.js");
-const { loginSchema } = require("../Schemas/usuarioSch.js");
+import { sendSuccess, 
+        sendError } 
+        from "../Handlers/responseHandler.js";
+import * as authService from "../Services/authS.js";
+import { loginSchema } from "../Schemas/usuarioSch.js";
 
 export const login = async (req, res) => {
     try {
         const { correo, constrasena } = req.body;
-        const { error } = loginSchema.safeParse({ correo, constrasena });
+        const { error } = loginSchema.validate({ correo, constrasena });
         if (error) {
             return sendError(res, "Datos de inicio de sesión inválidos", 400, error.details[0].message);
         }

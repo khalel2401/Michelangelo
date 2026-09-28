@@ -37,6 +37,20 @@ export const getUsuarioPorNombre = async (req, res) => {
   }
 };
 
+export const getUsuarioPorCorreo = async (req, res) => {
+  const { correo } = req.params;
+  try{
+    const usuario = await usuarioService.getUsuarioByCorreo(correo);
+    if(!usuario){
+      return res.status(404).json({message: "Usuario no encontrado"});
+    }
+    res.status(200).json(usuario);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({message: "Error interno del servidor"});
+  }
+};
+
 export const crearUsuario = async (req, res) => {
   const usuarioData = req.body;
   try {

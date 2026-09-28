@@ -5,7 +5,8 @@ import {
   getUsuarioPorNombre, 
   crearUsuario, 
   actualizarUsuario, 
-  eliminarUsuario 
+  eliminarUsuario, 
+  getUsuarioPorCorreo
 } from "../Controllers/usuarioC.js";
 
 import { 
