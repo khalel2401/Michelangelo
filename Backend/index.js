@@ -4,11 +4,13 @@ import cors from 'cors';
 import { PrismaClient } from '@prisma/client';
 import usuarioRoutes from './src/Routes/usuarioR.js';
 import eventoRoutes from './src/Routes/eventoR.js';
-import servicioRoutes from './src/Routes/servicios.js';
-import cotizacionRoutes from './src/Routes/cotizacion.js';
 import articuloRoutes from './src/Routes/articuloR.js';
 import authRoutes from './src/Routes/authR.js';
+import servicioRoutes from './src/Routes/servicios.js';
+import cotizacionRoutes from './src/Routes/cotizacion.js';
 import errorHandler from './src/Middlewares/errorM.js';
+import personalRoutes from './src/Routes/personalR.js';
+import contratacionRoutes from './src/Routes/contratacionR.js';
 
 
 const prisma = new PrismaClient();
@@ -19,11 +21,13 @@ app.use(express.json());
 
 app.use(usuarioRoutes);
 app.use(eventoRoutes);
+app.use(authRoutes);
 app.use(servicioRoutes);
 app.use(cotizacionRoutes);
+app.use(contratacionRoutes);
+app.use(personalRoutes);
 
 app.use(articuloRoutes);
-app.use(authRoutes);
 app.use(errorHandler);
 
 async function testDatabaseConnection() {
