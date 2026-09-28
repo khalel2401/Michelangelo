@@ -1,7 +1,6 @@
 import { z } from 'zod';
 
 export const eventoSchema = z.object({
-  id: z.number().int().positive(),
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').max(100),
   tipo: z.string().min(2, 'El tipo de evento es obligatorio').max(100),
   fecha: z.date({ invalid_type_error: 'Debe ingresar una fecha válida' }),

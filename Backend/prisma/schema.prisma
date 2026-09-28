@@ -47,3 +47,16 @@ model Usuario {
 
   @@map("usuarios")
 }
+
+model Local {
+  id              Int @id @default(autoincrement())
+  nombre          String
+  precio          Int
+  contacto        String?
+  nombreDueno     String
+  aforo           Int
+  direccion       String
+  disponibilidad  Boolean
+
+  @@map("locales")
+}

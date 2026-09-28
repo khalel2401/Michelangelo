@@ -1,4 +1,4 @@
-const { verificarToken } = require("../Services/authS.js");
+import { verificarToken } from "../Services/authS.js";
 
 export const extraerSesion = async (req) => {
     const authHeader = req.headers.authorization;
