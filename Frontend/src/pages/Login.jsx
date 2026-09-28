@@ -10,10 +10,8 @@ import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from '@mui/material/Button';
 
 export default function Login({ onLogin }) {
-  const [cargando, setCargando] = React.useState(true);
+  const [cargando, setCargando] = useState(false);
   const [error, setError] = useState(null);
-
-  
 
   const filledPasswordId = React.useId();
   const filledUserId = React.useId();
@@ -25,16 +23,36 @@ export default function Login({ onLogin }) {
   const handleMouseDownPassword = (event) => event.preventDefault();
   const handleMouseUpPassword = (event) => event.preventDefault();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(null);
+    setCargando(true);
 
-    const emailValido = email === "admin@correo.com";
-    const passwordValida = password === "123456";
+    try {
+      const response = await fetch(`${API_URL}/login`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (emailValido && passwordValida) {
-      onLogin();
-    } else {
-      alert("Usuario o contraseña incorrectos");
+      const data = await response.json();
+
+      if (!response.ok || !data.success) {
+        throw new Error(data.message || "Usuario o contraseña incorrectos");
+      }
+
+      if (data.data?.token) {
+        localStorage.setItem("token", data.data.token);
+      }
+
+      onLogin?.();
+    } catch (err) {
+      setError(err.message || "Error al iniciar sesión");
+      alert(err.message || "Usuario o contraseña incorrectos");
+    } finally {
+      setCargando(false);
     }
   };
 
@@ -72,8 +90,10 @@ export default function Login({ onLogin }) {
         />
       </FormControl>
 
-      <Button type="submit" variant="contained" sx={{ mt: 2 }}>
-        Iniciar sesión
+      {error && <p style={{ color: "crimson" }}>{error}</p>}
+
+      <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={cargando}>
+        {cargando ? "Iniciando..." : "Iniciar sesión"}
       </Button>
     </form>
   );
