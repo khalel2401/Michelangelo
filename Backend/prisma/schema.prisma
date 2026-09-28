@@ -14,33 +14,43 @@ datasource db {
 }
 
 model Servicio {
-  id          Int          @id @default(autoincrement())
-  nombre      String       @db.VarChar(100)
-  precio      Float
-  descripcion String?      @db.VarChar(200)
-  activo      Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                    Int                  @id @default(autoincrement())
+  nombre                String               @db.VarChar(100)
+  precio                Float
+  descripcion           String?              @db.VarChar(200)
+  activo                Boolean              @default(true)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
-  cotizaciones Cotizacion[]
+  cotizacionesServicios CotizacionServicio[]
 
   @@map("servicios")
 }
 
 model Cotizacion {
-  id               Int        @id @default(autoincrement())
-  cantidadPersonas Int
-  valorTotal       Float
-  abono            Float
-  estado           String     @default("pendiente")
-  servicioId       Int
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  id                    Int                  @id @default(autoincrement())
+  cantidadPersonas      Int
+  valorTotal            Float
+  abono                 Float
+  estado                String               @default("pendiente")
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
-  servicio         Servicio   @relation(fields: [servicioId], references: [id])
-  evento           Evento?
+  cotizacionesServicios CotizacionServicio[]
+  evento                Evento?
 
   @@map("cotizaciones")
+}
+
+model CotizacionServicio {
+  id           Int        @id @default(autoincrement())
+  cotizacionId Int
+  servicioId   Int
+
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  servicio     Servicio   @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+
+  @@map("cotizaciones_servicios")
 }
 
 model Evento {
