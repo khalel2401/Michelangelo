@@ -25,7 +25,7 @@ cp .env.example .env
 Edita `.env` con los datos de tu base de datos PostgreSQL:
 
 ```
-DATABASE_URL="postgresql://usuario:password@localhost:5432/zooapi?schema=public"
+DATABASE_URL="postgresql://usuario:password@localhost:5432/nombre_db?schema=public"
 PORT=3000
 ```
 
