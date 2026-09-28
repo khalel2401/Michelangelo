@@ -25,6 +25,7 @@ model Evento {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  valoraciones Valoracion[] 
   @@map("eventos")
 }
 
@@ -45,21 +46,25 @@ model Usuario {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+   valoraciones Valoracion[] 
+
   @@map("usuarios")
 }
 
-model valoracion {
-  id            Int @id @default(autoincrement())
-  rol           String @default("cliente")
-  calificacion  Int
-  comentario    String @db.Text
-  objetivoId    Int
-  autorId       Int
-  autor         Usuario  @relation(fields: [autorId], references: [id])
-  eventoId    Int?
-  evento    Evento? @ealtion(fields: [eventoId], references: [id])
-   createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+model Valoracion {
+  id           Int      @id @default(autoincrement())
+  calificacion Int
+  comentario   String   @db.Text
+  rol          String   @default("cliente") 
+  objetivoId   Int                           
+  autorId      Int
+  autor        Usuario  @relation(fields: [autorId], references: [id])
+  eventoId     Int?
+  evento       Evento?  @relation(fields: [eventoId], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 
+  @@unique([autorId, rol, objetivoId, eventoId])
+  @@index([rol, objetivoId])
   @@map("valoraciones")
 }
