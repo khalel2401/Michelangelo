@@ -13,7 +13,7 @@ async function main() {
     // En PostgreSQL, deleteMany no reinicia la secuencia autoincremental,
     // por eso usamos TRUNCATE con RESTART IDENTITY para resetear los IDs.
     console.log('Limpiando la base de datos...');
-    await prisma.$executeRaw`TRUNCATE TABLE "usuarios", "eventos" RESTART IDENTITY CASCADE;`;
+    await prisma.$executeRaw`TRUNCATE TABLE "usuarios", "eventos", "articulos", "vehiculos" RESTART IDENTITY CASCADE;`;
 
 
     //generacion de datos falsos de usuario
@@ -54,13 +54,46 @@ async function main() {
         )
     );
 
+    const cantidadArticulos = 10; // Cambiar valor dependiendo de la cantidad de articulos que se quieran generar
+    console.log('Generando datos falsos de articulo...');
+    const articulos = await Promise.all(
+        Array.from({ length: cantidadArticulos }).map(() =>
+            prisma.articulo.create({
+            data: {
+                nombre: faker.commerce.productName(),
+                cantidad: faker.number.int({ min: 1, max: 100 }),
+                enUso: faker.datatype.boolean(),
+            },
+            })
+        )
+    );
+
+    const cantidadVehiculos = 10; // Cambiar valor dependiendo de la cantidad de vehiculos que se quieran generar
+    console.log('Generando datos falsos de vehiculo...');
+    const vehiculos = await Promise.all(
+        Array.from({ length: cantidadVehiculos }).map(() =>
+            prisma.vehiculo.create({
+            data: {
+                marca: faker.vehicle.manufacturer(),
+                modelo: faker.vehicle.model(),
+                patente: faker.vehicle.vin(),
+                disponible: faker.datatype.boolean(),
+            },
+            })
+        )
+    );
+
+
 
     console.log('Datos falsos generados exitosamente.');
     console.log('Usuarios generados:', usuarios);
     console.log('Eventos generados:', eventos);
+    console.log('Articulos generados:', articulos);
+    console.log('Vehiculos generados:', vehiculos);
+
     
 
-
+    
     // seguir el mismo patron al añadir mas tablas de datos.
 }
 

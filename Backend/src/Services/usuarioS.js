@@ -36,7 +36,7 @@ export const getUsuarioByNombre = async (nombre) => {
 }
 
 export const getUsuarioByCorreo = async (email) => {
-  return await prisma.usuario.findMany({
+  return await prisma.usuario.findUnique({
     where: { email },
   });
 }
