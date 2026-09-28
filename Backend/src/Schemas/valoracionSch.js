@@ -1,7 +1,11 @@
-import {z} from 'zod';
+import { z } from 'zod';
 
 export const rolValoracionEnum = z.enum(['empleado', 'local', 'cliente']);
-//calificaciones entre 1 y 5 enteros y 1000 de texto como maximo 
+
+const idSchema = z.number().int().positive().max(2147483647);
+
+
+
 export const valoracionSchema = z.object({
   calificacion: z
     .number()
@@ -10,18 +14,28 @@ export const valoracionSchema = z.object({
     .max(5, 'La calificación máxima es 5'),
   comentario: z
     .string()
+    .trim() //no comentarios de solo espacios
     .min(1, 'El comentario no puede estar vacío')
     .max(1000, 'El comentario es demasiado largo'),
   rol: rolValoracionEnum,
-  objetivoId: z
-    .number()
-    .int()
-    .positive('Debe indicar el id de la entidad evaluada (empleado, local o cliente)'),
-  autorId: z
-    .number()
-    .int()
-    .positive('Debe indicar el usuario que realiza la valoración'),
-  eventoId: z.number().int().positive().optional(),
+  objetivoId: idSchema,
+  eventoId: idSchema.optional(),
 });
 
-export const updateValoracionSchema = valoracionSchema.partial();
+
+export const updateValoracionSchema = valoracionSchema
+  .pick({ calificacion: true, comentario: true })
+  .partial()
+  .refine((datos) => Object.keys(datos).length > 0, {
+    message: 'Debe enviar calificacion o comentario para actualizar',
+  });
+
+export const idParamsSchema = z.object({
+  id: z.coerce.number().int().positive().max(2147483647),
+});
+
+// Valida /valoraciones/objetivo/:rol/:objetivoId
+export const objetivoParamsSchema = z.object({
+  rol: rolValoracionEnum,
+  objetivoId: z.coerce.number().int().positive().max(2147483647),
+});
