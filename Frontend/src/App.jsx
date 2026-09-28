@@ -1,30 +1,24 @@
 import * as React from 'react';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import ProTip from './components/ProTip';
-import TopTabs from './components/topTabs';
+import Box from '@mui/material/Box';
+import Login from './pages/Login';
+import Home from './pages/home';
 
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+
+  if (isLoggedIn) {
+    return <Home />;
+  }
 
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4 }}>
-        
-        {/* asi es como se pone un texto random  */}
-        <Typography variant="h4" component="h1" gutterBottom>
-          HOLA MUNDOS
-        </Typography>
-        
-        {/* Aca esta la sección de tabs */}
-        <TopTabs />
-        
-        {/* para añadir una parte a la app usar <"componente"/>   */}
-        <ProTip />
-
-        
+        <Login onLogin={() => setIsLoggedIn(true)} />
       </Box>
+      <ProTip />
     </Container>
   );
 }
