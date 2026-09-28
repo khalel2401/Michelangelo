@@ -25,7 +25,7 @@ export const login = async (correo, contrasena) => {
     return { token };
 };
 
-const verificarToken = async (token) => {
+export const verificarToken = async (token) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         const usuario = await getUsuarioById(decoded.id);
