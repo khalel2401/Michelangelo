@@ -44,14 +44,16 @@ model Cotizacion {
 }
 
 model Evento {
-  id               Int        @id @default(autoincrement())
-  local            String     @db.VarChar(100)
-  fecha            DateTime
-  cotizacionId     Int        @unique
-  cotizacion       Cotizacion @relation(fields: [cotizacionId], references: [id])
-  //trabajadores     Trabajador[]
-  //vehiculos        Vehiculo[]
-  //equipos          Equipo[]
+  id                   Int        @id @default(autoincrement())
+  local                String     @db.VarChar(100)
+  fecha                DateTime
+  cotizacionId         Int        @unique
+  cotizacion           Cotizacion @relation(fields: [cotizacionId], references: [id])
+  //trabajadores       Trabajador[] //Ponlo como contratacion
+  //vehiculos          Vehiculo[]
+  //equipos            Equipo[]
+
+  contrataciones       Contratacion[]
 
   createdAt        DateTime   @default(now())
   updatedAt        DateTime   @updatedAt
@@ -80,10 +82,21 @@ model Usuario {
 }
 
 model Personal {
-  id           Int      @id @default(autoincrement())
-  nombre       String
-  apellido     String
-  telefono     String?
-  calificacion Int
-  evento       String
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  apellido      String
+  telefono      String?
+  calificacion  Int
+  contrataciones  Contratacion[]
+}
+
+model Contratacion {
+  id            Int           @id @default(autoincrement())
+  id_personal   Int       
+  id_evento     Int
+  fecha         String?
+  salario       Int
+
+  personal      Personal      @relation(fields:[id_personal], references: [id])
+  evento        Evento        @relation(fields:[id_evento], references: [id])
 }

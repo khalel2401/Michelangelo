@@ -26,7 +26,7 @@ export const crearServicio = async (req, res) => {
     const nuevoServicio = await servicioService.crearServicio(req.body);
     res.status(201).json(nuevoServicio);
   } catch (error) {
-    res.status(500).json({ mensaje: "Error interno del servidor" });
+    res.status(500).json({ mensaje: "Error interno del servidor"});
   }
 };
 
