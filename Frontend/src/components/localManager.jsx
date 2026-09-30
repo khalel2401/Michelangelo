@@ -1,4 +1,8 @@
 import { useEffect, useState } from "react";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Paper from "@mui/material/Paper";
+import Typography from "@mui/material/Typography";
 import { getLocales, crearLocal, actualizarLocal, borrarLocal } from "../Services/localS.js";
 
 const formVacio = {
@@ -6,6 +10,7 @@ const formVacio = {
     precio: "",
     contacto: "",
     nombreDueno: "",
+    aforo: "",
     direccion: "",
     disponibilidad: true
 }
@@ -32,7 +37,10 @@ export function localManager(){
 
     try {
         const data = await getLocales();
-        setLocales(data.data);
+        if (!data.success) {
+          throw new Error(data.message);
+        }
+        setLocales(Array.isArray(data.data) ? data.data : []);
     } catch (err) {
         setError(err.message);
     } finally {
@@ -62,6 +70,7 @@ export function localManager(){
     precio: local.precio,
     contacto: local.contacto,
     nombreDueno: local.nombreDueno,
+    aforo: local.aforo,
     direccion: local.direccion,
     disponibilidad: local.disponibilidad,
     });
@@ -81,23 +90,32 @@ export function localManager(){
     setGuardando(true);
     setErrorForm(null);
 
+    const datosLocal = {
+      ...formData,
+      precio: Number(formData.precio),
+      aforo: Number(formData.aforo),
+    };
 
-    const res = editandoId
-      ? await actualizarLocal(editandoId, datosLocal)
-      : await crearLocal(datosLocal);
+    try {
+      const res = editandoId
+        ? await actualizarLocal(editandoId, datosLocal)
+        : await crearLocal(datosLocal);
 
-    if (res.success) {
-      if (editandoId) {
-        setLocales(locales.map((v) => (v.id === editandoId ? res.data : v)));
+      if (res.success) {
+        if (editandoId) {
+          setLocales((actuales) => actuales.map((local) => (local.id === editandoId ? res.data : local)));
+        } else {
+          setLocales((actuales) => [...actuales, res.data]);
+        }
+        cancelarForm();
       } else {
-        setLocales([...locales, res.data]);
+        setErrorForm(res.message);
       }
-      cancelarForm();
-    } else {
-      setErrorForm(res.message);
+    } catch (err) {
+      setErrorForm(err.message || "No se pudo guardar el local");
+    } finally {
+      setGuardando(false);
     }
-
-    setGuardando(false);
   };
 
   const handleEliminar = async (id) => {
@@ -123,64 +141,89 @@ export function localManager(){
         {error && <p>Error: {error}</p>}
 
         {!cargando && !error &&(
-            <ul>
+            <Box component="ul" sx={{ listStyle: "none", p: 0, display: "grid", gap: 2 }}>
                 {locales.length === 0 ? (
-                    <p>No existen locales.</p>
+                  <Paper component="li" variant="outlined" sx={{ p: 2 }}>
+                    No existen locales.
+                  </Paper>
                 ): (
-                    locales.map((local) => {
-                        <li key={local.id}>
-                            {local.nombre} {local.precio} {local.contacto} {local.nombreDueno} {local.aforo} {local.direccion}
-                            {local.disponibilidad ? "Disponible" : "No disponible"}
-                            <button onClick={() => abrirEditar(local)}>Editar</button>
-                            <button
-                                onClick={() => handleEliminar(local.id)}
-                                disabled={eliminandoId === local.id}
-                            >
-                                {eliminandoId === local.id ? "Eliminando..." : "Eliminar"}
-                            </button>
-                        </li>
-                    })
+                  locales.map((local) => (
+                    <Paper component="li" key={local.id} variant="outlined" sx={{ p: 2 }}>
+                      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 1.5 }}>
+                        <Typography><strong>Nombre:</strong> {local.nombre}</Typography>
+                        <Typography><strong>Precio:</strong> {local.precio}</Typography>
+                        <Typography><strong>Contacto:</strong> {local.contacto}</Typography>
+                        <Typography><strong>Dueño:</strong> {local.nombreDueno}</Typography>
+                        <Typography><strong>Aforo:</strong> {local.aforo}</Typography>
+                        <Typography><strong>Dirección:</strong> {local.direccion}</Typography>
+                        <Typography><strong>Disponibilidad:</strong> {local.disponibilidad ? "Disponible" : "No disponible"}</Typography>
+                      </Box>
+                      <Box sx={{ display: "flex", gap: 1, mt: 2, pt: 1.5, borderTop: 1, borderColor: "divider" }}>
+                        <Button size="small" variant="outlined" onClick={() => abrirEditar(local)}>
+                          Editar
+                        </Button>
+                        <Button
+                          size="small"
+                          color="error"
+                          variant="outlined"
+                          onClick={() => handleEliminar(local.id)}
+                          disabled={eliminandoId === local.id}
+                        >
+                          {eliminandoId === local.id ? "Eliminando..." : "Eliminar"}
+                        </Button>
+                      </Box>
+                    </Paper>
+                  ))
                 )}
-            </ul>
+            </Box>
         )}
         {!mostrarForm && (
-        <button onClick={abrirCrear}>Agregar nuevo local</button>
+        <Button variant="contained" onClick={abrirCrear}>Agregar nuevo local</Button>
       )}
       {mostrarForm && (
-        <form onSubmit={handleSubmit} className="local-form">
+        <form onSubmit={handleSubmit} className="local-form" style={{ display: "grid", gap: "12px", maxWidth: "420px" }}>
           <h3>{editandoId ? "Editar local" : "Nuevo local"}</h3>
           {errorForm && <p className="error-msg">{errorForm}</p>}
 
-          <label>
+          <label style={{ display: "grid", gap: "4px" }}>
             Nombre
             <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
           </label>
 
-          <label>
+          <label style={{ display: "grid", gap: "4px" }}>
             Precio
-            <input type="text" name="precio" value={formData.precio} onChange={handleChange} required />
+            <input type="number" min="0" step="any" name="precio" value={formData.precio} onChange={handleChange} required />
           </label>
 
-          <label>
+          <label style={{ display: "grid", gap: "4px" }}>
             Numero de contacto
-            <input type="text" name="contacto" value={formData.contacto} onChange={handleChange} required />
+            <input type="text" name="contacto" value={formData.contacto} onChange={handleChange} minLength="8" maxLength="12" required />
           </label>
             
-            <label>
+            <label style={{ display: "grid", gap: "4px" }}>
             Dueño del local
             <input type="text" name="nombreDueno" value={formData.nombreDueno} onChange={handleChange} required />
           </label>
 
-            <label>
+            <label style={{ display: "grid", gap: "4px" }}>
+              Aforo
+              <input type="number" min="0" step="1" name="aforo" value={formData.aforo} onChange={handleChange} required />
+            </label>
+
+            <label style={{ display: "grid", gap: "4px" }}>
             Direccion
             <input type="text" name="direccion" value={formData.direccion} onChange={handleChange} required />
           </label>
 
-            <label>
+            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
             <input type="checkbox" name="disponibilidad" checked={formData.disponibilidad} onChange={handleChange} />
             Disponible
           </label>
 
+          <button type="submit" disabled={guardando}>
+            {guardando ? "Guardando..." : "Guardar"}
+          </button>
+          <button type="button" onClick={cancelarForm} disabled={guardando}>Cancelar</button>
         </form>
       )}
     </div>

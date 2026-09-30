@@ -24,6 +24,6 @@ router.get("/local/:id",getLocalPorId);
 router.get("/local/disponibilidad/",getLocalesDisponibles);
 router.get("/local/nombreDueno/:nombreDueno", getLocalPorNombreDueno);
 router.put("/local/:id",validateSchema(localUpdateSchema), actualizarLocal);
-router.delete("local/:id", eliminarLocal);
+router.delete("/local/:id", eliminarLocal);
 
 export default router;

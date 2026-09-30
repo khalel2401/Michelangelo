@@ -1,10 +1,13 @@
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
-
+import Button from '@mui/material/Button';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function Home(){
+  const navigate = useNavigate();
+
   return (
     <Container maxWidth="sm">
       <Box sx={{ my: 4 }}>
@@ -24,8 +27,9 @@ export default function Home(){
           alt='gato'
           src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTB5iy9zb2sazyZTu1udZKLhE5m8M-nJmaRvRsFLkTvFlBv0ipT4Yx5aPk&s=10'
         />
-
       </Box>
+      <Button onClick={() => navigate('/locales')}>Ver locales</Button>
+      
     </Container>
   );
 }
