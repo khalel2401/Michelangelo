@@ -1,30 +1,33 @@
 import * as React from 'react';
 import Container from '@mui/material/Container';
-import Typography from '@mui/material/Typography';
-import Box from '@mui/material/Box';
 import ProTip from './components/ProTip';
-import TopTabs from './components/topTabs';
+import Box from '@mui/material/Box';
+import Login from './pages/Login';
+import Home from './pages/Home.jsx';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import Locales from './pages/Locales.jsx';
+import Inventario from './pages/Inventario.jsx';
 
 
 export default function App() {
+  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
 
   return (
-    <Container maxWidth="sm">
-      <Box sx={{ my: 4 }}>
-        
-        {/* asi es como se pone un texto random  */}
-        <Typography variant="h4" component="h1" gutterBottom>
-          HOLA MUNDOS
-        </Typography>
-        
-        {/* Aca esta la sección de tabs */}
-        <TopTabs />
-        
-        {/* para añadir una parte a la app usar <"componente"/>   */}
-        <ProTip />
-
-        
-      </Box>
-    </Container>
+    <Routes>
+      <Route
+        path="/"
+        element={isLoggedIn ? <Home /> : (
+          <Container maxWidth="sm">
+            <Box sx={{ my: 4 }}>
+              <Login onLogin={() => setIsLoggedIn(true)} />
+            </Box>
+            <ProTip />
+          </Container>
+        )}
+      />
+      <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
+      <Route path="/Inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

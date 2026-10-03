@@ -1,5 +1,3 @@
-import * as React from 'react';
-import Link from '@mui/material/Link';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
@@ -12,12 +10,22 @@ function LightBulbIcon(props) {
 }
 
 export default function ProTip() {
+  let tip = 'ERROR';
+  switch (Math.floor(Math.random() * 2) + 1){ //genera un numero aleatorio para elegir entre distintos tips
+    case 1:
+      tip = 'Pone bien tu contraseña';
+      break;
+    case 2:
+      tip = 'Las mayusculas existen';
+      break;
+    default:
+      tip = 'ERROR DE RANDOM';
+      break;
+  }
   return (
-    <Typography sx={{ mt: 6, mb: 3, color: 'text.secondary' }}>
+    <Typography variant="caption" gutterBottom sx={{ mt: 6, mb: 3, color: 'text.secondary', display: 'block' }}>
       <LightBulbIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-      {'Pro tip: See more '}
-      <Link href="https://mui.com/material-ui/getting-started/templates/">templates</Link>
-      {' in the Material UI documentation.'}
+      Consejo: {tip}
     </Typography>
   );
 }

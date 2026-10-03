@@ -100,3 +100,33 @@ model Contratacion {
   personal      Personal      @relation(fields:[id_personal], references: [id])
   evento        Evento        @relation(fields:[id_evento], references: [id])
 }
+model Local {
+  id              Int @id @default(autoincrement())
+  nombre          String
+  precio          Int
+  contacto        String?
+  nombreDueno     String
+  aforo           Int
+  direccion       String
+  disponibilidad  Boolean
+
+  @@map("locales")
+}
+model Articulo {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @db.VarChar(100)
+  cantidad  Int       
+  enUso     Boolean  @default(true)
+
+  @@map("articulos")
+}
+
+model Vehiculo {
+  id        Int      @id @default(autoincrement())
+  marca     String   @db.VarChar(100)
+  modelo    String   @db.VarChar(100)
+  patente   String   @db.VarChar(100)
+  disponible Boolean  @default(true)
+
+  @@map("vehiculos")
+}
