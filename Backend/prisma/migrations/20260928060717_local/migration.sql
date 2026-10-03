@@ -1,6 +1,3 @@
--- AlterEnum
-ALTER TYPE "Rol" ADD VALUE 'externo';
-
 -- CreateTable
 CREATE TABLE "locales" (
     "id" SERIAL NOT NULL,
