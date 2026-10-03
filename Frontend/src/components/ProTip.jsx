@@ -10,10 +10,22 @@ function LightBulbIcon(props) {
 }
 
 export default function ProTip() {
+  let tip = 'ERROR';
+  switch (Math.floor(Math.random() * 2) + 1){ //genera un numero aleatorio para elegir entre distintos tips
+    case 1:
+      tip = 'Pone bien tu contraseña';
+      break;
+    case 2:
+      tip = 'Las mayusculas existen';
+      break;
+    default:
+      tip = 'ERROR DE RANDOM';
+      break;
+  }
   return (
-    <Typography sx={{ mt: 6, mb: 3, color: 'text.secondary' }}>
+    <Typography variant="caption" gutterBottom sx={{ mt: 6, mb: 3, color: 'text.secondary', display: 'block' }}>
       <LightBulbIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-      {'Consejo: Pone bien tu contraseña '}
+      Consejo: {tip}
     </Typography>
   );
 }
