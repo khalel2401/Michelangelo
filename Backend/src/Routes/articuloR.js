@@ -20,8 +20,8 @@ const router = Router();
 router.get("/articulos", getArticulos);
 router.post("/articulos", validateSchema(articuloSchema), crearArticulo);
 router.get("/articulos/:id", getArticuloPorId);
-router.get("/articulos/:id", validateSchema(updateArticuloSchema), actualizarArticulo);
-router.get("/articulos/:id", eliminarArticulo);
+router.put("/articulos/:id", validateSchema(updateArticuloSchema), actualizarArticulo);
+router.delete("/articulos/:id", eliminarArticulo);
 
 
 
