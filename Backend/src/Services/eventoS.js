@@ -1,30 +1,43 @@
 import prisma from "../Config/prisma.js";
 
-export const getAllEventos = async () => {
-  return await prisma.evento.findMany();
+export const obtenerEventos = async () => {
+  return await prisma.evento.findMany({
+    include: {
+      cotizacion: true,
+    },
+  });
 };
 
-export const getEventoById = async (id) => {
+export const obtenerEventoPorId = async (id) => {
   return await prisma.evento.findUnique({
     where: { id: parseInt(id) },
+    include: {
+      cotizacion: true,
+    },
   });
-}
+};
 
-export const createEvento = async (eventoData) => {
+export const crearEvento = async (eventoData) => {
   return await prisma.evento.create({
     data: eventoData,
+    include: {
+      cotizacion: true,
+    },
   });
-}
+};
 
-export const updateEvento = async (id, eventoData) => {
+export const actualizarEvento = async (id, eventoData) => {
   return await prisma.evento.update({
     where: { id: parseInt(id) },
     data: eventoData,
+    include: {
+      cotizacion: true,
+    },
   });
-}
+};
 
-export const deleteEvento = async (id) => {
+export const eliminarEvento = async (id) => {
   return await prisma.evento.delete({
     where: { id: parseInt(id) },
   });
-}
+};

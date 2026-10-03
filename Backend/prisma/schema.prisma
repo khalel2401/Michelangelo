@@ -13,17 +13,50 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Evento {
-  id               Int      @id @default(autoincrement())
-  nombre           String   @db.VarChar(100)
-  tipo             String   @db.VarChar(100)
-  fecha            DateTime
+model Servicio {
+  id          Int          @id @default(autoincrement())
+  nombre      String       @db.VarChar(100)
+  precio      Float
+  descripcion String?      @db.VarChar(200)
+  activo      Boolean      @default(true)
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  cotizaciones Cotizacion[]
+
+  @@map("servicios")
+}
+
+model Cotizacion {
+  id               Int        @id @default(autoincrement())
   cantidadPersonas Int
   valorTotal       Float
   abono            Float
-  confirmado       Boolean  @default(false)
-  createdAt        DateTime @default(now())
-  updatedAt        DateTime @updatedAt
+  estado           String     @default("pendiente")
+  servicioId       Int
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
+
+  servicio         Servicio   @relation(fields: [servicioId], references: [id])
+  evento           Evento?
+
+  @@map("cotizaciones")
+}
+
+model Evento {
+  id                   Int        @id @default(autoincrement())
+  local                String     @db.VarChar(100)
+  fecha                DateTime
+  cotizacionId         Int        @unique
+  cotizacion           Cotizacion @relation(fields: [cotizacionId], references: [id])
+  //trabajadores       Trabajador[] //Ponlo como contratacion
+  //vehiculos          Vehiculo[]
+  //equipos            Equipo[]
+
+  contrataciones       Contratacion[]
+
+  createdAt        DateTime   @default(now())
+  updatedAt        DateTime   @updatedAt
 
   @@map("eventos")
 }
@@ -48,6 +81,25 @@ model Usuario {
   @@map("usuarios")
 }
 
+model Personal {
+  id            Int      @id @default(autoincrement())
+  nombre        String
+  apellido      String
+  telefono      String?
+  calificacion  Int
+  contrataciones  Contratacion[]
+}
+
+model Contratacion {
+  id            Int           @id @default(autoincrement())
+  id_personal   Int       
+  id_evento     Int
+  fecha         String?
+  salario       Int
+
+  personal      Personal      @relation(fields:[id_personal], references: [id])
+  evento        Evento        @relation(fields:[id_evento], references: [id])
+}
 model Local {
   id              Int @id @default(autoincrement())
   nombre          String
