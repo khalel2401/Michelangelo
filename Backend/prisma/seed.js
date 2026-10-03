@@ -28,7 +28,7 @@ async function main() {
                 password: faker.internet.password({ length: 8 }),
                 nombre: faker.person.firstName(),
                 apellido: faker.person.lastName(),
-                telefono: faker.phone.number(),
+                telefono: faker.phone.number({ style: 'international' }),
                 rol: faker.helpers.arrayElement(['admin', 'cliente']),
             },
             })
@@ -92,7 +92,7 @@ async function main() {
                 data: {
                     nombre: faker.lorem.words(3),
                     precio: parseInt(faker.commerce.price({min: 100, max: 100000})),
-                    contacto: faker.phone.number(),
+                    contacto: faker.phone.number({ style: 'international' }),
                     nombreDueno: faker.person.fullName(),
                     aforo: parseInt(faker.number.bigInt({min: 100, max: 10000})),
                     direccion: faker.location.streetAddress(),
