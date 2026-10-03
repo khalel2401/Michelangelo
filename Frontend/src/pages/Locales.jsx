@@ -1,6 +1,7 @@
 import {useNavigate} from "react-router-dom";
 import { useState } from 'react';
 import { localManager } from "../components/localManager.jsx";
+import Button from "@mui/material/Button";
 
 const tabla = [
     {
@@ -24,7 +25,7 @@ export default function Locales() {
                 <div className="tab-content">
                     {TabComponent && <TabComponent/>}
                 </div>
-                <button onClick={() => navigate('/')}>Volver al menu</button>
+                <Button variant="contained" onClick={() => navigate('/')}>Volver al menu</Button>
             </div>
         </div>
     );
