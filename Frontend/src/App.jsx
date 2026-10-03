@@ -6,6 +6,7 @@ import Login from './pages/Login';
 import Home from './pages/Home.jsx';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Locales from './pages/Locales.jsx';
+import Inventario from './pages/Inventario.jsx';
 
 
 export default function App() {
@@ -25,6 +26,7 @@ export default function App() {
         )}
       />
       <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
+      <Route path="/Inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );

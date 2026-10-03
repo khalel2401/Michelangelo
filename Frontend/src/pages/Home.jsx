@@ -9,7 +9,13 @@ export default function Home(){
   const navigate = useNavigate();
 
   return (
-    <Container maxWidth="sm">
+    <Container maxWidth="sm" sx={{ 
+      borderColor: 'secondary.main', 
+      border: 4, 
+      borderRadius: 6,
+      display: 'grid',
+      alignContent: 'left'
+      }}>
       <Box sx={{ my: 4 }}>
         
         <Typography variant="h4" component="h1" gutterBottom>
@@ -29,7 +35,7 @@ export default function Home(){
         />
       </Box>
       <Button onClick={() => navigate('/locales')}>Ver locales</Button>
-      
+      <Button onClick={() => navigate('/inventario')}>Revisar Inventario</Button>
     </Container>
   );
 }
