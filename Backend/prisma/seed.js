@@ -84,6 +84,23 @@ async function main() {
     );
 
 
+    const cantidadLocales = 10;
+    console.log('Generando datos falsos de locales...');
+    const locales = await Promise.all(
+        Array.from({length: cantidadLocales}).map(() =>
+            prisma.local.create({
+                data: {
+                    nombre: faker.lorem.words(3),
+                    precio: parseInt(faker.commerce.price({min: 100, max: 100000})),
+                    contacto: faker.phone.number(),
+                    nombreDueno: faker.person.fullName(),
+                    aforo: parseInt(faker.number.bigInt({min: 100, max: 10000})),
+                    direccion: faker.location.streetAddress(),
+                    disponibilidad: true,
+                },
+            })
+        )
+    );
 
     console.log('Datos falsos generados exitosamente.');
     console.log('Usuarios generados:', usuarios);
