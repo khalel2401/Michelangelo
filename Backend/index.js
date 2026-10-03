@@ -7,7 +7,9 @@ import eventoRoutes from './src/Routes/eventoR.js';
 import localRoutes from './src/Routes/localR.js';
 import articuloRoutes from './src/Routes/articuloR.js';
 import authRoutes from './src/Routes/authR.js';
+import vehiculoRoutes from './src/Routes/vehiculosR.js';
 import errorHandler from './src/Middlewares/errorM.js';
+
 
 const prisma = new PrismaClient();
 const app = express();
@@ -18,6 +20,7 @@ app.use(express.json());
 app.use(usuarioRoutes);
 app.use(eventoRoutes);
 app.use(articuloRoutes);
+app.use(vehiculoRoutes);
 app.use(authRoutes);
 app.use(localRoutes);
 app.use(errorHandler);
