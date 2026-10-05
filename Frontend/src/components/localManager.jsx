@@ -141,7 +141,7 @@ export function localManager(){
         {error && <p>Error: {error}</p>}
 
         {!cargando && !error &&(
-            <Box component="ul" sx={{ listStyle: "none", p: 0, display: "grid", gap: 2 }}>
+            <Box component="ul" sx={{ listStyle: "none", p: 0, display: "grid", gap: 2, marginBottom: "12px" }}>
                 {locales.length === 0 ? (
                   <Paper component="li" variant="outlined" sx={{ p: 2 }}>
                     No existen locales.
@@ -181,7 +181,7 @@ export function localManager(){
         <Button variant="contained" onClick={abrirCrear}>Agregar nuevo local</Button>
       )}
       {mostrarForm && (
-        <form onSubmit={handleSubmit} className="local-form" style={{ display: "grid", gap: "12px", maxWidth: "420px" }}>
+        <form onSubmit={handleSubmit} className="local-form" style={{ display: "grid", gap: "12px", maxWidth: "420px", marginBottom: "12px" }}>
           <h3>{editandoId ? "Editar local" : "Nuevo local"}</h3>
           {errorForm && <p className="error-msg">{errorForm}</p>}
 
@@ -226,6 +226,9 @@ export function localManager(){
           <button type="button" onClick={cancelarForm} disabled={guardando}>Cancelar</button>
         </form>
       )}
+      <p>
+        
+      </p>
     </div>
   );
 }

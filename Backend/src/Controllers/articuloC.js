@@ -38,8 +38,8 @@ export const actualizarArticulo = async (req, res) => {
     const { id } = req.params;
     const updatedFields = req.body;
     try {
-        const articuloActualizado = await articuloService.updateArticulo(id);
-        if (!usuarioActualizado){
+        const articuloActualizado = await articuloService.updateArticulo(id, updatedFields);
+        if (!articuloActualizado){
             return res.status(404).json({ message: "articulo no encontrado "});
         }
         res.status(200).json(articuloActualizado);
@@ -53,7 +53,7 @@ export const eliminarArticulo = async (req, res) => {
   const { id } = req.params;
   try {
     const articuloEliminado = await articuloService.deleteArticulo(id);
-    if (!usuarioEliminado) {
+    if (!articuloEliminado) {
       return res.status(404).json({ message: "articulo no encontrado" });
     }
     res.status(200).json({ message: "articulo eliminado" });
