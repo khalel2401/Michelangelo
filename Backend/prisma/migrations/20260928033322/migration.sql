@@ -1,30 +1,3 @@
-/*
-  Warnings:
-
-  - You are about to drop the column `abono` on the `eventos` table. All the data in the column will be lost.
-  - You are about to drop the column `cantidadPersonas` on the `eventos` table. All the data in the column will be lost.
-  - You are about to drop the column `confirmado` on the `eventos` table. All the data in the column will be lost.
-  - You are about to drop the column `nombre` on the `eventos` table. All the data in the column will be lost.
-  - You are about to drop the column `tipo` on the `eventos` table. All the data in the column will be lost.
-  - You are about to drop the column `valorTotal` on the `eventos` table. All the data in the column will be lost.
-  - A unique constraint covering the columns `[cotizacionId]` on the table `eventos` will be added. If there are existing duplicate values, this will fail.
-  - Added the required column `cotizacionId` to the `eventos` table without a default value. This is not possible if the table is not empty.
-  - Added the required column `local` to the `eventos` table without a default value. This is not possible if the table is not empty.
-
-*/
--- AlterEnum
-ALTER TYPE "Rol" ADD VALUE 'externo';
-
--- AlterTable
-ALTER TABLE "eventos" DROP COLUMN "abono",
-DROP COLUMN "cantidadPersonas",
-DROP COLUMN "confirmado",
-DROP COLUMN "nombre",
-DROP COLUMN "tipo",
-DROP COLUMN "valorTotal",
-ADD COLUMN     "cotizacionId" INTEGER NOT NULL,
-ADD COLUMN     "local" VARCHAR(100) NOT NULL;
-
 -- CreateTable
 CREATE TABLE "servicios" (
     "id" SERIAL NOT NULL,
@@ -51,6 +24,57 @@ CREATE TABLE "cotizaciones" (
 
     CONSTRAINT "cotizaciones_pkey" PRIMARY KEY ("id")
 );
+
+-- Add the new columns before migrating existing event data.
+ALTER TABLE "eventos"
+ADD COLUMN "cotizacionId" INTEGER,
+ADD COLUMN "local" VARCHAR(100);
+
+-- Preserve the fields removed from eventos in a service and quotation per event.
+DO $$
+DECLARE
+    evento_legacy RECORD;
+    servicio_id INTEGER;
+    cotizacion_id INTEGER;
+BEGIN
+    FOR evento_legacy IN
+        SELECT "id", "nombre", "tipo", "cantidadPersonas", "valorTotal", "abono", "confirmado"
+        FROM "eventos"
+        ORDER BY "id"
+    LOOP
+        INSERT INTO "servicios" ("nombre", "precio", "descripcion", "updatedAt")
+        VALUES (evento_legacy."tipo", evento_legacy."valorTotal", evento_legacy."nombre", CURRENT_TIMESTAMP)
+        RETURNING "id" INTO servicio_id;
+
+        INSERT INTO "cotizaciones" (
+            "cantidadPersonas", "valorTotal", "abono", "estado", "servicioId", "updatedAt"
+        )
+        VALUES (
+            evento_legacy."cantidadPersonas",
+            evento_legacy."valorTotal",
+            evento_legacy."abono",
+            CASE WHEN evento_legacy."confirmado" THEN 'confirmado' ELSE 'pendiente' END,
+            servicio_id,
+            CURRENT_TIMESTAMP
+        )
+        RETURNING "id" INTO cotizacion_id;
+
+        UPDATE "eventos"
+        SET "cotizacionId" = cotizacion_id,
+            "local" = 'Sin especificar'
+        WHERE "id" = evento_legacy."id";
+    END LOOP;
+END $$;
+
+ALTER TABLE "eventos"
+ALTER COLUMN "cotizacionId" SET NOT NULL,
+ALTER COLUMN "local" SET NOT NULL,
+DROP COLUMN "abono",
+DROP COLUMN "cantidadPersonas",
+DROP COLUMN "confirmado",
+DROP COLUMN "nombre",
+DROP COLUMN "tipo",
+DROP COLUMN "valorTotal";
 
 -- CreateTable
 CREATE TABLE "Personal" (
