@@ -8,6 +8,11 @@ import IconButton from '@mui/material/IconButton';
 import Visibility from '@mui/icons-material/Visibility';
 import VisibilityOff from '@mui/icons-material/VisibilityOff';
 import Button from '@mui/material/Button';
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Typography from "@mui/material/Typography";
+import { alpha } from "@mui/material/styles";
 
 export default function Login({ onLogin }) {
   const [cargando, setCargando] = useState(false);
@@ -57,44 +62,122 @@ export default function Login({ onLogin }) {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <FormControl sx={{ m: 1, width: "25ch" }} variant="filled">
-        <InputLabel htmlFor={`${filledUserId}-input`}>Email</InputLabel>
-        <FilledInput
-          id={`${filledUserId}-input`}
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-        />
-      </FormControl>
+    <Box
+      sx={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        py: 3,
+        boxSizing: "border-box",
+      }}
+    >
+      <Card
+        variant="outlined"
+        sx={(theme) => ({
+          width: "100%",
+          maxWidth: 420,
+          borderRadius: 3,
+          border: `1px solid ${theme.palette.brand.crimson}`,
+          boxShadow: `0 2px 8px ${alpha(theme.palette.brand.crimson, 0.16)}`,
+          animation: "loginPop 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both",
+          "@keyframes loginPop": {
+            "0%": {
+              opacity: 0,
+              transform: "scale(0.92) translateY(12px)",
+            },
+            "70%": {
+              opacity: 1,
+              transform: "scale(1.02) translateY(0)",
+            },
+            "100%": {
+              opacity: 1,
+              transform: "scale(1)",
+            },
+          },
+          "@media (prefers-reduced-motion: reduce)": {
+            animation: "none",
+          },
+          transition: "box-shadow 180ms ease",
+          "&:hover": {
+            boxShadow: `0 0 20px ${alpha(theme.palette.brand.crimson, 0.55)}`,
+          },
+        })}
+      >
+        <CardContent
+          component="form"
+          onSubmit={handleSubmit}
+          sx={{
+            p: 4,
+            "&:last-child": { pb: 4 },
+            display: "flex",
+            flexDirection: "column",
+            gap: 2,
+          }}
+        >
+          <Typography variant="h5" component="h1" textAlign="center" gutterBottom>
+            Iniciar sesión
+          </Typography>
 
-      <FormControl sx={{ m: 1, width: "25ch" }} variant="filled">
-        <InputLabel htmlFor={`${filledPasswordId}-input`}>Password</InputLabel>
-        <FilledInput
-          id={`${filledPasswordId}-input`}
-          type={showPassword ? "text" : "password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          endAdornment={
-            <InputAdornment position="end">
-              <IconButton
-                aria-label={showPassword ? "hide the password" : "display the password"}
-                onClick={handleClickShowPassword}
-                onMouseDown={handleMouseDownPassword}
-                onMouseUp={handleMouseUpPassword}
-                edge="end"
-              >
-                {showPassword ? <VisibilityOff /> : <Visibility />}
-              </IconButton>
-            </InputAdornment>
-          }
-        />
-      </FormControl>
+          <FormControl fullWidth variant="filled">
+            <InputLabel htmlFor={`${filledUserId}-input`}>Email</InputLabel>
+            <FilledInput
+              id={`${filledUserId}-input`}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+            />
+          </FormControl>
 
-      {error && <p style={{ color: "crimson" }}>{error}</p>}
+          <FormControl fullWidth variant="filled">
+            <InputLabel htmlFor={`${filledPasswordId}-input`}>Password</InputLabel>
+            <FilledInput
+              id={`${filledPasswordId}-input`}
+              type={showPassword ? "text" : "password"}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              endAdornment={
+                <InputAdornment position="end">
+                  <IconButton
+                    aria-label={showPassword ? "hide the password" : "display the password"}
+                    onClick={handleClickShowPassword}
+                    onMouseDown={handleMouseDownPassword}
+                    onMouseUp={handleMouseUpPassword}
+                    edge="end"
+                  >
+                    {showPassword ? <VisibilityOff /> : <Visibility />}
+                  </IconButton>
+                </InputAdornment>
+              }
+            />
+          </FormControl>
 
-      <Button type="submit" variant="contained" sx={{ mt: 2 }} disabled={cargando}>
-        {cargando ? "Iniciando..." : "Iniciar sesión"}
-      </Button>
-    </form>
+          {error && (
+            <Typography color="error" role="alert">
+              {error}
+            </Typography>
+          )}
+
+          <Button
+            type="submit"
+            variant="contained"
+            fullWidth
+            disabled={cargando}
+            sx={(theme) => ({
+              mt: 1,
+              backgroundColor: theme.palette.brand.crimson,
+              boxShadow: `0 2px 8px ${alpha(theme.palette.brand.crimson, 0.16)}`,
+              transition: "box-shadow 180ms ease, transform 180ms ease",
+              "&:hover:not(.Mui-disabled)": {
+                backgroundColor: theme.palette.brand.crimsonDark,
+                boxShadow: `0 0 20px ${alpha(theme.palette.brand.crimson, 0.55)}`,
+                transform: "translateY(-2px)",
+              },
+            })}
+          >
+            {cargando ? "Iniciando..." : "Iniciar sesión"}
+          </Button>
+        </CardContent>
+      </Card>
+    </Box>
   );
 }
