@@ -21,13 +21,8 @@ export default function Inventario(){
 
     return (
         <Container maxWidth="sm">
-            <Typography>Inventario</Typography>
+            <Typography>Inventario </Typography>
             <Box component="articulos">
-                <Box component="tab-content">
-                    {TabComponent && <TabComponent/>}
-                </Box>
-            </Box>
-            <Box component="vehiculos">
                 <Box component="tab-content">
                     {TabComponent && <TabComponent/>}
                 </Box>
