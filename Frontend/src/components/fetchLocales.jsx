@@ -54,8 +54,22 @@ export default function FetchLocales() {
       {!cargando && !error && locales.length === 0 && (
         <Typography>No hay locales disponibles.</Typography>
       )}
-      {!error && locales.map((local) => (
-        <Card key={local.id} variant="outlined" sx={{ mb: 1.5 }}>
+      {!error && locales.map((local, index) => (
+        <Card
+          key={local.id}
+          variant="outlined"
+          sx={{
+            mb: 1.5,
+            animation: `localeFadeIn 450ms ease-out ${index * 90}ms both`,
+            '@keyframes localeFadeIn': {
+              from: { opacity: 0 },
+              to: { opacity: 1 },
+            },
+            '@media (prefers-reduced-motion: reduce)': {
+              animation: 'none',
+            },
+          }}
+        >
           <CardContent>
             <Typography variant="subtitle1" component="h3">
               {local.nombre}
