@@ -1,8 +1,16 @@
 import { useEffect, useState } from "react";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Checkbox from "@mui/material/Checkbox";
+import Chip from "@mui/material/Chip";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
+import { alpha } from "@mui/material/styles";
 import { getLocales, crearLocal, actualizarLocal, borrarLocal } from "../Services/localS.js";
 
 const formVacio = {
@@ -14,6 +22,15 @@ const formVacio = {
     direccion: "",
     disponibilidad: true
 }
+
+const botonConBrillo = (color = "primary") => (theme) => ({
+  boxShadow: `0 2px 8px ${alpha(theme.palette[color].main, 0.16)}`,
+  transition: "box-shadow 180ms ease, transform 180ms ease",
+  "&:hover:not(.Mui-disabled)": {
+    boxShadow: `0 0 20px ${alpha(theme.palette[color].main, 0.55)}`,
+    transform: "translateY(-4px)",
+  },
+});
 
 export function localManager(){
   const [locales, setLocales] = useState([]);
@@ -75,7 +92,6 @@ export function localManager(){
     disponibilidad: local.disponibilidad,
     });
     setErrorForm(null);
-    setMostrarForm(true);
   };
 
  const cancelarForm = () => {
@@ -134,32 +150,156 @@ export function localManager(){
     setEliminandoId(null);
   };
 
-  return (
-    <div>
-        <h2>Locales</h2>
-        {cargando && <p>Cargando locales...</p>}
-        {error && <p>Error: {error}</p>}
+  const renderFormulario = (esEdicion) => (
+    <form onSubmit={handleSubmit} style={{ display: "grid", gap: 1.5 }}>
+      <Typography variant="h6" component="h3">
+        {esEdicion ? "Editar local" : "Nuevo local"}
+      </Typography>
+      {errorForm && <Alert severity="error">{errorForm}</Alert>}
 
-        {!cargando && !error &&(
-            <Box component="ul" sx={{ listStyle: "none", p: 0, display: "grid", gap: 2, marginBottom: "12px" }}>
-                {locales.length === 0 ? (
-                  <Paper component="li" variant="outlined" sx={{ p: 2 }}>
-                    No existen locales.
-                  </Paper>
-                ): (
-                  locales.map((local) => (
-                    <Paper component="li" key={local.id} variant="outlined" sx={{ p: 2 }}>
-                      <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 1.5 }}>
-                        <Typography><strong>Nombre:</strong> {local.nombre}</Typography>
+      <TextField
+        label="Nombre"
+        name="nombre"
+        value={formData.nombre}
+        onChange={handleChange}
+        required
+        size="small"
+      />
+      <TextField
+        label="Precio"
+        name="precio"
+        type="number"
+        inputProps={{ min: 0, step: "any" }}
+        value={formData.precio}
+        onChange={handleChange}
+        required
+        size="small"
+      />
+      <TextField
+        label="Número de contacto"
+        name="contacto"
+        value={formData.contacto}
+        onChange={handleChange}
+        inputProps={{ minLength: 8, maxLength: 12 }}
+        required
+        size="small"
+      />
+      <TextField
+        label="Dueño del local"
+        name="nombreDueno"
+        value={formData.nombreDueno}
+        onChange={handleChange}
+        required
+        size="small"
+      />
+      <TextField
+        label="Aforo"
+        name="aforo"
+        type="number"
+        inputProps={{ min: 0, step: 1 }}
+        value={formData.aforo}
+        onChange={handleChange}
+        required
+        size="small"
+      />
+      <TextField
+        label="Dirección"
+        name="direccion"
+        value={formData.direccion}
+        onChange={handleChange}
+        required
+        size="small"
+      />
+      <FormControlLabel
+        control={
+          <Checkbox
+            name="disponibilidad"
+            checked={formData.disponibilidad}
+            onChange={handleChange}
+          />
+        }
+        label="Disponible"
+      />
+      <Box sx={{ display: "flex", gap: 1 }}>
+        <Button type="submit" variant="contained" disabled={guardando} sx={botonConBrillo()}>
+          {guardando ? "Guardando..." : "Guardar"}
+        </Button>
+        <Button type="button" onClick={cancelarForm} disabled={guardando} sx={botonConBrillo()}>
+          Cancelar
+        </Button>
+      </Box>
+    </form>
+  );
+
+  return (
+    <Box sx={{ width: "100%", py: 2 }}>
+      <Typography variant="h4" component="h2" textAlign="center" gutterBottom>
+        Locales
+      </Typography>
+      {cargando && <Typography role="status" textAlign="center">Cargando locales...</Typography>}
+      {error && <Alert severity="error" sx={{ maxWidth: 700, mx: "auto", mb: 2 }}>{error}</Alert>}
+
+      {!cargando && !error && locales.length === 0 && (
+        <Typography textAlign="center" sx={{ mb: 2 }}>No existen locales.</Typography>
+      )}
+
+      {!cargando && !error && locales.length > 0 && (
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 340px))",
+            justifyContent: "center",
+            alignItems: "stretch",
+            gap: 3,
+            mb: 3,
+          }}
+        >
+          {locales.map((local) => {
+            const editandoEsteLocal = editandoId === local.id;
+
+            return (
+              <Card
+                key={local.id}
+                variant="outlined"
+                sx={{
+                  width: "100%",
+                  aspectRatio: editandoEsteLocal ? "auto" : "1 / 1",
+                  minHeight: editandoEsteLocal ? 0 : 300,
+                  display: "flex",
+                  flexDirection: "column",
+                  borderRadius: 3,
+                  border: "1px solid #DC143C",
+                  boxShadow: "0 2px 8px rgba(220, 20, 60, 0.16)",
+                  transition: "box-shadow 180ms ease, transform 180ms ease",
+                  "&:hover": {
+                    boxShadow: "0 0 20px rgba(220, 20, 60, 0.55)",
+                    transform: "translateY(-4px)",
+                  },
+                }}
+              >
+                <CardContent sx={{ p: 2.5, display: "flex", flex: 1, flexDirection: "column" }}>
+                  {editandoEsteLocal ? (
+                    renderFormulario(true)
+                  ) : (
+                    <>
+                      <Typography variant="h5" component="h3" gutterBottom>
+                        {local.nombre}
+                      </Typography>
+                      <Chip
+                        label={local.disponibilidad ? "Disponible" : "No disponible"}
+                        color={local.disponibilidad ? "success" : "default"}
+                        size="small"
+                        sx={{ alignSelf: "flex-start", mb: 2 }}
+                      />
+                      <Box sx={{ display: "grid", gap: 1, flex: 1 }}>
                         <Typography><strong>Precio:</strong> {local.precio}</Typography>
                         <Typography><strong>Contacto:</strong> {local.contacto}</Typography>
                         <Typography><strong>Dueño:</strong> {local.nombreDueno}</Typography>
                         <Typography><strong>Aforo:</strong> {local.aforo}</Typography>
                         <Typography><strong>Dirección:</strong> {local.direccion}</Typography>
-                        <Typography><strong>Disponibilidad:</strong> {local.disponibilidad ? "Disponible" : "No disponible"}</Typography>
                       </Box>
                       <Box sx={{ display: "flex", gap: 1, mt: 2, pt: 1.5, borderTop: 1, borderColor: "divider" }}>
-                        <Button size="small" variant="outlined" onClick={() => abrirEditar(local)}>
+                        <Button size="small" variant="outlined" onClick={() => abrirEditar(local)} sx={botonConBrillo()}>
                           Editar
                         </Button>
                         <Button
@@ -168,67 +308,31 @@ export function localManager(){
                           variant="outlined"
                           onClick={() => handleEliminar(local.id)}
                           disabled={eliminandoId === local.id}
+                          sx={botonConBrillo("error")}
                         >
                           {eliminandoId === local.id ? "Eliminando..." : "Eliminar"}
                         </Button>
                       </Box>
-                    </Paper>
-                  ))
-                )}
-            </Box>
-        )}
-        {!mostrarForm && (
-        <Button variant="contained" onClick={abrirCrear}>Agregar nuevo local</Button>
+                    </>
+                  )}
+                </CardContent>
+              </Card>
+            );
+          })}
+        </Box>
       )}
-      {mostrarForm && (
-        <form onSubmit={handleSubmit} className="local-form" style={{ display: "grid", gap: "12px", maxWidth: "420px", marginBottom: "12px" }}>
-          <h3>{editandoId ? "Editar local" : "Nuevo local"}</h3>
-          {errorForm && <p className="error-msg">{errorForm}</p>}
 
-          <label style={{ display: "grid", gap: "4px" }}>
-            Nombre
-            <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
-          </label>
-
-          <label style={{ display: "grid", gap: "4px" }}>
-            Precio
-            <input type="number" min="0" step="any" name="precio" value={formData.precio} onChange={handleChange} required />
-          </label>
-
-          <label style={{ display: "grid", gap: "4px" }}>
-            Numero de contacto
-            <input type="text" name="contacto" value={formData.contacto} onChange={handleChange} minLength="8" maxLength="12" required />
-          </label>
-            
-            <label style={{ display: "grid", gap: "4px" }}>
-            Dueño del local
-            <input type="text" name="nombreDueno" value={formData.nombreDueno} onChange={handleChange} required />
-          </label>
-
-            <label style={{ display: "grid", gap: "4px" }}>
-              Aforo
-              <input type="number" min="0" step="1" name="aforo" value={formData.aforo} onChange={handleChange} required />
-            </label>
-
-            <label style={{ display: "grid", gap: "4px" }}>
-            Direccion
-            <input type="text" name="direccion" value={formData.direccion} onChange={handleChange} required />
-          </label>
-
-            <label style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-            <input type="checkbox" name="disponibilidad" checked={formData.disponibilidad} onChange={handleChange} />
-            Disponible
-          </label>
-
-          <button type="submit" disabled={guardando}>
-            {guardando ? "Guardando..." : "Guardar"}
-          </button>
-          <button type="button" onClick={cancelarForm} disabled={guardando}>Cancelar</button>
-        </form>
+      {mostrarForm ? (
+        <Paper variant="outlined" sx={{ maxWidth: 500, mx: "auto", p: 3, borderRadius: 3 }}>
+          {renderFormulario(false)}
+        </Paper>
+      ) : (
+        <Box sx={{ display: "flex", justifyContent: "center" }}>
+          <Button variant="contained" onClick={abrirCrear} sx={botonConBrillo()}>
+            Agregar nuevo local
+          </Button>
+        </Box>
       )}
-      <p>
-        
-      </p>
-    </div>
+    </Box>
   );
 }

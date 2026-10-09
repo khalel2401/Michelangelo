@@ -56,6 +56,13 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  color: '#fff',
+  backgroundColor: '#9b1235',
+  backgroundImage: [
+    'linear-gradient(180deg, rgba(255, 255, 255, 0.14) 0%, rgba(255, 255, 255, 0.025) 32%, rgba(0, 0, 0, 0.08) 100%)',
+    'linear-gradient(105deg, #7b102c 0%, #b5123b 24%, #dc143c 50%, #b5123b 76%, #7b102c 100%)',
+  ].join(', '),
+  borderBottom: '1px solid #d6d6d6',
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
