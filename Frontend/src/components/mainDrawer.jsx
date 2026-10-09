@@ -65,6 +65,24 @@ const AppBar = styled(MuiAppBar, {
   ].join(', '),
   borderBottom: `1px solid ${alpha(theme.palette.brand.burgundy, 0.2)}`,
   boxShadow: `0 2px 8px ${alpha(theme.palette.brand.burgundy, 0.12)}`,
+  animation: 'appBarPop 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+  '@keyframes appBarPop': {
+    '0%': {
+      opacity: 0,
+      transform: 'scale(0.96) translateY(-10px)',
+    },
+    '70%': {
+      opacity: 1,
+      transform: 'scale(1.01) translateY(0)',
+    },
+    '100%': {
+      opacity: 1,
+      transform: 'scale(1)',
+    },
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    animation: 'none',
+  },
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -90,6 +108,16 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
+    '@keyframes drawerSlideIn': {
+      from: { transform: 'translateX(-100%)' },
+      to: { transform: 'translateX(0)' },
+    },
+    '& .MuiDrawer-paper': {
+      animation: 'drawerSlideIn 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+      '@media (prefers-reduced-motion: reduce)': {
+        animation: 'none',
+      },
+    },
     variants: [
       {
         props: ({ open }) => open,
