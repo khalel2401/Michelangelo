@@ -261,21 +261,29 @@ export function localManager(){
               <Card
                 key={local.id}
                 variant="outlined"
-                sx={{
+                sx={(theme) => ({
                   width: "100%",
                   aspectRatio: editandoEsteLocal ? "auto" : "1 / 1",
                   minHeight: editandoEsteLocal ? 0 : 300,
                   display: "flex",
                   flexDirection: "column",
                   borderRadius: 3,
-                  border: "1px solid #DC143C",
-                  boxShadow: "0 2px 8px rgba(220, 20, 60, 0.16)",
+                  border: `1px solid ${theme.palette.brand.crimson}`,
+                  boxShadow: `0 2px 8px ${alpha(theme.palette.brand.crimson, 0.16)}`,
+                  animation: "localFadeIn 450ms ease-out both",
+                  "@keyframes localFadeIn": {
+                    from: { opacity: 0 },
+                    to: { opacity: 1 },
+                  },
+                  "@media (prefers-reduced-motion: reduce)": {
+                    animation: "none",
+                  },
                   transition: "box-shadow 180ms ease, transform 180ms ease",
                   "&:hover": {
-                    boxShadow: "0 0 20px rgba(220, 20, 60, 0.55)",
+                    boxShadow: `0 0 20px ${alpha(theme.palette.brand.crimson, 0.55)}`,
                     transform: "translateY(-4px)",
                   },
-                }}
+                })}
               >
                 <CardContent sx={{ p: 2.5, display: "flex", flex: 1, flexDirection: "column" }}>
                   {editandoEsteLocal ? (
