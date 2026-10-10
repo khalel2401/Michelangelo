@@ -19,10 +19,11 @@ export default function App() {
       <Route
         path="/"
         element={isLoggedIn ? <Home /> : (
-          <Container maxWidth="sm">
-            <Box sx={{ my: 4 }}>
-              <Login onLogin={() => setIsLoggedIn(true)} />
-            </Box>
+          <Container
+            maxWidth="sm"
+            sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          >
+            <Login onLogin={() => setIsLoggedIn(true)} />
             <ProTip />
           </Container>
         )}

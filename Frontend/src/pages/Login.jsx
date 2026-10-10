@@ -64,7 +64,7 @@ export default function Login({ onLogin }) {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        width: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -115,7 +115,7 @@ export default function Login({ onLogin }) {
             gap: 2,
           }}
         >
-          <Typography variant="h5" component="h1" textAlign="center" gutterBottom>
+          <Typography variant="h5" component="h1" align="center" gutterBottom>
             Iniciar sesión
           </Typography>
 
