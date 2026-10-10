@@ -250,7 +250,7 @@ export function inventarioManager(){
                                         renderFormulario(true)
                                     ) : (
                                         <>
-                                            <Typography variant="h5" component="h3" gutterBottom>
+                                            <Typography variant="h6" component="h3" gutterBottom>
                                                 {articulo.nombre}
                                             </Typography>
                                             <Chip
