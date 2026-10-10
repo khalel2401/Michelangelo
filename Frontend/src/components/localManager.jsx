@@ -233,14 +233,14 @@ export function localManager(){
 
   return (
     <Box sx={{ width: "100%", py: 2 }}>
-      <Typography variant="h4" component="h2" textAlign="center" gutterBottom>
+      <Typography variant="h4" component="h2" align="center" gutterBottom>
         Locales
       </Typography>
-      {cargando && <Typography role="status" textAlign="center">Cargando locales...</Typography>}
+      {cargando && <Typography role="status" align="center">Cargando locales...</Typography>}
       {error && <Alert severity="error" sx={{ maxWidth: 700, mx: "auto", mb: 2 }}>{error}</Alert>}
 
       {!cargando && !error && locales.length === 0 && (
-        <Typography textAlign="center" sx={{ mb: 2 }}>No existen locales.</Typography>
+        <Typography align="center" sx={{ mb: 2 }}>No existen locales.</Typography>
       )}
 
       {!cargando && !error && locales.length > 0 && (
