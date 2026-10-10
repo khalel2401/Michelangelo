@@ -3,6 +3,7 @@ import Alert from '@mui/material/Alert';
 import Box from '@mui/material/Box';
 import Card from '@mui/material/Card';
 import CardContent from '@mui/material/CardContent';
+import Chip from '@mui/material/Chip';
 import Typography from '@mui/material/Typography';
 import { getLocales } from '../Services/localS.js';
 
@@ -59,9 +60,15 @@ export default function FetchLocales() {
             <Typography variant="subtitle1" component="h3">
               {local.nombre}
             </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Estado: {local.disponibilidad ? 'Disponible' : 'No disponible'}
+            <Typography variant="subtitle2" component="div">
+              {local.direccion}
             </Typography>
+            <Chip
+              label={local.disponibilidad ? 'Disponible' : 'No disponible'}
+              color={local.disponibilidad ? 'success' : 'error'}
+              variant="outlined"
+              size="small"
+            />
           </CardContent>
         </Card>
       ))}

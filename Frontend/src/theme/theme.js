@@ -1,12 +1,21 @@
 import { createTheme } from '@mui/material/styles';
 
-//Seleccion de colores para la paleta de la app.
-//Ajustar Bien los colores dependiendo del tema seleccionado PORFAVOR
+const brandPalette = {
+  brand: {
+    crimson: '#DC143C',
+    crimsonDark: '#B5123B',
+    burgundy: '#7B102C',
+    appBar: '#9B1235',
+    onAppBar: '#FFFFFF',
+  },
+};
+
 const theme = createTheme({
   cssVariables: true,
   colorSchemes: {
     light: {
       palette: {
+        ...brandPalette,
         primary: {
           main: '#1b3249',
         },
@@ -23,6 +32,7 @@ const theme = createTheme({
     },
     dark: {
       palette: {
+        ...brandPalette,
         primary: {
           main: '#073c70',
         },

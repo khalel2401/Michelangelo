@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { styled, useTheme } from '@mui/material/styles';
+import { alpha, styled, useColorScheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
 import MuiAppBar from '@mui/material/AppBar';
@@ -19,6 +19,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AccessibleIcon from '@mui/icons-material/Accessible';
+import PregnantWomanIcon from '@mui/icons-material/PregnantWoman';
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -56,6 +57,14 @@ const AppBar = styled(MuiAppBar, {
   shouldForwardProp: (prop) => prop !== 'open',
 })(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1,
+  color: theme.palette.brand.onAppBar,
+  backgroundColor: theme.palette.brand.appBar,
+  backgroundImage: [
+    `linear-gradient(180deg, ${alpha(theme.palette.brand.appBar, 0.025)} 0%, ${alpha(theme.palette.brand.burgundy, 0.08)} 100%)`,
+    `linear-gradient(105deg, ${theme.palette.brand.burgundy} 0%, ${theme.palette.brand.crimsonDark} 24%, ${theme.palette.brand.crimson} 50%, ${theme.palette.brand.crimsonDark} 76%, ${theme.palette.brand.burgundy} 100%)`,
+  ].join(', '),
+  borderBottom: `1px solid ${alpha(theme.palette.brand.burgundy, 0.2)}`,
+  boxShadow: `0 2px 8px ${alpha(theme.palette.brand.burgundy, 0.12)}`,
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -102,6 +111,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
 
 export default function MiniDrawer() {
   const theme = useTheme();
+  const { mode, setMode } = useColorScheme();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const routes = {
@@ -139,6 +149,14 @@ export default function MiniDrawer() {
           <Typography variant="h6" noWrap component="div">
             NES eventos
           </Typography>
+          <Box sx={{ flexGrow: 1 }} />
+          <IconButton
+            color="inherit"
+            aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
+            onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+          >
+            <PregnantWomanIcon />
+          </IconButton>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
