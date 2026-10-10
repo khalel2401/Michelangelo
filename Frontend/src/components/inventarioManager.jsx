@@ -1,26 +1,37 @@
 import { useEffect, useState } from "react";
+import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Card from "@mui/material/Card";
+import CardContent from "@mui/material/CardContent";
+import Checkbox from "@mui/material/Checkbox";
+import Chip from "@mui/material/Chip";
+import FormControlLabel from "@mui/material/FormControlLabel";
 import Paper from "@mui/material/Paper";
+import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { 
+import { alpha } from "@mui/material/styles";
+import {
     getArticulos,
-    obtenerArticuloPorId,
     actualizarArticulos,
     borrarArticulos,
-    getVehiculos,
-    obtenerVehiculoPorId,
-    actualizarVehiculo,
-    borrarVehiculo,
     crearArticulos
 } from "../Services/inventarioS.js";
-import FormLabel from "@mui/material/FormLabel";
 
 const articuloFormVacio = {
     nombre: "",
     cantidad: "",
     enUso: true
-}
+};
+
+const botonConBrillo = (color = "primary") => (theme) => ({
+    boxShadow: `0 2px 8px ${alpha(theme.palette[color].main, 0.16)}`,
+    transition: "box-shadow 180ms ease, transform 180ms ease",
+    "&:hover:not(.Mui-disabled)": {
+        boxShadow: `0 0 20px ${alpha(theme.palette[color].main, 0.55)}`,
+        transform: "translateY(-4px)",
+    },
+});
 
 export function inventarioManager(){
     const [articulos, setArticulos] = useState([]);
@@ -78,13 +89,12 @@ export function inventarioManager(){
             enUso: articulo.enUso
         });
         setErrorForm(null);
-        setMostrarForm(true);
-    }
+    };
 
     const cancelarForm = () => {
         setMostrarForm(false);
         setEditandoId(null);
-        setFormData(ArticuloFormVacio);
+        setFormData(articuloFormVacio);
         setErrorForm(null);
     };
 
@@ -136,73 +146,157 @@ export function inventarioManager(){
         setEliminandoId(null);
     };
 
+    const renderFormulario = (esEdicion) => (
+        <Box component="form" onSubmit={handleSubmitArticulo} sx={{ display: "grid", gap: 1.5 }}>
+            <Typography variant="h6" component="h3">
+                {esEdicion ? "Editar artículo" : "Nuevo artículo"}
+            </Typography>
+            {errorForm && <Alert severity="error">{errorForm}</Alert>}
+            <TextField
+                label="Nombre"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleChange}
+                required
+                size="small"
+            />
+            <TextField
+                label="Cantidad"
+                name="cantidad"
+                type="number"
+                inputProps={{ min: 0, step: "any" }}
+                value={formData.cantidad}
+                onChange={handleChange}
+                required
+                size="small"
+            />
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        name="enUso"
+                        checked={formData.enUso}
+                        onChange={handleChange}
+                    />
+                }
+                label="En uso"
+            />
+            <Box sx={{ display: "flex", gap: 1 }}>
+                <Button type="submit" variant="contained" disabled={guardando} sx={botonConBrillo()}>
+                    {guardando ? "Guardando..." : "Guardar"}
+                </Button>
+                <Button type="button" onClick={cancelarForm} disabled={guardando} sx={botonConBrillo()}>
+                    Cancelar
+                </Button>
+            </Box>
+        </Box>
+    );
+
     return (
-        <Box sx={{ marginBottom: "20px" }}>
-            {cargando && <Typography> Cargando Articulos </Typography>}
-            {error && <Typography>Error: {error}</Typography>}
+        <Box sx={{ width: "100%", py: 2 }}>
+            <Typography variant="h4" component="h2" align="center" gutterBottom>
+                Inventario
+            </Typography>
+            {cargando && <Typography role="status" align="center">Cargando artículos...</Typography>}
+            {error && <Alert severity="error" sx={{ maxWidth: 700, mx: "auto", mb: 2 }}>{error}</Alert>}
 
+            {!cargando && !error && articulos.length === 0 && (
+                <Typography align="center" sx={{ mb: 2 }}>No hay artículos ingresados.</Typography>
+            )}
 
-            {!cargando && !error &&(
-                <Box component="ul" sx={{ listStyle: "none", p: 0, display: "grid", gap: 2, marginBottom: "20px" }}>
-                    {articulos.length === 0 ? (
-                        <Paper component="li" key={articulo.id} variant="outlined" sx={{ p:2 }}>
-                            No hay articulos ingresados.
-                        </Paper>
-                    ): (
-                        articulos.map((articulo) => (
-                            <Paper component="li" key={articulo.id} variant="outlined" sx={{ p: 2 }}>
-                                <Box sx={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(180px, 1fr))", gap: 1.5 }}>
-                                    <Typography><strong>Nombre: </strong> {articulo.nombre}</Typography>
-                                    <Typography><strong>Cantidad: </strong> {articulo.cantidad}</Typography>
-                                    <Typography><strong>enUso: </strong> {articulo.enUso ? "En uso" : "No está en uso"}</Typography>
-                                </Box>
-                                <Box sx={{ display: "flex", gap: 1, mt: 2, pt: 1.5, borderTop: 1, borderColor: "divider" }}>
-                                    <Button size="small" variant="outlined" onClick={() => abrirEditarArticulo}>
-                                        editar
-                                    </Button>
-                                    <Button size="small" color="error" variant="outlined" onClick={() => handleEliminar(articulo.id)} disabled={eliminandoId === articulo.id}>
-                                        {eliminandoId === articulo.id ? "eliminando...." : "eliminar"}
-                                    </Button>
-                                </Box>
-                            </Paper>
-                        ))
-                    )}
+            {!cargando && !error && articulos.length > 0 && (
+                <Box
+                    sx={{
+                        display: "grid",
+                        gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 220px))",
+                        justifyContent: "center",
+                        alignItems: "stretch",
+                        gap: 3,
+                        mb: 3,
+                    }}
+                >
+                    {articulos.map((articulo) => {
+                        const editandoEsteArticulo = editandoId === articulo.id;
+
+                        return (
+                            <Card
+                                key={articulo.id}
+                                variant="outlined"
+                                sx={(theme) => ({
+                                    width: "100%",
+                                    aspectRatio: editandoEsteArticulo ? "auto" : "1 / 1",
+                                    minHeight: editandoEsteArticulo ? 0 : 220,
+                                    display: "flex",
+                                    flexDirection: "column",
+                                    borderRadius: 3,
+                                    border: `1px solid ${theme.palette.brand.crimson}`,
+                                    boxShadow: `0 2px 8px ${alpha(theme.palette.brand.crimson, 0.16)}`,
+                                    animation: "articuloFadeIn 450ms ease-out both",
+                                    "@keyframes articuloFadeIn": {
+                                        from: { opacity: 0 },
+                                        to: { opacity: 1 },
+                                    },
+                                    "@media (prefers-reduced-motion: reduce)": {
+                                        animation: "none",
+                                    },
+                                    transition: "box-shadow 180ms ease, transform 180ms ease",
+                                    "&:hover": {
+                                        boxShadow: `0 0 20px ${alpha(theme.palette.brand.crimson, 0.55)}`,
+                                        transform: "translateY(-4px)",
+                                    },
+                                })}
+                            >
+                                <CardContent sx={{ p: 2.5, display: "flex", flex: 1, flexDirection: "column" }}>
+                                    {editandoEsteArticulo ? (
+                                        renderFormulario(true)
+                                    ) : (
+                                        <>
+                                            <Typography variant="h5" component="h3" gutterBottom>
+                                                {articulo.nombre}
+                                            </Typography>
+                                            <Chip
+                                                label={articulo.enUso ? "En uso" : "No está en uso"}
+                                                color={articulo.enUso ? "success" : "default"}
+                                                size="small"
+                                                sx={{ alignSelf: "flex-start", mb: 2 }}
+                                            />
+                                            <Box sx={{ display: "grid", gap: 1, flex: 1 }}>
+                                                <Typography><strong>Cantidad:</strong> {articulo.cantidad}</Typography>
+                                            </Box>
+                                            <Box sx={{ display: "flex", gap: 1, mt: 2, mb: 1, pt: 1.5, borderTop: 1, borderColor: "divider" }}>
+                                                <Button size="small" variant="outlined" onClick={() => abrirEditarArticulo(articulo)} sx={botonConBrillo()}>
+                                                    Editar
+                                                </Button>
+                                                <Button
+                                                    size="small"
+                                                    color="error"
+                                                    variant="outlined"
+                                                    onClick={() => handleEliminar(articulo.id)}
+                                                    disabled={eliminandoId === articulo.id}
+                                                    sx={botonConBrillo("error")}
+                                                >
+                                                    {eliminandoId === articulo.id ? "Eliminando..." : "Eliminar"}
+                                                </Button>
+                                            </Box>
+                                        </>
+                                    )}
+                                </CardContent>
+                            </Card>
+                        );
+                    })}
                 </Box>
             )}
-            {!mostrarForm && (
-                <Button variant="contained" onClick={abrirCrear}>Agregar Articulo</Button>
-            )}
-            {mostrarForm && (
-                <form onSubmit={handleSubmitArticulo} className="articulo-form" style={{ display: "grid", gap: "12px", maxWidth: "420px", marginBottom: "12px" }}>
-                    <h3>{editandoId ? "editar articulo" : "nuevo articulo"}</h3>
-                    {errorForm && <Typography className="error-msg">{errorForm}</Typography>}
 
-                    <FormLabel style={{ display: "grid", gap: "4px"}}>
-                        Nombre
-                        <input type="text" name="nombre" value={formData.nombre} onChange={handleChange} required />
-                    </FormLabel>
-
-                    <FormLabel style={{ display: "grid", gap: "4px"}}>
-                        Cantidad
-                        <input type="number" min="0" step="any" name="cantidad" value={formData.cantidad} onChange={handleChange} required />
-                    </FormLabel>
-
-                    <FormLabel style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                        <input type="checkbox" name="enUso" checked={formData.enUso} onChange={handleChange} required />
-                        en uso actualmente?
-                    </FormLabel>
-
-                    <Button type="submit" disabled={guardando}>
-                        {guardando ? "guardando..." : "guardar"}
+            {mostrarForm ? (
+                <Paper variant="outlined" sx={{ maxWidth: 500, mx: "auto", p: 3, borderRadius: 3 }}>
+                    {renderFormulario(false)}
+                </Paper>
+            ) : (
+                <Box sx={{ display: "flex", justifyContent: "center" }}>
+                    <Button variant="contained" onClick={abrirCrear} sx={botonConBrillo()}>
+                        Agregar artículo
                     </Button>
-                    <Button type="button" onClick={cancelarForm} disabled={guardando}>
-                        cancelar
-                    </Button>
-                </form>
+                </Box>
             )}
-            <Typography>
-
-            </Typography>
         </Box>
     );
 }
