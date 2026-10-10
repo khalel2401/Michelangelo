@@ -1,3 +1,4 @@
+import Box from '@mui/material/Box';
 import SvgIcon from '@mui/material/SvgIcon';
 import Typography from '@mui/material/Typography';
 
@@ -11,21 +12,41 @@ function LightBulbIcon(props) {
 
 export default function ProTip() {
   let tip = 'ERROR';
-  switch (Math.floor(Math.random() * 2) + 1){ //genera un numero aleatorio para elegir entre distintos tips
+  switch (Math.floor(Math.random() * 8) + 1){ //genera un numero aleatorio para elegir entre distintos tips
     case 1:
-      tip = 'Pone bien tu contraseña';
+      tip = 'Pone bien tu contraseña.';
       break;
     case 2:
-      tip = 'Las mayusculas existen';
+      tip = 'Las mayusculas existen.';
+      break;
+    case 3:
+      tip = 'No mires a dios a los ojos.';
+      break;
+    case 4:
+      tip = 'No busques conocimiento de algo que tu cabeza no pueda comprender.';
+      break;
+    case 5:
+      tip = 'Lo malo de ser mas rapido que la luz, es que solo vivirás en la oscuridad.';
+      break;
+    case 6:
+      tip = 'Teme a la vieja sangre.';
+      break;
+    case 7:
+      tip = 'Alabado sea el sol.';
+      break;
+    case 8:
+      tip = 'El loco que no pertenece a esta era, el misterioso gobernante sobre la niebla gris, el rey del amarillo y el negro que ejerce la buena suerte.';
       break;
     default:
       tip = 'ERROR DE RANDOM';
       break;
   }
   return (
-    <Typography variant="caption" gutterBottom sx={{ mt: 6, mb: 3, color: 'text.secondary', display: 'block' }}>
-      <LightBulbIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
-      Consejo: {tip}
-    </Typography>
+    <Box sx={{ align: 'center' }}>
+      <Typography variant="body2" gutterBottom sx={{ mt: 1, mb: 2, color: 'text.secondary', fontSize: '1rem' }}>
+        <LightBulbIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+        Consejo: {tip}
+      </Typography>
+    </Box>
   );
 }
