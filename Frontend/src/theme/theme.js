@@ -18,7 +18,7 @@ const theme = createTheme({
       palette: {
         ...brandPalette,
         primary: {
-          main: '#1b3249',
+          main: '#073c70',
         },
         secondary: {
           main: '#a51010',
