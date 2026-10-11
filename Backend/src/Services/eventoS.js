@@ -16,8 +16,18 @@ export const obtenerEventoPorId = async (id) => {
     },
   });
 };
-
 export const crearEvento = async (eventoData) => {
+  const cotizacion = await prisma.cotizacion.findUnique({
+    where: { id: parseInt(eventoData.cotizacionId) }
+  });
+
+  if (!cotizacion) {
+    throw new Error("1");
+  }
+  if (cotizacion.abono < (cotizacion.valorTotal * 0.5)) {
+    throw new Error("2");
+  }
+
   return await prisma.evento.create({
     data: eventoData,
     include: {

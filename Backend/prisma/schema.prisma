@@ -55,6 +55,7 @@ model CotizacionServicio {
 
 model Evento {
   id                   Int        @id @default(autoincrement())
+  nombre         String         @db.VarChar(100)
   local                String     @db.VarChar(100)
   fecha                DateTime
   cotizacionId         Int        @unique
@@ -63,6 +64,8 @@ model Evento {
   //vehiculos          Vehiculo[]
   //equipos            Equipo[]
 
+  //localId              Int         @unique
+  //local                Local       @relation(fields: [localId], references: [id])
   contrataciones       Contratacion[]
 
   createdAt        DateTime   @default(now())

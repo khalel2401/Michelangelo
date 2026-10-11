@@ -11,7 +11,7 @@ import cotizacionRoutes from './src/Routes/cotizacion.js';
 import errorHandler from './src/Middlewares/errorM.js';
 import personalRoutes from './src/Routes/personalR.js';
 import contratacionRoutes from './src/Routes/contratacionR.js';
-import cotizacionServicioR from "./src/Routes/cotizacionServicio.js";
+import cotizacionServicio from "./src/Routes/cotizacionServicio.js";
 
 const prisma = new PrismaClient();
 const app = express();

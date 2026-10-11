@@ -36,7 +36,7 @@ async function main() {
     );
 
 
-    const cantidadEventos = 10; // Cambiar valor dependiendo de la cantidad de eventos que se quieran generar
+    /*const cantidadEventos = 10; // Cambiar valor dependiendo de la cantidad de eventos que se quieran generar
     console.log('Generando datos falsos de evento...');
     const eventos = await Promise.all(
         Array.from({ length: cantidadEventos }).map(() =>
@@ -52,7 +52,7 @@ async function main() {
             },
             })
         )
-    );
+    );*/
 
     const cantidadArticulos = 10; // Cambiar valor dependiendo de la cantidad de articulos que se quieran generar
     console.log('Generando datos falsos de articulo...');
