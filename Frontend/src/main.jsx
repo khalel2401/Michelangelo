@@ -12,7 +12,7 @@ const root = ReactDOM.createRoot(rootElement);
 console.log('funciona te lo suplico');
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} defaultMode="light">
       <CssBaseline />
       <BrowserRouter>
         <App />

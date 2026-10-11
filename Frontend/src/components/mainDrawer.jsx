@@ -19,7 +19,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AccessibleIcon from '@mui/icons-material/Accessible';
-import PregnantWomanIcon from '@mui/icons-material/PregnantWoman';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -150,13 +152,18 @@ export default function MiniDrawer() {
             NES eventos
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton
-            color="inherit"
-            aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
-            onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-          >
-            <PregnantWomanIcon />
-          </IconButton>
+          <Tooltip title={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}>
+            <span>
+              <IconButton
+                color="inherit"
+                aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
+                disabled={!mode}
+                onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+              >
+                {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+            </span>
+          </Tooltip>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>

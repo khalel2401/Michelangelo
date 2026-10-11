@@ -12,6 +12,7 @@ const brandPalette = {
 
 const theme = createTheme({
   cssVariables: true,
+  colorSchemeSelector: 'class',
   colorSchemes: {
     light: {
       palette: {
