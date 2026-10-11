@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { flushSync } from 'react-dom';
 import { alpha, styled, useColorScheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -129,6 +130,32 @@ export default function MiniDrawer() {
     setOpen(false);
   };
 
+  const handleThemeToggle = (event) => {
+    const nextMode = mode === 'dark' ? 'light' : 'dark';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!document.startViewTransition || reduceMotion) {
+      setMode(nextMode);
+      return;
+    }
+
+    const x = event.detail === 0 ? window.innerWidth / 2 : event.clientX;
+    const y = event.detail === 0 ? window.innerHeight / 2 : event.clientY;
+    const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    );
+    const root = document.documentElement;
+
+    root.style.setProperty('--theme-transition-x', `${x}px`);
+    root.style.setProperty('--theme-transition-y', `${y}px`);
+    root.style.setProperty('--theme-transition-radius', `${radius}px`);
+
+    document.startViewTransition(() => {
+      flushSync(() => setMode(nextMode));
+    });
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -158,7 +185,7 @@ export default function MiniDrawer() {
                 color="inherit"
                 aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
                 disabled={!mode}
-                onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
+                onClick={handleThemeToggle}
               >
                 {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
               </IconButton>
