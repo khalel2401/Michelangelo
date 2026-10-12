@@ -146,10 +146,10 @@ export default function TerminosCondiciones(){
                         component="img"
                         src="/michelangelo-logo.svg"
                         alt="Logo de Michelangelo"
-                        sx={{ alignSelf: "center", width: 96, height: 96, objectFit: "contain" }}
+                        sx={{ justifySelf: "center", width: 200, height: 200, objectFit: "contain" }}
                     />
 
-                    
+
                 </Box>
             </Paper>
             <Button
