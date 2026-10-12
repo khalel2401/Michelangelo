@@ -141,6 +141,15 @@ export default function TerminosCondiciones(){
                             razonables de abogados) que surjan de su uso del servicio o de la violación de estos términos.
                         </Typography>
                     </Box>
+
+                    <Box
+                        component="img"
+                        src="/michelangelo-logo.svg"
+                        alt="Logo de Michelangelo"
+                        sx={{ alignSelf: "center", width: 96, height: 96, objectFit: "contain" }}
+                    />
+
+                    
                 </Box>
             </Paper>
             <Button

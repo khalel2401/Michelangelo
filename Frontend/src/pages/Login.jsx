@@ -116,8 +116,15 @@ export default function Login({ onLogin }) {
           }}
         >
           <Typography variant="h5" component="h1" align="center" gutterBottom>
-            Iniciar sesión
+            Inicio De Sesión
           </Typography>
+
+          <Box
+            component="img"
+            src="/michelangelo-logo.svg"
+            alt="Logo de Michelangelo"
+            sx={{ alignSelf: "center", width: 96, height: 96, objectFit: "contain" }}
+          />
 
           <FormControl fullWidth variant="filled">
             <InputLabel htmlFor={`${filledUserId}-input`}>Email</InputLabel>
