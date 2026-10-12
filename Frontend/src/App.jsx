@@ -9,6 +9,7 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import Locales from './pages/Locales.jsx';
 import Inventario from './pages/Inventario.jsx';
 import MiniDrawer from './components/mainDrawer.jsx';
+import Legal from './pages/TerminosCondiciones.jsx';
 
 
 export default function App() {
@@ -19,10 +20,11 @@ export default function App() {
       <Route
         path="/"
         element={isLoggedIn ? <Home /> : (
-          <Container maxWidth="sm">
-            <Box sx={{ my: 4 }}>
-              <Login onLogin={() => setIsLoggedIn(true)} />
-            </Box>
+          <Container
+            maxWidth="sm"
+            sx={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}
+          >
+            <Login onLogin={() => setIsLoggedIn(true)} />
             <ProTip />
           </Container>
         )}
@@ -30,6 +32,7 @@ export default function App() {
       <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
       <Route path="/Inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="/legal" element={<Legal />} />
     </Routes>
   );
 

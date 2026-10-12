@@ -35,7 +35,7 @@ async function main() {
         )
     );
 
-
+    /*
     const cantidadEventos = 10; // Cambiar valor dependiendo de la cantidad de eventos que se quieran generar
     console.log('Generando datos falsos de evento...');
     const eventos = await Promise.all(
@@ -49,10 +49,12 @@ async function main() {
                 valorTotal: parseFloat(faker.commerce.price({ min: 100, max: 10000 })),
                 abono: parseFloat(faker.commerce.price({ min: 50, max: 5000 })),
                 confirmado: faker.datatype.boolean(),
+                local: 
             },
             })
         )
     );
+    */
 
     const cantidadArticulos = 10; // Cambiar valor dependiendo de la cantidad de articulos que se quieran generar
     console.log('Generando datos falsos de articulo...');
@@ -104,7 +106,7 @@ async function main() {
 
     console.log('Datos falsos generados exitosamente.');
     console.log('Usuarios generados:', usuarios);
-    console.log('Eventos generados:', eventos);
+    //console.log('Eventos generados:', eventos);
     console.log('Articulos generados:', articulos);
     console.log('Vehiculos generados:', vehiculos);
 

@@ -5,6 +5,7 @@ import { ThemeProvider } from '@mui/material/styles';
 import { BrowserRouter } from 'react-router-dom';
 import App from './App';
 import theme from './theme/theme';
+import './theme/theme-transitions.css';
 
 
 const rootElement = document.getElementById('root');
@@ -12,7 +13,7 @@ const root = ReactDOM.createRoot(rootElement);
 console.log('funciona te lo suplico');
 root.render(
   <React.StrictMode>
-    <ThemeProvider theme={theme}>
+    <ThemeProvider theme={theme} defaultMode="system">
       <CssBaseline />
       <BrowserRouter>
         <App />
