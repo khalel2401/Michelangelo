@@ -117,6 +117,7 @@ export default function MiniDrawer() {
   const routes = {
     Locales: '/locales',
     Inventario: '/Inventario',
+    Personal: '/personal',
   };
 
   const handleDrawerOpen = () => {

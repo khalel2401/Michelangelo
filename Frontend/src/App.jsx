@@ -8,6 +8,7 @@ import Home from './pages/Home.jsx';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import Locales from './pages/Locales.jsx';
 import Inventario from './pages/Inventario.jsx';
+import Personal from './pages/Personal.jsx';
 import MiniDrawer from './components/mainDrawer.jsx';
 
 
@@ -29,6 +30,7 @@ export default function App() {
       />
       <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
       <Route path="/Inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
+      <Route path="/personal" element={isLoggedIn ? <Personal /> : <Navigate to="/" replace />} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
