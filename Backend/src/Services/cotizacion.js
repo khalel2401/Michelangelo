@@ -3,7 +3,10 @@ import prisma from "../Config/prisma.js";
 export const obtenerCotizaciones = async () => {
   return await prisma.cotizacion.findMany({
     include: {
-      servicio: true,
+      local: true,
+      cotizacionesServicios: {
+        include: { servicio: true },
+      },
       evento: true,
     },
   });
@@ -13,7 +16,10 @@ export const obtenerCotizacionPorId = async (id) => {
   return await prisma.cotizacion.findUnique({
     where: { id: parseInt(id) },
     include: {
-      servicio: true,
+      local: true,
+      cotizacionesServicios: {
+        include: { servicio: true },
+      },
       evento: true,
     },
   });
@@ -23,7 +29,11 @@ export const crearCotizacion = async (cotizacionData) => {
   return await prisma.cotizacion.create({
     data: cotizacionData,
     include: {
-      servicio: true,
+      cotizacionesServicios: {
+        include: {
+          servicio: true,
+        },
+      },
     },
   });
 };
@@ -33,7 +43,11 @@ export const actualizarCotizacion = async (id, cotizacionData) => {
     where: { id: parseInt(id) },
     data: cotizacionData,
     include: {
-      servicio: true,
+      cotizacionesServicios: {
+        include: {
+          servicio: true,
+        },
+      },
     },
   });
 };
