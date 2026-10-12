@@ -18,7 +18,6 @@ export default function Locales() {
 
     return (
         <div className= "right" id="right">
-            <h1>Locales</h1>
             <div className="Locales">
                 <div className="tabs-nav">
                 </div>

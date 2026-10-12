@@ -78,6 +78,7 @@ async function main() {
                 valorTotal: parseFloat(faker.commerce.price({ min: 100, max: 10000 })),
                 abono: parseFloat(faker.commerce.price({ min: 50, max: 5000 })),
                 confirmado: faker.datatype.boolean(),
+                local: 
             },
             })
         )
@@ -181,7 +182,7 @@ async function main() {
 
     console.log('Datos falsos generados exitosamente.');
     console.log('Usuarios generados:', usuarios);
-    console.log('Eventos generados:', eventos);
+    //console.log('Eventos generados:', eventos);
     console.log('Articulos generados:', articulos);
     console.log('Vehiculos generados:', vehiculos);
 

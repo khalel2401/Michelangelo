@@ -12,12 +12,13 @@ const brandPalette = {
 
 const theme = createTheme({
   cssVariables: true,
+  colorSchemeSelector: 'class',
   colorSchemes: {
     light: {
       palette: {
         ...brandPalette,
         primary: {
-          main: '#1b3249',
+          main: '#073c70',
         },
         secondary: {
           main: '#a51010',
