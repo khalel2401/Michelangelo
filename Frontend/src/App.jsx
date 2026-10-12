@@ -10,6 +10,7 @@ import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Locales from './pages/Locales.jsx';
 import Inventario from './pages/Inventario.jsx';
 import MiniDrawer from './components/mainDrawer.jsx';
+import Legal from './pages/TerminosCondiciones.jsx';
 
 const routeFadeDuration = 180;
 

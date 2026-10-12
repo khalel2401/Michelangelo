@@ -12,6 +12,8 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import { Link as RouterLink } from "react-router-dom"
 import { alpha } from "@mui/material/styles";
 
 export default function Login({ onLogin }) {
@@ -64,7 +66,7 @@ export default function Login({ onLogin }) {
   return (
     <Box
       sx={{
-        minHeight: "100vh",
+        width: "100%",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -115,9 +117,16 @@ export default function Login({ onLogin }) {
             gap: 2,
           }}
         >
-          <Typography variant="h5" component="h1" textAlign="center" gutterBottom>
-            Iniciar sesión
+          <Typography variant="h5" component="h1" align="center" gutterBottom>
+            Inicio De Sesión
           </Typography>
+
+          <Box
+            component="img"
+            src="/michelangelo-logo.svg"
+            alt="Logo de Michelangelo"
+            sx={{ alignSelf: "center", width: 96, height: 96, objectFit: "contain" }}
+          />
 
           <FormControl fullWidth variant="filled">
             <InputLabel htmlFor={`${filledUserId}-input`}>Email</InputLabel>
@@ -156,6 +165,11 @@ export default function Login({ onLogin }) {
               {error}
             </Typography>
           )}
+
+          <Typography variant="subtitle2"> 
+            Recordar leer los {' '}
+            <Link component={RouterLink} to="/legal" color="primary" underline="hover">Terminos y condiciones.</Link>
+          </Typography>
 
           <Button
             type="submit"
