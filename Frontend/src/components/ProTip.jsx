@@ -42,9 +42,9 @@ export default function ProTip() {
       break;
   }
   return (
-    <Box sx={{ align: 'center' }}>
-      <Typography variant="body2" gutterBottom sx={{ mt: 1, mb: 2, color: 'text.secondary', fontSize: '1rem' }}>
-        <LightBulbIcon sx={{ mr: 1, verticalAlign: 'middle' }} />
+    <Box sx={{ width: '100%' }}>
+      <Typography variant="body2" gutterBottom sx={{ mt: 1, mb: 2, color: 'text.secondary', fontSize: '1rem', textAlign: 'center' }}>
+        <LightBulbIcon sx={{ mr: 1, verticalAlign: 'middle', align: 'center' }} />
         Consejo: {tip}
       </Typography>
     </Box>
