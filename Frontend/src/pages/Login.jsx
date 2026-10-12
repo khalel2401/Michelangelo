@@ -12,6 +12,8 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import Link from "@mui/material/Link";
+import { Link as RouterLink } from "react-router-dom"
 import { alpha } from "@mui/material/styles";
 
 export default function Login({ onLogin }) {
@@ -163,6 +165,11 @@ export default function Login({ onLogin }) {
               {error}
             </Typography>
           )}
+
+          <Typography variant="subtitle2"> 
+            Recordar leer los {' '}
+            <Link component={RouterLink} to="/legal" color="primary" underline="hover">Terminos y condiciones.</Link>
+          </Typography>
 
           <Button
             type="submit"
