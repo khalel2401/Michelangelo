@@ -2,12 +2,16 @@ import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
-import Card from "@mui/material/Card";
-import CardContent from "@mui/material/CardContent";
 import Checkbox from "@mui/material/Checkbox";
 import Chip from "@mui/material/Chip";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import Paper from "@mui/material/Paper";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import { alpha } from "@mui/material/styles";
@@ -204,65 +208,45 @@ export function inventarioManager(){
             )}
 
             {!cargando && !error && articulos.length > 0 && (
-                <Box
-                    sx={{
-                        display: "grid",
-                        gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 200px), 220px))",
-                        justifyContent: "center",
-                        alignItems: "stretch",
-                        gap: 3,
-                        mb: 3,
-                    }}
-                >
-                    {articulos.map((articulo) => {
-                        const editandoEsteArticulo = editandoId === articulo.id;
+                <TableContainer component={Paper} variant="outlined" sx={{ mb: 3, overflowX: "auto" }}>
+                    <Table aria-label="Artículos del inventario">
+                        <TableHead>
+                            <TableRow>
+                                <TableCell>Artículo</TableCell>
+                                <TableCell align="right">Cantidad</TableCell>
+                                <TableCell>Estado</TableCell>
+                                <TableCell align="right">Acciones</TableCell>
+                            </TableRow>
+                        </TableHead>
+                        <TableBody>
+                            {articulos.map((articulo) => {
+                                const editandoEsteArticulo = editandoId === articulo.id;
 
-                        return (
-                            <Card
-                                key={articulo.id}
-                                variant="outlined"
-                                sx={(theme) => ({
-                                    width: "100%",
-                                    aspectRatio: editandoEsteArticulo ? "auto" : "1 / 1",
-                                    minHeight: editandoEsteArticulo ? 0 : 220,
-                                    display: "flex",
-                                    flexDirection: "column",
-                                    borderRadius: 3,
-                                    border: `1px solid ${theme.palette.brand.crimson}`,
-                                    boxShadow: `0 2px 8px ${alpha(theme.palette.brand.crimson, 0.16)}`,
-                                    animation: "articuloFadeIn 450ms ease-out both",
-                                    "@keyframes articuloFadeIn": {
-                                        from: { opacity: 0 },
-                                        to: { opacity: 1 },
-                                    },
-                                    "@media (prefers-reduced-motion: reduce)": {
-                                        animation: "none",
-                                    },
-                                    transition: "box-shadow 180ms ease, transform 180ms ease",
-                                    "&:hover": {
-                                        boxShadow: `0 0 20px ${alpha(theme.palette.brand.crimson, 0.55)}`,
-                                        transform: "translateY(-4px)",
-                                    },
-                                })}
-                            >
-                                <CardContent sx={{ p: 2.5, display: "flex", flex: 1, flexDirection: "column" }}>
-                                    {editandoEsteArticulo ? (
-                                        renderFormulario(true)
-                                    ) : (
-                                        <>
-                                            <Typography variant="h6" component="h3" gutterBottom>
-                                                {articulo.nombre}
-                                            </Typography>
+                                if (editandoEsteArticulo) {
+                                    return (
+                                        <TableRow key={articulo.id}>
+                                            <TableCell colSpan={4}>
+                                                {renderFormulario(true)}
+                                            </TableCell>
+                                        </TableRow>
+                                    );
+                                }
+
+                                return (
+                                    <TableRow key={articulo.id} hover>
+                                        <TableCell component="th" scope="row">
+                                            {articulo.nombre}
+                                        </TableCell>
+                                        <TableCell align="right">{articulo.cantidad}</TableCell>
+                                        <TableCell>
                                             <Chip
                                                 label={articulo.enUso ? "En uso" : "No está en uso"}
                                                 color={articulo.enUso ? "success" : "default"}
                                                 size="small"
-                                                sx={{ alignSelf: "flex-start", mb: 2 }}
                                             />
-                                            <Box sx={{ display: "grid", gap: 1, flex: 1 }}>
-                                                <Typography><strong>Cantidad:</strong> {articulo.cantidad}</Typography>
-                                            </Box>
-                                            <Box sx={{ display: "flex", gap: 1, mt: 2, mb: 1, pt: 1.5, borderTop: 1, borderColor: "divider" }}>
+                                        </TableCell>
+                                        <TableCell align="right">
+                                            <Box sx={{ display: "inline-flex", gap: 1 }}>
                                                 <Button size="small" variant="outlined" onClick={() => abrirEditarArticulo(articulo)} sx={botonConBrillo()}>
                                                     Editar
                                                 </Button>
@@ -277,13 +261,13 @@ export function inventarioManager(){
                                                     {eliminandoId === articulo.id ? "Eliminando..." : "Eliminar"}
                                                 </Button>
                                             </Box>
-                                        </>
-                                    )}
-                                </CardContent>
-                            </Card>
-                        );
-                    })}
-                </Box>
+                                        </TableCell>
+                                    </TableRow>
+                                );
+                            })}
+                        </TableBody>
+                    </Table>
+                </TableContainer>
             )}
 
             {mostrarForm ? (
