@@ -147,6 +147,7 @@ export default function MiniDrawer() {
   const [open, setOpen] = React.useState(false);
   const routes = {
     Locales: '/locales',
+    Eventos: '/eventos',
     Inventario: '/Inventario',
   };
 
@@ -268,6 +269,19 @@ export default function MiniDrawer() {
                   ]}
                 >
                   {text === 'Locales' ? <InboxIcon /> : <AccessibleIcon />}
+                  {text === 'Eventos' ? (    
+                    <img
+                      src="/evento.png"
+                      alt="Eventos"
+                      style={{
+                        width: 24,
+                        height: 24,
+                        objectFit: 'contain',
+                      }}
+                    />
+                  ) : (
+                <AccessibleIcon />
+                  )}
                 </ListItemIcon>
                 <ListItemText
                   primary={text}

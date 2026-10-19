@@ -31,7 +31,6 @@ model Local {
   id             Int          @id @default(autoincrement())
   nombre         String
   precio         Int
-  capacidad      Int
   contacto       String?
   nombreDueno    String
   aforo          Int

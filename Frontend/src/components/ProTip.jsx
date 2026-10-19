@@ -37,6 +37,9 @@ export default function ProTip() {
     case 8:
       tip = 'El loco que no pertenece a esta era, el misterioso gobernante sobre la niebla gris, el rey del amarillo y el negro que ejerce la buena suerte.';
       break;
+    case 9:
+      tip = 'Quien tiene un porqué para vivir puede soportar casi cualquier cómo.';
+      break;
     default:
       tip = 'ERROR DE RANDOM';
       break;
