@@ -149,6 +149,7 @@ export default function MiniDrawer() {
     Locales: '/locales',
     Eventos: '/eventos',
     Inventario: '/Inventario',
+    Cotizaciones: '/cotizaciones',
   };
 
   const handleDrawerOpen = () => {
@@ -235,7 +236,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Locales', 'Eventos', 'Inventario', 'Personal'].map((text, index) => (
+          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={routes[text] ? () => navigate(routes[text]) : undefined}
