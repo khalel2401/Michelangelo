@@ -19,6 +19,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
+import PersonIcon from '@mui/icons-material/Person';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -270,7 +273,10 @@ export default function MiniDrawer() {
                         },
                   ]}
                 >
-                  {text === 'Locales' ? <InboxIcon /> : <AccessibleIcon />}
+                  {text === 'Personal' ? <PersonIcon /> : null }
+                  {text === 'Locales' ? <InboxIcon /> : null }
+                  {text === 'Cotizaciones' ? <PointOfSaleIcon /> : null }
+                  {text === 'Inventario' ? <InventoryIcon /> : null }
                   {text === 'Eventos' ? (    
                     <img
                       src="/evento.png"
@@ -281,9 +287,7 @@ export default function MiniDrawer() {
                         objectFit: 'contain',
                       }}
                     />
-                  ) : (
-                <AccessibleIcon />
-                  )}
+                  ) : null }
                 </ListItemIcon>
                 <ListItemText
                   primary={text}

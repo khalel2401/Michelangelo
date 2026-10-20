@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import Collapse from "@mui/material/Collapse";
+import IconButton from "@mui/material/IconButton";
 import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
@@ -13,6 +15,7 @@ import TableRow from "@mui/material/TableRow";
 import Tab from "@mui/material/Tab";
 import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
+import FilterListIcon from "@mui/icons-material/FilterList";
 import Typography from "@mui/material/Typography";
 import {
   actualizarPersonal,
@@ -50,6 +53,9 @@ export default function PersonalManager() {
   const [guardando, setGuardando] = useState(false);
   const [eliminandoId, setEliminandoId] = useState(null);
   const [pestana, setPestana] = useState(0);
+  const [busquedaPersonal, setBusquedaPersonal] = useState("");
+  const [mostrarFiltros, setMostrarFiltros] = useState(false);
+  const [filtroAsignacion, setFiltroAsignacion] = useState("todos");
   const [eventos, setEventos] = useState([]);
   const [asignaciones, setAsignaciones] = useState([]);
   const [cargandoAsignaciones, setCargandoAsignaciones] = useState(true);
@@ -287,6 +293,23 @@ export default function PersonalManager() {
     />
   );
 
+  const personasFiltradas = personas.filter((persona) => {
+    const coincideNombre = (persona.nombre ?? "")
+      .toLocaleLowerCase("es")
+      .includes(busquedaPersonal.trim().toLocaleLowerCase("es"));
+    const estaAsignado = asignaciones.some(
+      (item) => String(item.id_personal ?? item.personal?.id) === String(persona.id),
+    );
+    const coincideAsignacion =
+      cargandoAsignaciones ||
+      Boolean(errorAsignaciones) ||
+      filtroAsignacion === "todos" ||
+      (filtroAsignacion === "asignados" && estaAsignado) ||
+      (filtroAsignacion === "sin-asignar" && !estaAsignado);
+
+    return coincideNombre && coincideAsignacion;
+  });
+
   const formularioPersona = (modo) => (
     <Box component="form" onSubmit={guardarPersona} sx={{ display: "grid", gap: 1.5 }}>
       <Typography variant="h6" component="h3">
@@ -297,7 +320,7 @@ export default function PersonalManager() {
         {campo("nombre", "Nombre")}
         {campo("apellido", "Apellido")}
         {campo("telefono", "Teléfono", false, { inputProps: { maxLength: 16 } })}
-        {campo("calificacion", "Calificación (0 a 5)", true, campoNumero)}
+        {campo("calificacion", "Calificación (0 a 5)[TEMPORAL]", true, campoNumero)}
       </Box>
       <Box sx={{ display: "flex", gap: 1 }}>
         <Button type="submit" variant="contained" disabled={guardando}>
@@ -348,56 +371,132 @@ export default function PersonalManager() {
               <Typography>No hay personal registrado todavía.</Typography>
             </Paper>
           ) : !error && (
-            <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
-              <Table aria-label="Tabla de personal">
-                <TableHead>
-                  <TableRow>
-                    <TableCell><strong>Nombre</strong></TableCell>
-                    <TableCell><strong>Apellido</strong></TableCell>
-                    <TableCell><strong>Teléfono</strong></TableCell>
-                    <TableCell align="center"><strong>Calificación</strong></TableCell>
-                    <TableCell align="right"><strong>Acciones</strong></TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {personas.map((persona) => {
-                    const editando = personaEditandoId === persona.id;
-                    return (
-                      <TableRow key={persona.id} hover>
-                        {editando ? (
-                          <TableCell colSpan={5}>
-                            {formularioPersona("editar")}
-                          </TableCell>
-                        ) : (
-                          <>
-                            <TableCell>{persona.nombre}</TableCell>
-                            <TableCell>{persona.apellido}</TableCell>
-                            <TableCell>{persona.telefono || "—"}</TableCell>
-                            <TableCell align="center">{persona.calificacion ?? "—"}</TableCell>
-                            <TableCell align="right">
-                              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                                <Button size="small" variant="outlined" onClick={() => iniciarEdicion(persona)}>
-                                  Editar
-                                </Button>
-                                <Button
-                                  size="small"
-                                  color="error"
-                                  variant="outlined"
-                                  onClick={() => borrarPersona(persona)}
-                                  disabled={eliminandoId === persona.id}
-                                >
-                                  {eliminandoId === persona.id ? "Eliminando..." : "Eliminar"}
-                                </Button>
-                              </Box>
-                            </TableCell>
-                          </>
-                        )}
+            <Box sx={{ display: "grid", gap: 1.5 }}>
+              <Paper
+                variant="outlined"
+                sx={{ px: 1.5, py: 0.5, borderRadius: 2 }}
+              >
+                <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                  <Typography variant="body2" color="text.secondary">
+                    Filtro: {personasFiltradas.length} de {personas.length} personas
+                  </Typography>
+                  <IconButton
+                    aria-label={mostrarFiltros ? "Ocultar filtros de personal" : "Mostrar filtros de personal"}
+                    aria-expanded={mostrarFiltros}
+                    onClick={() => setMostrarFiltros((actual) => !actual)}
+                    color={mostrarFiltros || busquedaPersonal || filtroAsignacion !== "todos" ? "primary" : "default"}
+                  >
+                    <FilterListIcon />
+                  </IconButton>
+                </Box>
+                <Collapse in={mostrarFiltros}>
+                  <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, minmax(0, 1fr))" }, gap: 1.5, pb: 1.5 }}>
+                    <TextField
+                      label="Buscar por nombre"
+                      value={busquedaPersonal}
+                      onChange={(event) => setBusquedaPersonal(event.target.value)}
+                      size="small"
+                      fullWidth
+                    />
+                    <TextField
+                      select
+                      label="Asignación a evento"
+                      value={filtroAsignacion}
+                      onChange={(event) => setFiltroAsignacion(event.target.value)}
+                      size="small"
+                      fullWidth
+                      disabled={cargandoAsignaciones || Boolean(errorAsignaciones)}
+                    >
+                      <MenuItem value="todos">Todos</MenuItem>
+                      <MenuItem value="asignados">Asignados a un evento</MenuItem>
+                      <MenuItem value="sin-asignar">Sin asignación</MenuItem>
+                    </TextField>
+                  </Box>
+                </Collapse>
+              </Paper>
+              {personasFiltradas.length === 0 ? (
+                <Paper variant="outlined" sx={{ p: 3, textAlign: "center", borderRadius: 2 }}>
+                  <Typography>No hay personal que coincida con los filtros.</Typography>
+                </Paper>
+              ) : (
+                <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, overflowX: "auto" }}>
+                  <Table aria-label="Tabla de personal">
+                    <TableHead>
+                      <TableRow>
+                        <TableCell><strong>Nombre</strong></TableCell>
+                        <TableCell><strong>Apellido</strong></TableCell>
+                        <TableCell><strong>Teléfono</strong></TableCell>
+                        <TableCell align="center"><strong>Calificación</strong></TableCell>
+                        <TableCell><strong>Evento asignado</strong></TableCell>
+                        <TableCell align="right"><strong>Acciones</strong></TableCell>
                       </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </TableContainer>
+                    </TableHead>
+                    <TableBody>
+                      {personasFiltradas.map((persona) => {
+                        const editando = personaEditandoId === persona.id;
+                        const asignacionesPersona = asignaciones.filter(
+                          (item) =>
+                            String(item.id_personal ?? item.personal?.id) === String(persona.id),
+                        );
+                        return (
+                          <TableRow key={persona.id} hover>
+                            {editando ? (
+                              <TableCell colSpan={6}>
+                                {formularioPersona("editar")}
+                              </TableCell>
+                            ) : (
+                              <>
+                                <TableCell>{persona.nombre}</TableCell>
+                                <TableCell>{persona.apellido}</TableCell>
+                                <TableCell>{persona.telefono || "—"}</TableCell>
+                                <TableCell align="center">{persona.calificacion ?? "—"}</TableCell>
+                                <TableCell>
+                                  {cargandoAsignaciones
+                                    ? "Cargando asignaciones..."
+                                    : errorAsignaciones
+                                      ? "No disponible"
+                                      : asignacionesPersona.length === 0
+                                        ? "Sin asignación"
+                                        : asignacionesPersona.map((item) => {
+                                          const evento = item.evento || eventos.find(
+                                            (actual) =>
+                                              String(actual.id) ===
+                                              String(item.id_evento ?? item.evento?.id),
+                                          );
+                                          return (
+                                            <Typography key={item.id} variant="body2">
+                                              {evento?.nombre || evento?.local || "Evento no disponible"}
+                                              {evento?.fecha && ` · ${formatearFecha(evento.fecha)}`}
+                                            </Typography>
+                                          );
+                                        })}
+                                </TableCell>
+                                <TableCell align="right">
+                                  <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                                    <Button size="small" variant="outlined" onClick={() => iniciarEdicion(persona)}>
+                                      Editar
+                                    </Button>
+                                    <Button
+                                      size="small"
+                                      color="error"
+                                      variant="outlined"
+                                      onClick={() => borrarPersona(persona)}
+                                      disabled={eliminandoId === persona.id}
+                                    >
+                                      {eliminandoId === persona.id ? "Eliminando..." : "Eliminar"}
+                                    </Button>
+                                  </Box>
+                                </TableCell>
+                              </>
+                            )}
+                          </TableRow>
+                        );
+                      })}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              )}
+            </Box>
           )}
         </>
       )}
