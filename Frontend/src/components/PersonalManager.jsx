@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
+import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -9,6 +10,8 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import Tab from "@mui/material/Tab";
+import Tabs from "@mui/material/Tabs";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import {
@@ -17,6 +20,12 @@ import {
   eliminarPersonal,
   getPersonales,
 } from "../Services/PersonalS.js";
+import {
+  crearAsignacionPersonal,
+  eliminarAsignacionPersonal,
+  getContrataciones,
+  getEventosParaAsignacion,
+} from "../Services/contratacionS.js";
 
 const personaVacia = {
   nombre: "",
@@ -40,9 +49,24 @@ export default function PersonalManager() {
   const [mostrarAlta, setMostrarAlta] = useState(false);
   const [guardando, setGuardando] = useState(false);
   const [eliminandoId, setEliminandoId] = useState(null);
+  const [pestana, setPestana] = useState(0);
+  const [eventos, setEventos] = useState([]);
+  const [asignaciones, setAsignaciones] = useState([]);
+  const [cargandoAsignaciones, setCargandoAsignaciones] = useState(true);
+  const [errorAsignaciones, setErrorAsignaciones] = useState(null);
+  const [errorFormularioAsignacion, setErrorFormularioAsignacion] = useState(null);
+  const [asignacion, setAsignacion] = useState({
+    idPersonal: "",
+    idEvento: "",
+    fechaContratacion: "",
+    salario: "",
+  });
+  const [guardandoAsignacion, setGuardandoAsignacion] = useState(false);
+  const [eliminandoAsignacionId, setEliminandoAsignacionId] = useState(null);
 
   useEffect(() => {
     cargarPersonal();
+    cargarAsignaciones();
   }, []);
 
   const cargarPersonal = async () => {
@@ -60,6 +84,28 @@ export default function PersonalManager() {
     } finally {
       setCargando(false);
     }
+  };
+
+  const cargarAsignaciones = async () => {
+    setCargandoAsignaciones(true);
+    setErrorAsignaciones(null);
+
+    const [resultadoAsignaciones, resultadoEventos] = await Promise.all([
+      getContrataciones(),
+      getEventosParaAsignacion(),
+    ]);
+
+    if (!resultadoAsignaciones.success || !resultadoEventos.success) {
+      setErrorAsignaciones(
+        resultadoAsignaciones.message ||
+          resultadoEventos.message ||
+          "No se pudieron cargar las asignaciones",
+      );
+    } else {
+      setAsignaciones(Array.isArray(resultadoAsignaciones.data) ? resultadoAsignaciones.data : []);
+      setEventos(Array.isArray(resultadoEventos.data) ? resultadoEventos.data : []);
+    }
+    setCargandoAsignaciones(false);
   };
 
   const cambiarCampo = (event) => {
@@ -153,6 +199,81 @@ export default function PersonalManager() {
     setEliminandoId(null);
   };
 
+  const cambiarAsignacion = (event) => {
+    const { name, value } = event.target;
+    setAsignacion((actual) => ({ ...actual, [name]: value }));
+    setErrorFormularioAsignacion(null);
+  };
+
+  const guardarAsignacion = async (event) => {
+    event.preventDefault();
+    setGuardandoAsignacion(true);
+    setErrorFormularioAsignacion(null);
+
+    const yaAsignado = asignaciones.some(
+      (item) =>
+        String(item.id_personal ?? item.personal?.id) === asignacion.idPersonal &&
+        String(item.id_evento ?? item.evento?.id) === asignacion.idEvento,
+    );
+    if (yaAsignado) {
+      setErrorFormularioAsignacion("Este personal ya está asignado a ese evento.");
+      setGuardandoAsignacion(false);
+      return;
+    }
+
+    const datos = {
+      idPersonal: Number(asignacion.idPersonal),
+      idEvento: Number(asignacion.idEvento),
+      salario: Number(asignacion.salario),
+      ...(asignacion.fechaContratacion
+        ? { fechaContratacion: asignacion.fechaContratacion }
+        : {}),
+    };
+
+    const resultado = await crearAsignacionPersonal(datos);
+    if (resultado.success) {
+      setAsignaciones((actuales) => [...actuales, resultado.data]);
+      setAsignacion({
+        idPersonal: "",
+        idEvento: "",
+        fechaContratacion: "",
+        salario: "",
+      });
+    } else {
+      setErrorFormularioAsignacion(
+        resultado.message || "No se pudo asignar el personal al evento",
+      );
+    }
+    setGuardandoAsignacion(false);
+  };
+
+  const quitarAsignacion = async (item) => {
+    if (
+      !window.confirm(
+        `¿Quieres quitar a ${item.personal?.nombre || "este personal"} del evento "${item.evento?.local || "seleccionado"}"?`,
+      )
+    ) {
+      return;
+    }
+
+    setEliminandoAsignacionId(item.id);
+    const resultado = await eliminarAsignacionPersonal(item.id);
+    if (resultado.success) {
+      setAsignaciones((actuales) => actuales.filter((asignacionActual) => asignacionActual.id !== item.id));
+    } else {
+      setErrorAsignaciones(resultado.message || "No se pudo quitar la asignación");
+    }
+    setEliminandoAsignacionId(null);
+  };
+
+  const formatearFecha = (fecha) => {
+    if (!fecha) return "—";
+    const fechaLocal = new Date(`${String(fecha).slice(0, 10)}T00:00:00`);
+    return Number.isNaN(fechaLocal.getTime())
+      ? fecha
+      : new Intl.DateTimeFormat("es-CL", { dateStyle: "medium" }).format(fechaLocal);
+  };
+
   const campo = (name, label, required = true, extra = {}) => (
     <TextField
       label={label}
@@ -194,77 +315,248 @@ export default function PersonalManager() {
       <Box sx={{ display: "flex", flexWrap: "wrap", alignItems: "center", justifyContent: "space-between", gap: 2, mb: 2 }}>
         <Box>
           <Typography variant="h4" component="h2">Personal</Typography>
-          <Typography color="text.secondary">Administra los datos del equipo.</Typography>
+          <Typography color="text.secondary">Administra el equipo y sus eventos asignados.</Typography>
         </Box>
-        {!mostrarAlta && personaEditandoId === null && (
+        {pestana === 0 && !mostrarAlta && personaEditandoId === null && (
           <Button variant="contained" onClick={iniciarAlta}>Agregar personal</Button>
         )}
       </Box>
 
-      {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
-      {mostrarAlta && (
-        <Paper variant="outlined" sx={{ p: 2.5, mb: 2, borderRadius: 2 }}>
-          {formularioPersona("crear")}
-        </Paper>
+      <Tabs
+        value={pestana}
+        onChange={(_event, valor) => setPestana(valor)}
+        aria-label="Administración de personal y asignaciones"
+        sx={{ mb: 2, borderBottom: 1, borderColor: "divider" }}
+      >
+        <Tab label="Personal" />
+        <Tab label="Asignaciones a eventos" />
+      </Tabs>
+
+      {pestana === 0 && (
+        <>
+          {error && <Alert severity="error" sx={{ mb: 2 }}>{error}</Alert>}
+          {mostrarAlta && (
+            <Paper variant="outlined" sx={{ p: 2.5, mb: 2, borderRadius: 2 }}>
+              {formularioPersona("crear")}
+            </Paper>
+          )}
+
+          {cargando ? (
+            <Typography role="status">Cargando personal...</Typography>
+          ) : !error && personas.length === 0 ? (
+            <Paper variant="outlined" sx={{ p: 4, textAlign: "center", borderRadius: 2 }}>
+              <Typography>No hay personal registrado todavía.</Typography>
+            </Paper>
+          ) : !error && (
+            <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
+              <Table aria-label="Tabla de personal">
+                <TableHead>
+                  <TableRow>
+                    <TableCell><strong>Nombre</strong></TableCell>
+                    <TableCell><strong>Apellido</strong></TableCell>
+                    <TableCell><strong>Teléfono</strong></TableCell>
+                    <TableCell align="center"><strong>Calificación</strong></TableCell>
+                    <TableCell align="right"><strong>Acciones</strong></TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {personas.map((persona) => {
+                    const editando = personaEditandoId === persona.id;
+                    return (
+                      <TableRow key={persona.id} hover>
+                        {editando ? (
+                          <TableCell colSpan={5}>
+                            {formularioPersona("editar")}
+                          </TableCell>
+                        ) : (
+                          <>
+                            <TableCell>{persona.nombre}</TableCell>
+                            <TableCell>{persona.apellido}</TableCell>
+                            <TableCell>{persona.telefono || "—"}</TableCell>
+                            <TableCell align="center">{persona.calificacion ?? "—"}</TableCell>
+                            <TableCell align="right">
+                              <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
+                                <Button size="small" variant="outlined" onClick={() => iniciarEdicion(persona)}>
+                                  Editar
+                                </Button>
+                                <Button
+                                  size="small"
+                                  color="error"
+                                  variant="outlined"
+                                  onClick={() => borrarPersona(persona)}
+                                  disabled={eliminandoId === persona.id}
+                                >
+                                  {eliminandoId === persona.id ? "Eliminando..." : "Eliminar"}
+                                </Button>
+                              </Box>
+                            </TableCell>
+                          </>
+                        )}
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </>
       )}
 
-      {cargando ? (
-        <Typography role="status">Cargando personal...</Typography>
-      ) : !error && personas.length === 0 ? (
-        <Paper variant="outlined" sx={{ p: 4, textAlign: "center", borderRadius: 2 }}>
-          <Typography>No hay personal registrado todavía.</Typography>
-        </Paper>
-      ) : !error && (
-        <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2 }}>
-          <Table aria-label="Tabla de personal">
-            <TableHead>
-              <TableRow>
-                <TableCell><strong>Nombre</strong></TableCell>
-                <TableCell><strong>Apellido</strong></TableCell>
-                <TableCell><strong>Teléfono</strong></TableCell>
-                <TableCell align="center"><strong>Calificación</strong></TableCell>
-                <TableCell align="right"><strong>Acciones</strong></TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {personas.map((persona) => {
-                const editando = personaEditandoId === persona.id;
-                return (
-                  <TableRow key={persona.id} hover>
-                    {editando ? (
-                      <TableCell colSpan={5}>
-                        {formularioPersona("editar")}
-                      </TableCell>
-                    ) : (
-                      <>
-                        <TableCell>{persona.nombre}</TableCell>
-                        <TableCell>{persona.apellido}</TableCell>
-                        <TableCell>{persona.telefono || "—"}</TableCell>
-                        <TableCell align="center">{persona.calificacion ?? "—"}</TableCell>
-                        <TableCell align="right">
-                          <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 1 }}>
-                            <Button size="small" variant="outlined" onClick={() => iniciarEdicion(persona)}>
-                              Editar
-                            </Button>
-                            <Button
-                              size="small"
-                              color="error"
-                              variant="outlined"
-                              onClick={() => borrarPersona(persona)}
-                              disabled={eliminandoId === persona.id}
-                            >
-                              {eliminandoId === persona.id ? "Eliminando..." : "Eliminar"}
-                            </Button>
-                          </Box>
-                        </TableCell>
-                      </>
-                    )}
+      {pestana === 1 && (
+        <Box sx={{ display: "grid", gap: 2 }}>
+          {errorAsignaciones && (
+            <Alert
+              severity="error"
+              action={<Button color="inherit" size="small" onClick={cargarAsignaciones}>Reintentar</Button>}
+            >
+              {errorAsignaciones}
+            </Alert>
+          )}
+          <Paper
+            component="form"
+            variant="outlined"
+            onSubmit={guardarAsignacion}
+            sx={{ p: 2.5, borderRadius: 2 }}
+          >
+            <Typography variant="h6" component="h3" gutterBottom>
+              Asignar personal a un evento
+            </Typography>
+            {errorFormularioAsignacion && (
+              <Alert severity="error" sx={{ mb: 2 }}>{errorFormularioAsignacion}</Alert>
+            )}
+            {(personas.length === 0 || eventos.length === 0) && !cargandoAsignaciones && !errorAsignaciones && (
+              <Alert severity="info" sx={{ mb: 2 }}>
+                Para crear una asignación, primero registra personal y al menos un evento.
+              </Alert>
+            )}
+            <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", md: "repeat(4, 1fr)" }, gap: 1.5 }}>
+              <TextField
+                select
+                label="Personal"
+                name="idPersonal"
+                value={asignacion.idPersonal}
+                onChange={cambiarAsignacion}
+                required
+                size="small"
+                disabled={personas.length === 0}
+              >
+                {personas.map((persona) => (
+                  <MenuItem key={persona.id} value={String(persona.id)}>
+                    {persona.nombre} {persona.apellido}
+                  </MenuItem>
+                ))}
+              </TextField>
+              <TextField
+                select
+                label="Evento"
+                name="idEvento"
+                value={asignacion.idEvento}
+                onChange={cambiarAsignacion}
+                required
+                size="small"
+                disabled={eventos.length === 0}
+              >
+                {eventos.map((evento) => {
+                  const duplicado = asignaciones.some(
+                    (item) =>
+                      String(item.id_personal ?? item.personal?.id) === asignacion.idPersonal &&
+                      String(item.id_evento ?? item.evento?.id) === String(evento.id),
+                  );
+                  return (
+                    <MenuItem key={evento.id} value={String(evento.id)} disabled={duplicado}>
+                      {evento.local} · {formatearFecha(evento.fecha)}{duplicado ? " (ya asignado)" : ""}
+                    </MenuItem>
+                  );
+                })}
+              </TextField>
+              <TextField
+                label="Fecha de asignación"
+                name="fechaContratacion"
+                type="date"
+                value={asignacion.fechaContratacion}
+                onChange={cambiarAsignacion}
+                size="small"
+                slotProps={{ inputLabel: { shrink: true } }}
+              />
+              <TextField
+                label="Salario"
+                name="salario"
+                type="number"
+                value={asignacion.salario}
+                onChange={cambiarAsignacion}
+                required
+                size="small"
+                slotProps={{ htmlInput: { min: 0, step: 1 } }}
+              />
+            </Box>
+            <Button
+              type="submit"
+              variant="contained"
+              sx={{ mt: 1.5 }}
+              disabled={
+                guardandoAsignacion ||
+                cargandoAsignaciones ||
+                personas.length === 0 ||
+                eventos.length === 0
+              }
+            >
+              {guardandoAsignacion ? "Asignando..." : "Asignar a evento"}
+            </Button>
+          </Paper>
+
+          {cargandoAsignaciones ? (
+            <Typography role="status">Cargando asignaciones...</Typography>
+          ) : !errorAsignaciones && asignaciones.length === 0 ? (
+            <Paper variant="outlined" sx={{ p: 4, textAlign: "center", borderRadius: 2 }}>
+              <Typography>Aún no hay personal asignado a eventos.</Typography>
+            </Paper>
+          ) : !errorAsignaciones && (
+            <TableContainer component={Paper} variant="outlined" sx={{ borderRadius: 2, overflowX: "auto" }}>
+              <Table aria-label="Asignaciones de personal a eventos">
+                <TableHead>
+                  <TableRow>
+                    <TableCell><strong>Personal</strong></TableCell>
+                    <TableCell><strong>Evento</strong></TableCell>
+                    <TableCell><strong>Fecha del evento</strong></TableCell>
+                    <TableCell><strong>Fecha de asignación</strong></TableCell>
+                    <TableCell align="right"><strong>Salario</strong></TableCell>
+                    <TableCell align="right"><strong>Acciones</strong></TableCell>
                   </TableRow>
-                );
-              })}
-            </TableBody>
-          </Table>
-        </TableContainer>
+                </TableHead>
+                <TableBody>
+                  {asignaciones.map((item) => {
+                    const persona = item.personal || personas.find(
+                      (actual) => String(actual.id) === String(item.id_personal),
+                    );
+                    const evento = item.evento || eventos.find(
+                      (actual) => String(actual.id) === String(item.id_evento),
+                    );
+                    return (
+                      <TableRow key={item.id} hover>
+                        <TableCell>{persona ? `${persona.nombre} ${persona.apellido}` : "Personal no disponible"}</TableCell>
+                        <TableCell>{evento?.local || "Evento no disponible"}</TableCell>
+                        <TableCell>{formatearFecha(evento?.fecha)}</TableCell>
+                        <TableCell>{formatearFecha(item.fecha)}</TableCell>
+                        <TableCell align="right">{item.salario ?? "—"}</TableCell>
+                        <TableCell align="right">
+                          <Button
+                            size="small"
+                            color="error"
+                            variant="outlined"
+                            onClick={() => quitarAsignacion(item)}
+                            disabled={eliminandoAsignacionId === item.id}
+                          >
+                            {eliminandoAsignacionId === item.id ? "Quitando..." : "Quitar"}
+                          </Button>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          )}
+        </Box>
       )}
     </Box>
   );
