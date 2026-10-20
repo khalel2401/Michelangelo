@@ -8,7 +8,7 @@ import FetchLocales from '../components/fetchLocales.jsx';
 
 export default function Home(){
   const navigate = useNavigate();
-
+  console.log('Home.jsx renderizado');
   return (
     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, width: '100%' }}>
       <Container maxWidth="sm" sx={{
@@ -40,6 +40,7 @@ export default function Home(){
         </Box>
         <Button onClick={() => navigate('/locales')}>Ver locales</Button>
         <Button onClick={() => navigate('/inventario')}>Revisar Inventario</Button>
+        <Button onClick={() => navigate('/vehiculos')}>Revisar Vehiculos</Button>
       </Container>
       <FetchLocales />
     </Box>

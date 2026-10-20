@@ -49,6 +49,18 @@ export function inventarioManager(){
     const [errorForm, setErrorForm] = useState(null);
     const [eliminandoId, setEliminandoId] = useState(null);
 
+    console.log("Renderizando inventarioManager, estado actual:", {
+        articulos,
+        cargando,
+        error,
+        mostrarForm,
+        editandoId,
+        formData,
+        guardando,
+        errorForm,
+        eliminandoId
+    });
+
     useEffect(() => {
         fetchArticulos();
     }, []);
