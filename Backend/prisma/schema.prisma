@@ -14,33 +14,43 @@ datasource db {
 }
 
 model Servicio {
-  id          Int          @id @default(autoincrement())
-  nombre      String       @db.VarChar(100)
-  precio      Float
-  descripcion String?      @db.VarChar(200)
-  activo      Boolean      @default(true)
-  createdAt   DateTime     @default(now())
-  updatedAt   DateTime     @updatedAt
+  id                    Int                  @id @default(autoincrement())
+  nombre                String               @db.VarChar(100)
+  precio                Float
+  descripcion           String?              @db.VarChar(200)
+  activo                Boolean              @default(true)
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
-  cotizaciones Cotizacion[]
+  cotizacionesServicios CotizacionServicio[]
 
   @@map("servicios")
 }
 
 model Cotizacion {
-  id               Int        @id @default(autoincrement())
-  cantidadPersonas Int
-  valorTotal       Float
-  abono            Float
-  estado           String     @default("pendiente")
-  servicioId       Int
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  id                    Int                  @id @default(autoincrement())
+  cantidadPersonas      Int
+  valorTotal            Float
+  abono                 Float
+  estado                String               @default("pendiente")
+  createdAt             DateTime             @default(now())
+  updatedAt             DateTime             @updatedAt
 
-  servicio         Servicio   @relation(fields: [servicioId], references: [id])
-  evento           Evento?
+  cotizacionesServicios CotizacionServicio[]
+  evento                Evento?
 
   @@map("cotizaciones")
+}
+
+model CotizacionServicio {
+  id           Int        @id @default(autoincrement())
+  cotizacionId Int
+  servicioId   Int
+
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  servicio     Servicio   @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+
+  @@map("cotizaciones_servicios")
 }
 
 model Evento {
@@ -81,12 +91,32 @@ model Usuario {
   @@map("usuarios")
 }
 
+<<<<<<<<< Temporary merge branch 1
+model Articulo {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @db.VarChar(100)
+  cantidad  Int       
+  enUso     Boolean  @default(true)
+
+  @@map("articulos")
+}
+
+model Vehiculo {
+  id        Int      @id @default(autoincrement())
+  marca     String   @db.VarChar(100)
+  modelo    String   @db.VarChar(100)
+  patente   String   @db.VarChar(100)
+  disponible Boolean  @default(true)
+
+  @@map("vehiculos")
+}
+=========
 model Personal {
   id            Int      @id @default(autoincrement())
   nombre        String
   apellido      String
   telefono      String?
-  calificacion  Int
+  calificacion  Int?
   contrataciones  Contratacion[]
 }
 
