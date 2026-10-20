@@ -12,21 +12,23 @@ export default function Home(){
   return (
     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, width: '100%' }}>
       <Container maxWidth="sm" sx={{
-        borderColor: 'secondary.main',
         border: 4,
+        borderColor: 'secondary.main',
         borderRadius: 6,
         display: 'grid',
         alignContent: 'left',
         flex: 1,
         mx: 0,
       }}>
-        <Box sx={{ my: 4 }}>
-          <Typography variant="h4" component="h1" gutterBottom>
+        <Box sx={{ my: 4, align: 'center' }}>
+          <Typography variant="h4" component="h1" gutterBottom align='center'>
             HOLA MUNDOS
           </Typography>
           <Box
             component="img"
             sx={{
+              display: 'block',
+              mx: 'auto',
               height: 233,
               width: 350,
               maxHeight: { xs: 233, md: 167 },

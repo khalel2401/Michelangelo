@@ -13,8 +13,7 @@ import vehiculoRoutes from './src/Routes/vehiculosR.js';
 import errorHandler from './src/Middlewares/errorM.js';
 import personalRoutes from './src/Routes/personalR.js';
 import contratacionRoutes from './src/Routes/contratacionR.js';
-
-import cotizacionServicio  from "./src/Routes/cotizacionServicio.js";
+import cotizacionServicio from "./src/Routes/cotizacionServicio.js";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -24,6 +23,7 @@ app.use(express.json());
 
 app.use(usuarioRoutes);
 app.use(eventoRoutes);
+app.use(articuloRoutes);
 app.use(vehiculoRoutes);
 app.use(authRoutes);
 app.use(servicioRoutes);
@@ -35,6 +35,8 @@ app.use(localRoutes);
 app.use(articuloRoutes);
 app.use(errorHandler);
 app.use("/api/cotizaciones-servicios", cotizacionServicio);
+
+app.use(errorHandler);
 
 async function testDatabaseConnection() {
   try {

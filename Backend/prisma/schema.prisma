@@ -27,14 +27,32 @@ model Servicio {
   @@map("servicios")
 }
 
+model Local {
+  id             Int          @id @default(autoincrement())
+  nombre         String
+  precio         Int
+  contacto       String?
+  nombreDueno    String
+  aforo          Int
+  direccion      String
+  disponibilidad Boolean      @default(true)
+
+  cotizaciones   Cotizacion[]
+
+  @@map("locales")
+}
+
 model Cotizacion {
-  id                    Int                  @id @default(autoincrement())
-  cantidadPersonas      Int
-  valorTotal            Float
-  abono                 Float
-  estado                String               @default("pendiente")
-  createdAt             DateTime             @default(now())
-  updatedAt             DateTime             @updatedAt
+  id               Int      @id @default(autoincrement())
+  cantidadPersonas Int
+  valorTotal       Float
+  abono            Float
+  estado           String   @default("pendiente")
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  localId          Int?
+  local            Local?   @relation(fields: [localId], references: [id])
 
   cotizacionesServicios CotizacionServicio[]
   evento                Evento?
@@ -54,19 +72,16 @@ model CotizacionServicio {
 }
 
 model Evento {
-  id                   Int        @id @default(autoincrement())
-  local                String     @db.VarChar(100)
-  fecha                DateTime
-  cotizacionId         Int        @unique
-  cotizacion           Cotizacion @relation(fields: [cotizacionId], references: [id])
-  //trabajadores       Trabajador[] //Ponlo como contratacion
-  //vehiculos          Vehiculo[]
-  //equipos            Equipo[]
+  id           Int        @id @default(autoincrement())
+  nombre       String     @db.VarChar(100)
+  fecha        DateTime
+  cotizacionId Int        @unique
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id])
 
-  contrataciones       Contratacion[]
+  contrataciones Contratacion[]
 
-  createdAt        DateTime   @default(now())
-  updatedAt        DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("eventos")
 }
@@ -91,7 +106,6 @@ model Usuario {
   @@map("usuarios")
 }
 
-<<<<<<<<< Temporary merge branch 1
 model Articulo {
   id        Int      @id @default(autoincrement())
   nombre    String   @db.VarChar(100)
@@ -110,53 +124,23 @@ model Vehiculo {
 
   @@map("vehiculos")
 }
-=========
+
 model Personal {
-  id            Int      @id @default(autoincrement())
-  nombre        String
-  apellido      String
-  telefono      String?
-  calificacion  Int?
-  contrataciones  Contratacion[]
+  id             Int            @id @default(autoincrement())
+  nombre         String
+  apellido       String
+  telefono       String?
+  calificacion   Int?
+  contrataciones Contratacion[]
 }
 
 model Contratacion {
-  id            Int           @id @default(autoincrement())
-  id_personal   Int       
-  id_evento     Int
-  fecha         String?
-  salario       Int
+  id          Int      @id @default(autoincrement())
+  id_personal Int
+  id_evento   Int
+  fecha       String?
+  salario     Int
 
-  personal      Personal      @relation(fields:[id_personal], references: [id])
-  evento        Evento        @relation(fields:[id_evento], references: [id])
-}
-model Local {
-  id              Int @id @default(autoincrement())
-  nombre          String
-  precio          Int
-  contacto        String?
-  nombreDueno     String
-  aforo           Int
-  direccion       String
-  disponibilidad  Boolean
-
-  @@map("locales")
-}
-model Articulo {
-  id        Int      @id @default(autoincrement())
-  nombre    String   @db.VarChar(100)
-  cantidad  Int       
-  enUso     Boolean  @default(true)
-
-  @@map("articulos")
-}
-
-model Vehiculo {
-  id        Int      @id @default(autoincrement())
-  marca     String   @db.VarChar(100)
-  modelo    String   @db.VarChar(100)
-  patente   String   @db.VarChar(100)
-  disponible Boolean  @default(true)
-
-  @@map("vehiculos")
+  personal Personal @relation(fields: [id_personal], references: [id])
+  evento   Evento   @relation(fields: [id_evento], references: [id])
 }

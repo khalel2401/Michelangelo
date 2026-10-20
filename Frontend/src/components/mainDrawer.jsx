@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { flushSync } from 'react-dom';
 import { alpha, styled, useColorScheme, useTheme } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import MuiDrawer from '@mui/material/Drawer';
@@ -19,7 +20,9 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import AccessibleIcon from '@mui/icons-material/Accessible';
-import PregnantWomanIcon from '@mui/icons-material/PregnantWoman';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightMode';
+import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
 
 const drawerWidth = 240;
@@ -65,6 +68,24 @@ const AppBar = styled(MuiAppBar, {
   ].join(', '),
   borderBottom: `1px solid ${alpha(theme.palette.brand.burgundy, 0.2)}`,
   boxShadow: `0 2px 8px ${alpha(theme.palette.brand.burgundy, 0.12)}`,
+  animation: 'appBarPop 500ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+  '@keyframes appBarPop': {
+    '0%': {
+      opacity: 0,
+      transform: 'scale(0.96) translateY(-10px)',
+    },
+    '70%': {
+      opacity: 1,
+      transform: 'scale(1.01) translateY(0)',
+    },
+    '100%': {
+      opacity: 1,
+      transform: 'scale(1)',
+    },
+  },
+  '@media (prefers-reduced-motion: reduce)': {
+    animation: 'none',
+  },
   transition: theme.transitions.create(['width', 'margin'], {
     easing: theme.transitions.easing.sharp,
     duration: theme.transitions.duration.leavingScreen,
@@ -90,6 +111,16 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
     flexShrink: 0,
     whiteSpace: 'nowrap',
     boxSizing: 'border-box',
+    '@keyframes drawerSlideIn': {
+      from: { transform: 'translateX(-100%)' },
+      to: { transform: 'translateX(0)' },
+    },
+    '& .MuiDrawer-paper': {
+      animation: 'drawerSlideIn 450ms cubic-bezier(0.2, 0.8, 0.2, 1) both',
+      '@media (prefers-reduced-motion: reduce)': {
+        animation: 'none',
+      },
+    },
     variants: [
       {
         props: ({ open }) => open,
@@ -116,8 +147,10 @@ export default function MiniDrawer() {
   const [open, setOpen] = React.useState(false);
   const routes = {
     Locales: '/locales',
+    Eventos: '/eventos',
     Inventario: '/Inventario',
     Personal: '/personal',
+    Cotizaciones: '/cotizaciones',
   };
 
   const handleDrawerOpen = () => {
@@ -126,6 +159,32 @@ export default function MiniDrawer() {
 
   const handleDrawerClose = () => {
     setOpen(false);
+  };
+
+  const handleThemeToggle = (event) => {
+    const nextMode = mode === 'dark' ? 'light' : 'dark';
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!document.startViewTransition || reduceMotion) {
+      setMode(nextMode);
+      return;
+    }
+
+    const x = event.detail === 0 ? window.innerWidth / 2 : event.clientX;
+    const y = event.detail === 0 ? window.innerHeight / 2 : event.clientY;
+    const radius = Math.hypot(
+      Math.max(x, window.innerWidth - x),
+      Math.max(y, window.innerHeight - y),
+    );
+    const root = document.documentElement;
+
+    root.style.setProperty('--theme-transition-x', `${x}px`);
+    root.style.setProperty('--theme-transition-y', `${y}px`);
+    root.style.setProperty('--theme-transition-radius', `${radius}px`);
+
+    document.startViewTransition(() => {
+      flushSync(() => setMode(nextMode));
+    });
   };
 
   return (
@@ -151,13 +210,18 @@ export default function MiniDrawer() {
             NES eventos
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <IconButton
-            color="inherit"
-            aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
-            onClick={() => setMode(mode === 'dark' ? 'light' : 'dark')}
-          >
-            <PregnantWomanIcon />
-          </IconButton>
+          <Tooltip title={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}>
+            <span>
+              <IconButton
+                color="inherit"
+                aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
+                disabled={!mode}
+                onClick={handleThemeToggle}
+              >
+                {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+              </IconButton>
+            </span>
+          </Tooltip>
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -173,7 +237,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Locales', 'Eventos', 'Inventario', 'Personal'].map((text, index) => (
+          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={routes[text] ? () => navigate(routes[text]) : undefined}
@@ -207,6 +271,19 @@ export default function MiniDrawer() {
                   ]}
                 >
                   {text === 'Locales' ? <InboxIcon /> : <AccessibleIcon />}
+                  {text === 'Eventos' ? (    
+                    <img
+                      src="/evento.png"
+                      alt="Eventos"
+                      style={{
+                        width: 24,
+                        height: 24,
+                        objectFit: 'contain',
+                      }}
+                    />
+                  ) : (
+                <AccessibleIcon />
+                  )}
                 </ListItemIcon>
                 <ListItemText
                   primary={text}

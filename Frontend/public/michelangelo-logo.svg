@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" aria-hidden="true" role="img" class="iconify iconify--logos" width="31.88" height="32" preserveAspectRatio="xMidYMid meet" viewBox="0 0 256 257" xmlns:bx="https://boxy-svg.com">
+  <defs>
+    <radialGradient gradientUnits="userSpaceOnUse" cx="127.98" cy="124.413" r="125.774" id="gradient-0">
+      <stop offset="0" style="stop-color: rgb(218, 85, 85)"/>
+      <stop offset="1" style="stop-color: rgb(59.557% 6.3874% 14.183%)"/>
+    </radialGradient>
+  </defs>
+  <path d="M 127.98 -2.618 L 159.073 92.376 L 253.754 94.425 L 178.29 155.184 L 205.713 251.444 L 127.98 194.001 L 50.247 251.444 L 77.67 155.184 L 2.206 94.425 L 96.887 92.376 Z" bx:shape="star 127.98 137.824 132.247 140.442 0.4 5 1@12420449" style="stroke: rgb(0, 0, 0); fill-rule: nonzero; paint-order: stroke; fill: url(&quot;#gradient-0&quot;);"/>
+  <text style="fill: rgb(51, 51, 51); font-family: &quot;Arial&quot;, sans-serif; font-size: 28px; font-weight: 700; letter-spacing: -3px; text-transform: uppercase; white-space: pre;" x="132.866" y="142.699" transform="matrix(4.627357, 0, 0, 7.7395, -606.780334, -900.696411)">NES</text>
+  <text style="fill: rgb(160, 25, 42); font-family: Arial, sans-serif; font-size: 32px; letter-spacing: -4px; paint-order: stroke; stroke: rgb(0, 0, 0); stroke-linecap: round; stroke-linejoin: round; word-spacing: -1px; white-space: pre;" x="59.759" y="231.888" transform="matrix(0.77349, 0, 0, 0.775298, 33.251336, 66.753732)">EVENTOS</text>
+</svg>

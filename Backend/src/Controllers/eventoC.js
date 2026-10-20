@@ -5,7 +5,7 @@ export const getEventos = async (req, res) => {
     const eventos = await eventoService.obtenerEventos();
     res.status(200).json(eventos);
   } catch (error) {
-    res.status(500).json({ mensaje: "Error interno del servidor" });
+    res.status(500).json({ mensaje: "Error interno del servidor", message: error.message });
   }
 };
 
@@ -26,6 +26,15 @@ export const crearEvento = async (req, res) => {
     const nuevoEvento = await eventoService.crearEvento(req.body);
     res.status(201).json(nuevoEvento);
   } catch (error) {
+    if (error.message === "1") {
+      return res.status(404).json({ mensaje: "La cotización no existe" });
+    }
+
+    if (error.message === "2") {
+      return res.status(400).json({ 
+        mensaje: "No se puede crear el evento, el abono debe ser de al menos el 50% del valor total" 
+      });
+    }
     res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };

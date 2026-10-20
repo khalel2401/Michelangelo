@@ -3,7 +3,6 @@ import { Component, useState } from 'react';
 import { inventarioManager } from "../components/inventarioManager.jsx";
 import Button from "@mui/material/Button";
 import Container from "@mui/material/Container";
-import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
 
 const table = [
@@ -20,14 +19,8 @@ export default function Inventario(){
     const TabComponent = table.find((t) => t.id === tabActiva)?.component;
 
     return (
-        <Container maxWidth="sm">
-            <Typography>Inventario</Typography>
+        <Container maxWidth="lg">
             <Box component="articulos">
-                <Box component="tab-content">
-                    {TabComponent && <TabComponent/>}
-                </Box>
-            </Box>
-            <Box component="vehiculos">
                 <Box component="tab-content">
                     {TabComponent && <TabComponent/>}
                 </Box>
