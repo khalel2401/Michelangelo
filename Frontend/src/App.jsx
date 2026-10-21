@@ -9,8 +9,11 @@ import Home from './pages/Home.jsx';
 import { Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import Locales from './pages/Locales.jsx';
 import Inventario from './pages/Inventario.jsx';
+import Personal from './pages/Personal.jsx';
 import MiniDrawer from './components/mainDrawer.jsx';
 import Legal from './pages/TerminosCondiciones.jsx';
+import Eventos from "./pages/Eventos.jsx";
+import Cotizaciones from './pages/Cotizacion.jsx';
 
 const routeFadeDuration = 180;
 
@@ -68,6 +71,9 @@ export default function App() {
         />
         <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
         <Route path="/Inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
+      <Route path="/personal" element={isLoggedIn ? <Personal /> : <Navigate to="/" replace />} />
+        <Route path="/eventos" element={<Eventos />} />
+        <Route path="/cotizaciones" element={<Cotizaciones />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Box>

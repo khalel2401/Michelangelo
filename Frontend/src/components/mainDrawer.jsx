@@ -19,6 +19,9 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
+import PersonIcon from '@mui/icons-material/Person';
+import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
+import InventoryIcon from '@mui/icons-material/Inventory';
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
@@ -147,7 +150,10 @@ export default function MiniDrawer() {
   const [open, setOpen] = React.useState(false);
   const routes = {
     Locales: '/locales',
+    Eventos: '/eventos',
     Inventario: '/Inventario',
+    Personal: '/personal',
+    Cotizaciones: '/cotizaciones',
   };
 
   const handleDrawerOpen = () => {
@@ -234,7 +240,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Locales', 'Eventos', 'Inventario', 'Personal'].map((text, index) => (
+          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones'].map((text, index) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={routes[text] ? () => navigate(routes[text]) : undefined}
@@ -267,7 +273,21 @@ export default function MiniDrawer() {
                         },
                   ]}
                 >
-                  {text === 'Locales' ? <InboxIcon /> : <AccessibleIcon />}
+                  {text === 'Personal' ? <PersonIcon /> : null }
+                  {text === 'Locales' ? <InboxIcon /> : null }
+                  {text === 'Cotizaciones' ? <PointOfSaleIcon /> : null }
+                  {text === 'Inventario' ? <InventoryIcon /> : null }
+                  {text === 'Eventos' ? (    
+                    <img
+                      src="/evento.png"
+                      alt="Eventos"
+                      style={{
+                        width: 24,
+                        height: 24,
+                        objectFit: 'contain',
+                      }}
+                    />
+                  ) : null }
                 </ListItemIcon>
                 <ListItemText
                   primary={text}

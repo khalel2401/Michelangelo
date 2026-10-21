@@ -22,7 +22,7 @@ export const crearContratacion = async (req, res) => {
 export const actualizarContratacion = async (req, res) => {
     try {
         const { id } = req.params;
-        const existe = await contratacionService.obtenerContratacionPorId(id);
+        const existe = await contratacionService.getContratacionById(id);
             if (!existe) {
               return res.status(404).json({ mensaje: "Contratación no encontrada" });
             }
@@ -37,7 +37,7 @@ export const actualizarContratacion = async (req, res) => {
 export const eliminarContratacion =async (req, res) => {
     try {
         const { id } = req.params;
-        const existe = await contratacionService.obtenerContratacionPorId(id);
+        const existe = await contratacionService.getContratacionById(id);
             if (!existe) {
               return res.status(404).json({ mensaje: "Contratación no encontrada" });
             }
