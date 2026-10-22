@@ -29,7 +29,7 @@ export default function Login({ onLogin }) {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => event.preventDefault();
   const handleMouseUpPassword = (event) => event.preventDefault();
-
+  console.log('Login.jsx');
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);

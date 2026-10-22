@@ -15,6 +15,8 @@ import Legal from './pages/TerminosCondiciones.jsx';
 import Eventos from "./pages/Eventos.jsx";
 import Cotizaciones from './pages/Cotizacion.jsx';
 
+import Vehiculos from './pages/Vehiculos.jsx';
+
 const routeFadeDuration = 180;
 
 export default function App() {
@@ -70,10 +72,12 @@ export default function App() {
           )}
         />
         <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
-        <Route path="/Inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
-      <Route path="/personal" element={isLoggedIn ? <Personal /> : <Navigate to="/" replace />} />
+        <Route path="/personal" element={isLoggedIn ? <Personal /> : <Navigate to="/" replace />} />
         <Route path="/eventos" element={<Eventos />} />
         <Route path="/cotizaciones" element={<Cotizaciones />} />
+        <Route path="/inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
+        <Route path="/vehiculos" element={isLoggedIn ? <Vehiculos /> : <Navigate to="/" replace />} />
+        <Route path="/legal" element={<Legal />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Box>

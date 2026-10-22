@@ -17,10 +17,10 @@ export default function Inventario(){
     const navigate = useNavigate();
     const [tabActiva, setTabActiva] = useState(table[0].id);
     const TabComponent = table.find((t) => t.id === tabActiva)?.component;
-
+    
     return (
         <Container maxWidth="lg">
-            <Box component="articulos">
+            <Box>
                 <Box component="tab-content">
                     {TabComponent && <TabComponent/>}
                 </Box>
