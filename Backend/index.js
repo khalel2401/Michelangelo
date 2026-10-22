@@ -30,7 +30,10 @@ app.use(servicioRoutes);
 app.use(cotizacionRoutes);
 app.use(contratacionRoutes);
 app.use(personalRoutes);
+
 app.use(localRoutes);
+app.use(articuloRoutes);
+app.use(errorHandler);
 app.use("/api/cotizaciones-servicios", cotizacionServicio);
 
 app.use(errorHandler);
