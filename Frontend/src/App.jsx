@@ -14,7 +14,6 @@ import MiniDrawer from './components/mainDrawer.jsx';
 import Legal from './pages/TerminosCondiciones.jsx';
 import Eventos from "./pages/Eventos.jsx";
 import Cotizaciones from './pages/Cotizacion.jsx';
-
 import Vehiculos from './pages/Vehiculos.jsx';
 
 const routeFadeDuration = 180;
