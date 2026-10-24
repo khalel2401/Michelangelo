@@ -1,83 +1,52 @@
 import prisma from '../Config/prisma.js';
 
+const ROLES_TRABAJADOR = ['admin'];
+
 const crearError = (status, message) => Object.assign(new Error(message), { status });
 
-const ROLES_PERMITIDOS = {
-  cliente: ['empleado', 'local'],
-  admin: ['empleado', 'local', 'cliente'],
+const incluir = {
+  autor: {select: {id: true, nombre: true,apellido: true }},
+  trabajador: {select: {id: true, nombre: true,apellido: true }},
+  evento: {select: {id: true, nombre: true, fecha: true }},
 };
 
-export const getAllValoraciones = async () => {
-  return await prisma.valoracion.findMany({ orderBy: { createdAt: 'desc' } });
+const buscarEvento = async(id) => {
+  const evento = await prisma.evento.findUnique({where: {id}});
+  if (!evento) throw crearError(404, 'Evento no encontrado');
+  return evento;
 };
 
-export const getValoracionById = async (id) => {
-  return await prisma.valoracion.findUnique({
-    where: { id: parseInt(id) },
-  });
-}
-
-export const getValoracionesByAutor = async (autorId) => {
-  return await prisma.valoracion.findMany({
-    where: { autorId },
-    orderBy: { createdAt: 'desc' },
-  });
-}
-
-export const getValoracionesByObjetivo = async (rol, objetivoId) => {
-  return await prisma.valoracion.findMany({
-    where: {
-      rol,
-      objetivoId: parseInt(objetivoId),
-    },
-    orderBy: { createdAt: 'desc' },
-  });
-}
-
-export const createValoracion = async (valoracionData, autor) => {
-  const permitidos = ROLES_PERMITIDOS[autor.rol] ?? [];
-  if (!permitidos.includes(valoracionData.rol)) {
-    throw crearError(403, `Un usuario con rol "${autor.rol}" no puede valorar a un "${valoracionData.rol}"`);
+const buscarTrabajador = async(id)=> {
+  const trabajador = await prisma.usuario.findUnique({where: {id}});
+  if (!trabajador || !ROLES_TRABAJADOR.includes(trabajador.rol)){
+    throw crearError(404, 'Trabajador no encontrado');
   }
+  return trabajador;
+};
 
-  if (valoracionData.rol === 'cliente') {
-    if (valoracionData.objetivoId === autor.id) {
-      throw crearError(400, 'No puedes valorarte a ti mismo');
-    }
-    const objetivo = await prisma.usuario.findUnique({
-      where: { id: valoracionData.objetivoId },
-    });
-    if (!objetivo || objetivo.rol !== 'cliente') {
-      throw crearError(404, 'El cliente indicado no existe');
-    }
+const buscarValoracion = async(id)=> {
+  const valoracion = await prisma.valoracion.findUnique({where: {id}, include: incluir});
+  if(!valoracion) throw crearError(404, 'Valoracion no encontrada');
+  return valoracion;
+};
+
+const verificarPermiso = (usuario, valoracion)=> {
+  if (usuario.rol !== 'admin' && valoracion.autorId !== usuario.id){
+    throw crearError(403,'No tienes permiso sobre esta valoracion');
   }
+};
 
-  const duplicada = await prisma.valoracion.findFirst({
-    where: {
-      autorId: autor.id,
-      rol: valoracionData.rol,
-      objetivoId: valoracionData.objetivoId,
-      eventoId: valoracionData.eventoId ?? null,
-    },
-  });
-  if (duplicada) {
-    throw crearError(409, 'Ya realizaste una valoración para este objetivo en este evento');
-  }
+const resumen = async (where)=>{
+  const [valoraciones, stats] = await Promise.all([prisma.valoracion.findMany({where, include: incluir, orderBy: {createdAt: 'desc'}}),
+    prisma.valoracion.aggregate({where, _avg: {calificaion: true},
+    _count: true}),
+  ]);
+  const promedio = stats._avg.calificaion;
+  return{
+    promedio: promedio === null ? null: Math.round(promedio*100)/100,
+    total: stats._count,
+    valoraciones,
+  };
+};
 
-  return await prisma.valoracion.create({
-    data: { ...valoracionData, autorId: autor.id },
-  });
-}
-
-export const updateValoracion = async (id, valoracionData) => {
-  return await prisma.valoracion.update({
-    where: { id: parseInt(id) },
-    data: valoracionData,
-  });
-}
-
-export const deleteValoracion = async (id) => {
-  return await prisma.valoracion.delete({
-    where: { id: parseInt(id) },
-  });
-}
+//hacer las consultas de las valoraciones abajo
