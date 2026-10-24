@@ -52,19 +52,25 @@ model Usuario {
 }
 
 model Valoracion {
-  id           Int      @id @default(autoincrement())
-  calificacion Int
-  comentario   String   @db.Text
-  rol          String   @default("cliente") 
-  objetivoId   Int                           
-  autorId      Int
-  autor        Usuario  @relation(fields: [autorId], references: [id])
-  eventoId     Int?
-  evento       Evento?  @relation(fields: [eventoId], references: [id], onDelete: SetNull)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+ id             Int @id   @default(autoincrement())
+ calificacion   Int
+ comentario     String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  //autor coso
+  autorId       Int
+  autor         Usuario @relation("ValoracionAutor", fields: [autorId], references: [id], onDelete: Cascade)
+  eventoId      Int?
+  evento        Evento? @relation(fields: [eventoId], references: [id], onDelete:Cascade)
 
-  @@unique([autorId, rol, objetivoId, eventoId])
-  @@index([rol, objetivoId])
+  //trabajador
+  trabajadorId    Int?
+  trabajador      Usuario? @realtion("ValoracionTrabajador", fields:
+  [trabajadorId], references: [id], onDelete: Cascade)
+
+  @@unique([autorId, trabajadorId])
+  @@unique([autorId, eventoId])
   @@map("valoraciones")
+  @@index([trabajadorId])
+  @@index([eventoId])
 }

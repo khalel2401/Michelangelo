@@ -14,7 +14,7 @@ export const valoracionSchema = z.object({
     .max(5, 'La calificación máxima es 5'),
   comentario: z
     .string()
-    .trim() //no comentarios de solo espacios
+    .trim() 
     .min(1, 'El comentario no puede estar vacío')
     .max(1000, 'El comentario es demasiado largo'),
   rol: rolValoracionEnum,
