@@ -1,7 +1,6 @@
 import prisma from '../Config/prisma.js';
 
 const ROLES_TRABAJADOR = ['admin'];
-
 const crearError = (status, message) => Object.assign(new Error(message), { status });
 
 const incluir = {
@@ -83,6 +82,14 @@ export const updateValoracion = async (id, datos, usuario)=> {
   velificarPermiso(usuario, valoracion);
   return prisma.valoracion.update({
     where:{id},
-    data: {calificacion, datos.calificacion, comentario: datos.comentario},
+    data: { calificacion: datos.calificacion, comentario: datos.comentario},
+    include: incluir,
   });
 };
+
+export const deleteValoracion = async (id, usuario)=>{ 
+  const valoracion = await buscarValoracion(id);
+  verificarPermiso(valoracion, usuario);
+  await prisma.valoracion.delete({where: {id}
+  });
+}
