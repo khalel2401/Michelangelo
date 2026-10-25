@@ -1,3 +1,4 @@
+
 /*
     Usamos la libreria faker para generar datos falsos para poblar el backend.
 
@@ -35,6 +36,16 @@ async function main() {
             })
         )
     );
+    prisma.usuario.create({
+        data:{
+            email: 'test@example.com',
+            password: 'password123',
+            nombre: 'Test',
+            apellido: 'User',
+            telefono: '+1234567890',
+            rol: 'admin'
+        }
+    })
     
     const cantidadServicios = 10;
     console.log('Generando datos falsos de servicio...');
@@ -141,7 +152,7 @@ async function main() {
     });
 
  
-    /*
+    
     const cantidadEventos = 5;
     console.log('Generando datos falsos de evento...');
     const eventos = await Promise.all(
@@ -156,8 +167,8 @@ async function main() {
         )
     );
 
-    */
-    /*
+    
+    
     const contrataciones = await Promise.all(
         eventos.map((evento, index) =>
             prisma.contratacion.create({
@@ -171,25 +182,7 @@ async function main() {
         )
     );
 
-    */
-    /*
-    const cantidadCotizaciones = 10;
-    console.log('Generando datos falsos de cotizaciones...');
-    const cotizaciones = await Promise.all(
-        Array.from({ length: cantidadCotizaciones }).map((_, index) => {
-            const valorTotal = faker.number.int({ min: 500000, max: 3000000 });
-            return prisma.cotizacion.create({
-                data: {
-                    localId: locales[index].id,
-                    cantidadPersonas: faker.number.int({ min: 20, max: 300 }),
-                    valorTotal: valorTotal,
-                    abono: faker.number.int({ min: Math.ceil(valorTotal * 0.5), max: valorTotal }),
-                    estado: faker.helpers.arrayElement(['pendiente', 'aprobada', 'finalizada']),
-                },
-            });
-        })
-    );
-    */
+    
     console.log('Datos falsos generados exitosamente.');
     console.log('Usuarios generados:', usuarios);
     console.log('Servicios generados:', servicios);
