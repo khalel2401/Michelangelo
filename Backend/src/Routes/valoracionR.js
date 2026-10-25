@@ -21,6 +21,13 @@ import { verificarAuth } from "../Middlewares/authM.js";
 const router = Router();
 
 router.use("/valoraciones", verificarAuth);
+
+const soloAdmin = (req, res, next)=>{
+  if (req.usuario.rol !== 'admin'){
+    return res.status(403).json({menssage: 'No tienes permiso para realizar esta acción, solo un administrador'});
+  }
+}
+router.use("/valoraciones", verificarAuth);
 router.get("/valoraciones", getValoraciones);
 router.get("/valoraciones/mias", getMisValoraciones);
 router.post("/valoraciones", validateSchema(valoracionSchema), crearValoracion);
