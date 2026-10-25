@@ -1,41 +1,37 @@
 import { z } from 'zod';
 
-export const rolValoracionEnum = z.enum(['empleado', 'local', 'cliente']);
+const id = z.number().int().positive().max(2147483647);
 
-const idSchema = z.number().int().positive().max(2147483647);
+const calificacion = z
+  .number({ error: 'La calificación debe ser un número' })
+  .int('La calificación debe ser un número entero')
+  .min(1, 'La calificación mínima es 1')
+  .max(5, 'La calificación máxima es 5');
 
+const comentario = z
+  .string({ error: 'El comentario debe ser texto' })
+  .trim()
+  .min(1, 'El comentario no puede estar vacío')
+  .max(1000, 'El comentario no puede superar los 1000 caracteres');
 
-
-export const valoracionSchema = z.object({
-  calificacion: z
-    .number()
-    .int()
-    .min(1, 'La calificación mínima es 1')
-    .max(5, 'La calificación máxima es 5'),
-  comentario: z
-    .string()
-    .trim() 
-    .min(1, 'El comentario no puede estar vacío')
-    .max(1000, 'El comentario es demasiado largo'),
-  rol: rolValoracionEnum,
-  objetivoId: idSchema,
-  eventoId: idSchema.optional(),
-});
-
-
-export const updateValoracionSchema = valoracionSchema
-  .pick({ calificacion: true, comentario: true })
-  .partial()
-  .refine((datos) => Object.keys(datos).length > 0, {
-    message: 'Debe enviar calificacion o comentario para actualizar',
+export const valoracionSchema = z
+  .object({
+    calificacion,
+    comentario: comentario.optional(),
+    trabajadorId: id.optional(),
+    eventoId: id.optional(),
+  })
+  .refine((d) => (d.trabajadorId === undefined) !== (d.eventoId === undefined), {
+    message: 'Debes indicar trabajadorId o eventoId (solo uno de los dos)',
+    path: ['trabajadorId'],
   });
 
-export const idParamsSchema = z.object({
-  id: z.coerce.number().int().positive().max(2147483647),
-});
+export const updateValoracionSchema = z
+  .object({
+    calificacion: calificacion.optional(),
+    comentario: comentario.optional(),
+  })
 
-// Valida /valoraciones/objetivo/:rol/:objetivoId
-export const objetivoParamsSchema = z.object({
-  rol: rolValoracionEnum,
-  objetivoId: z.coerce.number().int().positive().max(2147483647),
-});
+  .refine((d) => d.calificacion !== undefined || d.comentario !== undefined, {
+    message: 'Debes enviar calificacion o comentario para actualizar',
+  });
