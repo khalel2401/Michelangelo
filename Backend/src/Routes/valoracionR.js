@@ -27,12 +27,14 @@ const soloAdmin = (req, res, next)=>{
     return res.status(403).json({menssage: 'No tienes permiso para realizar esta acción, solo un administrador'});
   }
 }
-router.use("/valoraciones", verificarAuth);
-router.get("/valoraciones", getValoraciones);
-router.get("/valoraciones/mias", getMisValoraciones);
-router.post("/valoraciones", validateSchema(valoracionSchema), crearValoracion);
-router.get("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), getValoracionPorId);
-router.put("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), validateSchema(updateValoracionSchema), actualizarValoracion);
-router.delete("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), eliminarValoracion);
 
+router.get('/valoraciones', soloAdmin, getValoraciones);
+router.get('/valoraciones/misValoraciones', getMisValoraciones);
+router.get('/valoraciones/trabajadores/id', soloAdmin, validateSchema(idParamsSchema, 'params'), getValoracionesTrabajador);
+router.get('/valoraciones/eventos/:id', soloAdmin, validateSchema(idParamsSchema, 'params'), getValoracionesEvento);
+router.get('/valoraciones/:id', validateSchema(idParamsSchema, 'params'), getValoracionPorId);
+
+router.post('/valoraciones', validateSchema(valoracionSchema), crearValoracion);
+router.put('/valoraciones/:id', validateSchema(idParamsSchema, 'params'), validateSchema(updateValoracionSchema), actualizarValoracion);
+router.delete('/valoraciones/:id', validateSchema(idParamsSchema, 'params'), eliminarValoracion);
 export default router;
