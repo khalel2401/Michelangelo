@@ -4,7 +4,6 @@ import {
   getValoraciones,
   getMisValoraciones,
   getValoracionPorId,
-  getValoracionesPorObjetivo,
   crearValoracion,
   actualizarValoracion,
   eliminarValoracion
@@ -13,7 +12,6 @@ import {
 import {
   valoracionSchema,
   updateValoracionSchema,
-  objetivoParamsSchema,
   idParamsSchema
 } from "../Schemas/valoracionSch.js";
 
@@ -25,7 +23,6 @@ const router = Router();
 router.use("/valoraciones", verificarAuth);
 router.get("/valoraciones", getValoraciones);
 router.get("/valoraciones/mias", getMisValoraciones);
-router.get("/valoraciones/objetivo/:rol/:objetivoId", validateSchema(objetivoParamsSchema, 'params'), getValoracionesPorObjetivo);
 router.post("/valoraciones", validateSchema(valoracionSchema), crearValoracion);
 router.get("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), getValoracionPorId);
 router.put("/valoraciones/:id", validateSchema(idParamsSchema, 'params'), validateSchema(updateValoracionSchema), actualizarValoracion);
