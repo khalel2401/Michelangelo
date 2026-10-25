@@ -83,10 +83,10 @@ export function vehiculoManager() {
 
     const handleChange = (e) => {
         const { name, value, type, checked} = e.target;
-        setFormData({
-            ...setFormData,
+        setFormData((prevFormData) => ({
+            ...prevFormData,
             [name]: type === "checkbox" ? checked : value,
-        });
+        }));
 
     };
 
