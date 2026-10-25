@@ -10,14 +10,19 @@ import CssBaseline from '@mui/material/CssBaseline';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import HomeIcon from '@mui/icons-material/Home';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
+import Tooltip from '@mui/material/Tooltip';
+import { useNavigate } from 'react-router-dom';
+
+
+//iconos
+import MenuIcon from '@mui/icons-material/Menu';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import ChevronRightIcon from '@mui/icons-material/ChevronRight';
+import HomeIcon from '@mui/icons-material/Home';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import PersonIcon from '@mui/icons-material/Person';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
@@ -25,8 +30,11 @@ import InventoryIcon from '@mui/icons-material/Inventory';
 import AccessibleIcon from '@mui/icons-material/Accessible';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
-import Tooltip from '@mui/material/Tooltip';
-import { useNavigate } from 'react-router-dom';
+import EventIcon from '@mui/icons-material/Event';
+//
+
+
+
 
 const drawerWidth = 240;
 
@@ -228,131 +236,39 @@ export default function MiniDrawer() {
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
+        
         <DrawerHeader>
+
           <IconButton aria-label="Ir a inicio" onClick={() => navigate('/')}>
-            <HomeIcon />
+            <HomeIcon /> Inicio
           </IconButton>
+
           {open && (
             <IconButton aria-label="Cerrar menú" onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
             </IconButton>
           )}
         </DrawerHeader>
+        
         <Divider />
+        
         <List>
           {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones'].map((text, index) => (
+            
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={routes[text] ? () => navigate(routes[text]) : undefined}
-                sx={[
-                  {
-                    minHeight: 48,
-                    px: 2.5,
-                  },
-                  open
-                    ? {
-                        justifyContent: 'initial',
-                      }
-                    : {
-                        justifyContent: 'center',
-                      },
-                ]}
-              >
-                <ListItemIcon
-                  sx={[
-                    {
-                      minWidth: 0,
-                      justifyContent: 'center',
-                    },
-                    open
-                      ? {
-                          mr: 3,
-                        }
-                      : {
-                          mr: 'auto',
-                        },
-                  ]}
-                >
+                sx={[{ minHeight: 48, px: 2.5, }, open ? { justifyContent: 'initial', } : { justifyContent: 'center', }, ]}>
+                
+                <ListItemIcon sx={[{ minWidth: 0, justifyContent: 'center', }, open ? { mr: 3,} : { mr: 'auto', },]}>
                   {text === 'Personal' ? <PersonIcon /> : null }
                   {text === 'Locales' ? <InboxIcon /> : null }
                   {text === 'Cotizaciones' ? <PointOfSaleIcon /> : null }
                   {text === 'Inventario' ? <InventoryIcon /> : null }
-                  {text === 'Eventos' ? (    
-                    <img
-                      src="/evento.png"
-                      alt="Eventos"
-                      style={{
-                        width: 24,
-                        height: 24,
-                        objectFit: 'contain',
-                      }}
-                    />
-                  ) : null }
+                  {text === 'Eventos' ? <EventIcon />: null }
                 </ListItemIcon>
-                <ListItemText
-                  primary={text}
-                  sx={[
-                    open
-                      ? {
-                          opacity: 1,
-                        }
-                      : {
-                          opacity: 0,
-                        },
-                  ]}
-                />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                sx={[
-                  {
-                    minHeight: 48,
-                    px: 2.5,
-                  },
-                  open
-                    ? {
-                        justifyContent: 'initial',
-                      }
-                    : {
-                        justifyContent: 'center',
-                      },
-                ]}
-              >
-                <ListItemIcon
-                  sx={[
-                    {
-                      minWidth: 0,
-                      justifyContent: 'center',
-                    },
-                    open
-                      ? {
-                          mr: 3,
-                        }
-                      : {
-                          mr: 'auto',
-                        },
-                  ]}
-                >
-                  <AccessibleIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={text}
-                  sx={[
-                    open
-                      ? {
-                          opacity: 1,
-                        }
-                      : {
-                          opacity: 0,
-                        },
-                  ]}
-                />
+
+                <ListItemText primary={text} sx={[ open ? { opacity: 1, } : { opacity: 0, }, ]}/>
               </ListItemButton>
             </ListItem>
           ))}

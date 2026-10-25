@@ -4,6 +4,7 @@
   - You are about to drop the column `servicioId` on the `cotizaciones` table. All the data in the column will be lost.
   - You are about to drop the column `local` on the `eventos` table. All the data in the column will be lost.
   - Added the required column `nombre` to the `eventos` table without a default value. This is not possible if the table is not empty.
+  - Added the required column `capacidad` to the `locales` table without a default value. This is not possible if the table is not empty.
 
 */
 -- AlterEnum
@@ -24,7 +25,8 @@ ALTER TABLE "eventos" DROP COLUMN "local",
 ADD COLUMN     "nombre" VARCHAR(100) NOT NULL;
 
 -- AlterTable
-ALTER TABLE "locales" ALTER COLUMN "disponibilidad" SET DEFAULT true;
+ALTER TABLE "locales" ADD COLUMN     "capacidad" INTEGER NOT NULL,
+ALTER COLUMN "disponibilidad" SET DEFAULT true;
 
 -- CreateTable
 CREATE TABLE "cotizaciones_servicios" (
