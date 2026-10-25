@@ -13,6 +13,7 @@ async function main() {
     // En PostgreSQL, deleteMany no reinicia la secuencia autoincremental,
     // por eso usamos TRUNCATE con RESTART IDENTITY para resetear los IDs.
     console.log('Limpiando la base de datos...');
+    await prisma.$executeRaw`TRUNCATE TABLE "usuarios", "eventos", "articulos", "vehiculos", "locales", "servicios", "Personal", "Contratacion", "cotizaciones", "cotizaciones_servicios" RESTART IDENTITY CASCADE;`;
     await prisma.$executeRaw`TRUNCATE TABLE "usuarios", "eventos", "articulos", "vehiculos", "locales", "cotizaciones", "cotizaciones_servicios" RESTART IDENTITY CASCADE;`;
 
 
@@ -65,25 +66,6 @@ async function main() {
         )
     );
 
-    /*const cantidadEventos = 10; // Cambiar valor dependiendo de la cantidad de eventos que se quieran generar
-    console.log('Generando datos falsos de evento...');
-    const eventos = await Promise.all(
-        Array.from({ length: cantidadEventos }).map(() =>
-            prisma.evento.create({
-            data: {
-                nombre: faker.lorem.words(3),
-                tipo: faker.helpers.arrayElement(['concierto', 'cumpleaños', 'deportivo', 'conferencia', 'otro']),
-                fecha: faker.date.future(),
-                cantidadPersonas: faker.number.int({ min: 10, max: 1000 }),
-                valorTotal: parseFloat(faker.commerce.price({ min: 100, max: 10000 })),
-                abono: parseFloat(faker.commerce.price({ min: 50, max: 5000 })),
-                confirmado: faker.datatype.boolean(),
-                local: 
-            },
-            })
-        )
-    );*/
-
     const cantidadArticulos = 10; // Cambiar valor dependiendo de la cantidad de articulos que se quieran generar
     console.log('Generando datos falsos de articulo...');
     const articulos = await Promise.all(
@@ -122,7 +104,6 @@ async function main() {
                 data: {
                     nombre: faker.lorem.words(3),
                     precio: parseInt(faker.commerce.price({min: 100, max: 100000})),
-                    capacidad : parseInt(faker.commerce.price({min: 100, max: 100000})),
                     contacto: faker.phone.number({ style: 'international' }),
                     nombreDueno: faker.person.fullName(),
                     aforo: parseInt(faker.number.bigInt({min: 100, max: 10000})),
@@ -132,6 +113,32 @@ async function main() {
             })
         )
     );
+
+
+
+    const cantidadCotizaciones = 10;
+    console.log('Generando datos falsos de cotizaciones...');
+    const cotizaciones = await Promise.all(
+        Array.from({ length: cantidadCotizaciones }).map((_, index) => {
+            const valorTotal = faker.number.int({ min: 500000, max: 3000000 });
+            return prisma.cotizacion.create({
+                data: {
+                    localId: locales[index].id,
+                    cantidadPersonas: faker.number.int({ min: 20, max: 300 }),
+                    valorTotal: valorTotal,
+                    abono: faker.number.int({ min: Math.ceil(valorTotal * 0.5), max: valorTotal }),
+                    estado: faker.helpers.arrayElement(['pendiente', 'aprobada', 'finalizada']),
+                },
+            });
+        })
+    );
+
+    const cotizacionesServicios = await prisma.cotizacionServicio.createMany({
+        data: cotizaciones.map((cotizacion, index) => ({
+            cotizacionId: cotizacion.id,
+            servicioId: servicios[index % servicios.length].id,
+        })),
+    });
 
  
     /*
@@ -148,6 +155,7 @@ async function main() {
             })
         )
     );
+
     */
     /*
     const contrataciones = await Promise.all(
@@ -162,6 +170,7 @@ async function main() {
             })
         )
     );
+
     */
     /*
     const cantidadCotizaciones = 10;
@@ -183,7 +192,13 @@ async function main() {
     */
     console.log('Datos falsos generados exitosamente.');
     console.log('Usuarios generados:', usuarios);
-    //console.log('Eventos generados:', eventos);
+    console.log('Servicios generados:', servicios);
+    console.log('Personal generado:', personal);
+    console.log('Locales generados:', locales);
+    console.log('Cotizaciones generadas:', cotizaciones);
+    console.log('Relaciones cotización-servicio generadas:', cotizacionesServicios.count);
+    console.log('Eventos generados:', eventos);
+    console.log('Contrataciones generadas:', contrataciones);
     console.log('Articulos generados:', articulos);
     console.log('Vehiculos generados:', vehiculos);
 
