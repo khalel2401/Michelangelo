@@ -13,7 +13,7 @@ async function main() {
     // En PostgreSQL, deleteMany no reinicia la secuencia autoincremental,
     // por eso usamos TRUNCATE con RESTART IDENTITY para resetear los IDs.
     console.log('Limpiando la base de datos...');
-    await prisma.$executeRaw`TRUNCATE TABLE "usuarios", "eventos", "articulos", "vehiculos" RESTART IDENTITY CASCADE;`;
+    await prisma.$executeRaw`TRUNCATE TABLE "usuarios", "eventos", "articulos", "vehiculos", "locales", "cotizaciones", "cotizaciones_servicios" RESTART IDENTITY CASCADE;`;
 
 
     //generacion de datos falsos de usuario
@@ -134,7 +134,7 @@ async function main() {
     );
 
  
-
+    /*
     const cantidadEventos = 5;
     console.log('Generando datos falsos de evento...');
     const eventos = await Promise.all(
@@ -148,8 +148,8 @@ async function main() {
             })
         )
     );
-
-
+    */
+    /*
     const contrataciones = await Promise.all(
         eventos.map((evento, index) =>
             prisma.contratacion.create({
@@ -162,7 +162,8 @@ async function main() {
             })
         )
     );
-
+    */
+    /*
     const cantidadCotizaciones = 10;
     console.log('Generando datos falsos de cotizaciones...');
     const cotizaciones = await Promise.all(
@@ -179,7 +180,7 @@ async function main() {
             });
         })
     );
-
+    */
     console.log('Datos falsos generados exitosamente.');
     console.log('Usuarios generados:', usuarios);
     //console.log('Eventos generados:', eventos);
