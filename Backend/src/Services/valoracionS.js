@@ -49,4 +49,40 @@ const resumen = async (where)=>{
   };
 };
 
-//hacer las consultas de las valoraciones abajo
+export const crearValoracion = async ({calificacion, comentario, trabajdorId, eventoId}, usuario)=> {
+  if (trabajadorId !== undefined){
+    if(trabajadorId === autor.id) {
+      throw crearError(400, 'No puedes valorarte a ti mismo');
+    } 
+    await buscarTrabajador(trabajadorId);
+
+  }else {
+    const evento = await buscarEvento(eventoId);
+    if(!evento.confirmado) {
+      throw crearError(400, 'Error: Solo puedes valorar eventos confirmados');
+    }
+    if (evento.fecha > new Date()){
+      throw crearError(400,'El evento aun no ocurre, no se puede valorar');
+    }
+  }
+
+  try{
+    return await prisma.valoracion.create({
+      data: {calificacion, comentario, trabajadorId, eventoId, autorId: autor.id}, include: incluir
+    });
+  } catch (err){
+    if(err.code === 'P2002'){
+      throw crearError(400, 'Ya se ha realizado una valoracion para este evento o trabajador');
+    }
+    throw err;
+  }
+};
+
+export const updateValoracion = async (id, datos, usuario)=> {
+  const valoracion = await buscarValoracion(id);
+  velificarPermiso(usuario, valoracion);
+  return prisma.valoracion.update({
+    where:{id},
+    data: {calificacion, datos.calificacion, comentario: datos.comentario},
+  });
+};
