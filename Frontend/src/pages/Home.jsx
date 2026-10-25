@@ -10,19 +10,22 @@ export default function Home(){
   const navigate = useNavigate();
   console.log('Home.jsx renderizado');
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, width: '100%' }}>
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, width: '100%', justifyContent: 'center' }}>
       <Container maxWidth="sm" sx={{
         border: 4,
         borderColor: 'secondary.main',
         borderRadius: 6,
-        display: 'grid',
-        alignContent: 'left',
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        textAlign: 'center',
         flex: 1,
         mx: 0,
       }}>
-        <Box sx={{ my: 4, align: 'center' }}>
+        <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography variant="h4" component="h1" gutterBottom align='center'>
-            HOLA MUNDOS
+            Panel de control
           </Typography>
           <Box
             component="img"
@@ -35,12 +38,12 @@ export default function Home(){
               maxWidth: { xs: 350, md: 250 },
             }}
             alt='gato'
-            src='https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTB5iy9zb2sazyZTu1udZKLhE5m8M-nJmaRvRsFLkTvFlBv0ipT4Yx5aPk&s=10'
+            src='../informatica.jpg'
           />
         </Box>
-        <Button onClick={() => navigate('/locales')}>Ver locales</Button>
-        <Button onClick={() => navigate('/inventario')}>Revisar Inventario</Button>
-        <Button onClick={() => navigate('/vehiculos')}>Revisar Vehiculos</Button>
+        <Button onClick={() => navigate('/locales')} sx={{ alignSelf: 'center' }}>Ver locales</Button>
+        <Button onClick={() => navigate('/inventario')} sx={{ alignSelf: 'center' }}>Revisar Inventario</Button>
+        <Button onClick={() => navigate('/vehiculos')} sx={{ alignSelf: 'center' }}>Revisar Vehiculos</Button>
       </Container>
       <FetchLocales />
     </Box>
