@@ -35,3 +35,7 @@ export const updateValoracionSchema = z
   .refine((d) => d.calificacion !== undefined || d.comentario !== undefined, {
     message: 'Debes enviar calificacion o comentario para actualizar',
   });
+
+  export const idParamsSchema = z.object({
+  id: z.coerce.number().int().positive().max(2147483647),
+  });
