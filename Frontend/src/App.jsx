@@ -19,7 +19,9 @@ import Vehiculos from './pages/Vehiculos.jsx';
 const routeFadeDuration = 180;
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(
+    () => Boolean(localStorage.getItem('token')),
+  );
   const location = useLocation();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const [displayedLocation, setDisplayedLocation] = React.useState(location);
@@ -72,8 +74,8 @@ export default function App() {
         />
         <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
         <Route path="/personal" element={isLoggedIn ? <Personal /> : <Navigate to="/" replace />} />
-        <Route path="/eventos" element={<Eventos />} />
-        <Route path="/cotizaciones" element={<Cotizaciones />} />
+        <Route path="/eventos" element={isLoggedIn ? <Eventos /> : <Navigate to="/" replace />} />
+        <Route path="/cotizaciones" element={isLoggedIn ? <Cotizaciones /> : <Navigate to="/" replace />} />
         <Route path="/inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
         <Route path="/vehiculos" element={isLoggedIn ? <Vehiculos /> : <Navigate to="/" replace />} />
         <Route path="/legal" element={<Legal />} />
@@ -88,7 +90,7 @@ export default function App() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <MiniDrawer />
+      <MiniDrawer onLogout={() => setIsLoggedIn(false)} />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {pages}

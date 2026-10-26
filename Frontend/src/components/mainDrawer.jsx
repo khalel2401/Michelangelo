@@ -27,10 +27,10 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import PersonIcon from '@mui/icons-material/Person';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import InventoryIcon from '@mui/icons-material/Inventory';
-import AccessibleIcon from '@mui/icons-material/Accessible';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import EventIcon from '@mui/icons-material/Event';
+import LogoutIcon from '@mui/icons-material/Logout';
 //
 
 
@@ -151,17 +151,27 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function MiniDrawer() {
+export default function MiniDrawer({ onLogout }) {
   const theme = useTheme();
   const { mode, setMode } = useColorScheme();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
-  const routes = {
-    Locales: '/locales',
-    Eventos: '/eventos',
-    Inventario: '/Inventario',
-    Personal: '/personal',
-    Cotizaciones: '/cotizaciones',
+  const navigationItems = [
+    { text: 'Inicio', route: '/', icon: <HomeIcon /> },
+    { text: 'Locales', route: '/locales', icon: <InboxIcon /> },
+    { text: 'Eventos', route: '/eventos', icon: <EventIcon /> },
+    { text: 'Inventario', route: '/Inventario', icon: <InventoryIcon /> },
+    { text: 'Personal', route: '/personal', icon: <PersonIcon /> },
+    { text: 'Cotizaciones', route: '/cotizaciones', icon: <PointOfSaleIcon /> },
+  ];
+  const tooltipSlotProps = {
+    tooltip: {
+      sx: {
+        fontSize: '0.9rem',
+        px: 1.5,
+        py: 0.75,
+      },
+    },
   };
 
   const handleDrawerOpen = () => {
@@ -198,6 +208,12 @@ export default function MiniDrawer() {
     });
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    onLogout?.();
+    navigate('/', { replace: true });
+  };
+
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -221,28 +237,31 @@ export default function MiniDrawer() {
             NES eventos
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}>
+          <Tooltip title="Cerrar sesión" slotProps={tooltipSlotProps}>
             <span>
               <IconButton
                 color="inherit"
-                aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
-                disabled={!mode}
-                onClick={handleThemeToggle}
+                aria-label="Cerrar sesión"
+                onClick={handleLogout}
               >
-                {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+                <LogoutIcon />
               </IconButton>
             </span>
           </Tooltip>
         </Toolbar>
       </AppBar>
-      <Drawer variant="permanent" open={open}>
+      <Drawer
+        variant="permanent"
+        open={open}
+        sx={{
+          '& .MuiDrawer-paper': {
+            display: 'flex',
+            flexDirection: 'column',
+          },
+        }}
+      >
         
         <DrawerHeader>
-
-          <IconButton aria-label="Ir a inicio" onClick={() => navigate('/')}>
-            <HomeIcon /> Inicio
-          </IconButton>
-
           {open && (
             <IconButton aria-label="Cerrar menú" onClick={handleDrawerClose}>
               {theme.direction === 'rtl' ? <ChevronRightIcon /> : <ChevronLeftIcon />}
@@ -252,26 +271,63 @@ export default function MiniDrawer() {
         
         <Divider />
         
-        <List>
-          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones'].map((text, index) => (
-            
+        <List sx={{ flexGrow: 1 }}>
+          {navigationItems.map(({ text, route, icon }) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <ListItemButton
-                onClick={routes[text] ? () => navigate(routes[text]) : undefined}
-                sx={[{ minHeight: 48, px: 2.5, }, open ? { justifyContent: 'initial', } : { justifyContent: 'center', }, ]}>
-                
-                <ListItemIcon sx={[{ minWidth: 0, justifyContent: 'center', }, open ? { mr: 3,} : { mr: 'auto', },]}>
-                  {text === 'Personal' ? <PersonIcon /> : null }
-                  {text === 'Locales' ? <InboxIcon /> : null }
-                  {text === 'Cotizaciones' ? <PointOfSaleIcon /> : null }
-                  {text === 'Inventario' ? <InventoryIcon /> : null }
-                  {text === 'Eventos' ? <EventIcon />: null }
-                </ListItemIcon>
-
-                <ListItemText primary={text} sx={[ open ? { opacity: 1, } : { opacity: 0, }, ]}/>
-              </ListItemButton>
+              <Tooltip title={text} placement="right" slotProps={tooltipSlotProps}>
+                <ListItemButton
+                  onClick={() => navigate(route)}
+                  sx={[
+                    { minHeight: 48, px: 2.5 },
+                    open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
+                  ]}
+                >
+                  <ListItemIcon
+                    sx={[
+                      { minWidth: 0, justifyContent: 'center' },
+                      open ? { mr: 3 } : { mr: 'auto' },
+                    ]}
+                  >
+                    {icon}
+                  </ListItemIcon>
+                  <ListItemText primary={text} sx={[open ? { opacity: 1 } : { opacity: 0 }]} />
+                </ListItemButton>
+              </Tooltip>
             </ListItem>
           ))}
+        </List>
+        <Divider />
+        <List>
+          <ListItem disablePadding sx={{ display: 'block' }}>
+            <Tooltip
+              title={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
+              placement="right"
+              slotProps={tooltipSlotProps}
+            >
+              <ListItemButton
+                onClick={handleThemeToggle}
+                disabled={!mode}
+                aria-label={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
+                sx={[
+                  { minHeight: 48, px: 2.5 },
+                  open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
+                ]}
+              >
+                <ListItemIcon
+                  sx={[
+                    { minWidth: 0, justifyContent: 'center' },
+                    open ? { mr: 3 } : { mr: 'auto' },
+                  ]}
+                >
+                  {mode === 'dark' ? <LightModeIcon /> : <DarkModeIcon />}
+                </ListItemIcon>
+                <ListItemText
+                  primary={`Cambiar a modo ${mode === 'dark' ? 'claro' : 'oscuro'}`}
+                  sx={[open ? { opacity: 1 } : { opacity: 0 }]}
+                />
+              </ListItemButton>
+            </Tooltip>
+          </ListItem>
         </List>
       </Drawer>
     </Box>

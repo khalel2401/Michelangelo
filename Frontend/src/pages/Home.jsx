@@ -10,7 +10,7 @@ export default function Home(){
   const navigate = useNavigate();
   console.log('Home.jsx renderizado');
   return (
-    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, width: '100%', justifyContent: 'center' }}>
+    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, width: '100%', justifyContent: 'center', bgcolor: 'background.default', py: 4 }}>
       <Container maxWidth="sm" sx={{
         border: 4,
         borderColor: 'secondary.main',
@@ -22,6 +22,7 @@ export default function Home(){
         textAlign: 'center',
         flex: 1,
         mx: 0,
+        bgcolor: 'background.paper',
       }}>
         <Box sx={{ my: 4, display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
           <Typography variant="h4" component="h1" gutterBottom align='center'>
