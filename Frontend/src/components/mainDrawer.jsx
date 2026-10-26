@@ -150,6 +150,7 @@ export default function MiniDrawer() {
     Eventos: '/eventos',
     Inventario: '/Inventario',
     Cotizaciones: '/cotizaciones',
+    Servicios: '/servicios',
   };
 
   const handleDrawerOpen = () => {
@@ -236,7 +237,7 @@ export default function MiniDrawer() {
         </DrawerHeader>
         <Divider />
         <List>
-          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones'].map((text, index) => (
+          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones', 'Servicios'].map((text) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 onClick={routes[text] ? () => navigate(routes[text]) : undefined}
@@ -269,8 +270,9 @@ export default function MiniDrawer() {
                         },
                   ]}
                 >
-                  {text === 'Locales' ? <InboxIcon /> : <AccessibleIcon />}
-                  {text === 'Eventos' ? (    
+                  {text === 'Locales' ? (
+                    <InboxIcon />
+                  ) : text === 'Eventos' ? (
                     <img
                       src="/evento.png"
                       alt="Eventos"
@@ -280,8 +282,18 @@ export default function MiniDrawer() {
                         objectFit: 'contain',
                       }}
                     />
+                  ) : text === 'Servicios' ? (
+                    <img
+                      src="/servicios.jpg"
+                      alt="Servicios"
+                      style={{
+                        width: 24,
+                        height: 24,
+                        objectFit: 'contain',
+                      }}
+                    />
                   ) : (
-                <AccessibleIcon />
+                    <AccessibleIcon />
                   )}
                 </ListItemIcon>
                 <ListItemText
@@ -302,7 +314,7 @@ export default function MiniDrawer() {
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
+          {['All mail', 'Trash', 'Spam'].map((text) => (
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
                 sx={[

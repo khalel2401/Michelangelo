@@ -13,6 +13,7 @@ import MiniDrawer from './components/mainDrawer.jsx';
 import Legal from './pages/TerminosCondiciones.jsx';
 import Eventos from "./pages/Eventos.jsx";
 import Cotizaciones from './pages/Cotizacion.jsx';
+import Servicios from './pages/Servicios.jsx';
 
 const routeFadeDuration = 180;
 
@@ -72,6 +73,7 @@ export default function App() {
         <Route path="/Inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
         <Route path="/eventos" element={<Eventos />} />
         <Route path="/cotizaciones" element={<Cotizaciones />} />
+        <Route path="/servicios" element={<Servicios />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </Box>
