@@ -38,7 +38,7 @@ export default function Home(){
               maxHeight: { xs: 233, md: 167 },
               maxWidth: { xs: 350, md: 250 },
             }}
-            alt='gato'
+            alt='imagen'
             src='../informatica.jpg'
           />
         </Box>
