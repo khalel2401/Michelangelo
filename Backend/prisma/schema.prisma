@@ -46,7 +46,8 @@ model Usuario {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-   valoraciones Valoracion[] 
+   valoracionesHechas     Valoracion[] @relation("ValoracionAutor")
+   valoracionesRecibidas  Valoracion[] @relation("ValoracionTrabajador")
 
   @@map("usuarios")
 }
