@@ -66,8 +66,7 @@ model Valoracion {
 
   //trabajador
   trabajadorId    Int?
-  trabajador      Usuario? @relation("ValoracionTrabajador", fields:
-  [trabajadorId], references: [id], onDelete: Cascade)
+  trabajador      Usuario? @relation("ValoracionTrabajador", fields: [trabajadorId], references: [id], onDelete: Cascade)
 
   @@unique([autorId, trabajadorId])
   @@unique([autorId, eventoId])
