@@ -16,6 +16,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
+import { isRouteAllowed } from '../auth/roles.js';
 
 
 //iconos
@@ -27,6 +28,7 @@ import InboxIcon from '@mui/icons-material/MoveToInbox';
 import PersonIcon from '@mui/icons-material/Person';
 import PointOfSaleIcon from '@mui/icons-material/PointOfSale';
 import InventoryIcon from '@mui/icons-material/Inventory';
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import EventIcon from '@mui/icons-material/Event';
@@ -151,18 +153,20 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function MiniDrawer({ onLogout }) {
+export default function MiniDrawer({ role, onLogout }) {
   const theme = useTheme();
   const { mode, setMode } = useColorScheme();
   const navigate = useNavigate();
   const [open, setOpen] = React.useState(false);
   const navigationItems = [
     { text: 'Inicio', route: '/', icon: <HomeIcon /> },
+    { text: 'Inicio de usuario', route: '/userHome', icon: <PersonIcon /> },
     { text: 'Locales', route: '/locales', icon: <InboxIcon /> },
     { text: 'Eventos', route: '/eventos', icon: <EventIcon /> },
-    { text: 'Inventario', route: '/Inventario', icon: <InventoryIcon /> },
+    { text: 'Inventario', route: '/inventario', icon: <InventoryIcon /> },
     { text: 'Personal', route: '/personal', icon: <PersonIcon /> },
     { text: 'Cotizaciones', route: '/cotizaciones', icon: <PointOfSaleIcon /> },
+    { text: 'Vehículos', route: '/vehiculos', icon: <DirectionsCarIcon /> },
   ];
   const tooltipSlotProps = {
     tooltip: {
@@ -210,6 +214,7 @@ export default function MiniDrawer({ onLogout }) {
 
   const handleLogout = () => {
     localStorage.removeItem('token');
+    localStorage.removeItem('role');
     onLogout?.();
     navigate('/', { replace: true });
   };
@@ -272,29 +277,32 @@ export default function MiniDrawer({ onLogout }) {
         <Divider />
         
         <List sx={{ flexGrow: 1 }}>
-          {navigationItems.map(({ text, route, icon }) => (
-            <ListItem key={text} disablePadding sx={{ display: 'block' }}>
-              <Tooltip title={text} placement="right" slotProps={tooltipSlotProps}>
-                <ListItemButton
-                  onClick={() => navigate(route)}
-                  sx={[
-                    { minHeight: 48, px: 2.5 },
-                    open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
-                  ]}
-                >
-                  <ListItemIcon
+          {navigationItems
+            .filter(({ route }) => isRouteAllowed(role, route))
+            .filter(({ route }) => route !== '/userHome' || role === 'admin')
+            .map(({ text, route, icon }) => (
+              <ListItem key={text} disablePadding sx={{ display: 'block' }}>
+                <Tooltip title={text} placement="right" slotProps={tooltipSlotProps}>
+                  <ListItemButton
+                    onClick={() => navigate(route)}
                     sx={[
-                      { minWidth: 0, justifyContent: 'center' },
-                      open ? { mr: 3 } : { mr: 'auto' },
+                      { minHeight: 48, px: 2.5 },
+                      open ? { justifyContent: 'initial' } : { justifyContent: 'center' },
                     ]}
                   >
-                    {icon}
-                  </ListItemIcon>
-                  <ListItemText primary={text} sx={[open ? { opacity: 1 } : { opacity: 0 }]} />
-                </ListItemButton>
-              </Tooltip>
-            </ListItem>
-          ))}
+                    <ListItemIcon
+                      sx={[
+                        { minWidth: 0, justifyContent: 'center' },
+                        open ? { mr: 3 } : { mr: 'auto' },
+                      ]}
+                    >
+                      {icon}
+                    </ListItemIcon>
+                    <ListItemText primary={text} sx={[open ? { opacity: 1 } : { opacity: 0 }]} />
+                  </ListItemButton>
+                </Tooltip>
+              </ListItem>
+            ))}
         </List>
         <Divider />
         <List>
