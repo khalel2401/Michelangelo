@@ -7,7 +7,7 @@ export const sendSuccess = (res, data, message = 'Operación exitosa', statusCod
   });
 };
 
-export const sendError = (res, message = 'Error interno', statusCode = 500, errors = null) => {
+export const sendError = (res, message = 'Error interno del servidor', statusCode = 500, errors = null) => {
   return res.status(statusCode).json({
     success: false,
     message,
