@@ -3,6 +3,7 @@ import { Router } from 'express';
 import {
   getValoraciones,
   getMisValoraciones,
+  getTrabajadores,
   getValoracionPorId,
   getValoracionesTrabajador,
   getValoracionesEvento,
@@ -32,6 +33,7 @@ const soloAdmin = (req, res, next) => {
 
 router.get('/valoraciones', soloAdmin, getValoraciones);
 router.get('/valoraciones/misValoraciones', getMisValoraciones);
+router.get('/valoraciones/trabajadores', getTrabajadores);
 router.get('/valoraciones/trabajadores/:id', soloAdmin, validateSchema(idParamsSchema, 'params'), getValoracionesTrabajador);
 router.get('/valoraciones/eventos/:id', soloAdmin, validateSchema(idParamsSchema, 'params'), getValoracionesEvento);
 router.get('/valoraciones/:id', validateSchema(idParamsSchema, 'params'), getValoracionPorId);

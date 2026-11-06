@@ -13,6 +13,10 @@ export const getValoraciones = manejarError(async (req, res) => {
   res.status(200).json(await valoracionService.getValoraciones());
 });
 
+export const getTrabajadores = manejarError(async (req, res) => {
+  res.status(200).json(await valoracionService.getTrabajadores());
+});
+
 export const getMisValoraciones = manejarError(async (req, res) => {
   res.status(200).json(await valoracionService.getValoracionesByAutor(req.usuario.id));
 });

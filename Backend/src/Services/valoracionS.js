@@ -51,6 +51,14 @@ const resumen = async (where) => {
 export const getValoraciones = () =>
   prisma.valoracion.findMany({ include: incluir, orderBy: { createdAt: 'desc' } });
 
+// Trabajadores que se pueden valorar (solo datos públicos: nunca email ni password).
+export const getTrabajadores = () =>
+  prisma.usuario.findMany({
+    where: { rol: { in: ROLES_TRABAJADOR } },
+    select: { id: true, nombre: true, apellido: true },
+    orderBy: { nombre: 'asc' },
+  });
+
 export const getValoracionesByAutor = (autorId) =>
   prisma.valoracion.findMany({ where: { autorId }, include: incluir, orderBy: { createdAt: 'desc' } });
 
