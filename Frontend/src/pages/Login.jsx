@@ -15,6 +15,7 @@ import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom"
 import { alpha } from "@mui/material/styles";
+import { isValidRole } from "../auth/roles.js";
 
 export default function Login({ onLogin }) {
   const [cargando, setCargando] = useState(false);
@@ -50,11 +51,13 @@ export default function Login({ onLogin }) {
         throw new Error(data.message || "Usuario o contraseña incorrectos");
       }
 
-      if (data.data?.token) {
-        localStorage.setItem("token", data.data.token);
+      if (!data.data?.token || !isValidRole(data.data?.role)) {
+        throw new Error("La respuesta de inicio de sesión no incluye un rol válido");
       }
 
-      onLogin?.();
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem("role", data.data.role);
+      onLogin?.(data.data.role);
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
       alert(err.message || "Usuario o contraseña incorrectos");

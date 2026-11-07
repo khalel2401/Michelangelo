@@ -18,7 +18,7 @@ export const login = async (email, password) => {
     const jwtSecret = process.env.JWT_SECRET || "michelangelo-dev-secret";
     const token = jwt.sign({ id: usuario.id, email: usuario.email }, jwtSecret, { expiresIn: "1h" });
 
-    return { token };
+    return { token, role: usuario.rol };
 };
 
 export const verificarToken = async (token) => {
