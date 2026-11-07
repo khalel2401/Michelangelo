@@ -5,11 +5,11 @@ import {
   crearCotizacion,
   actualizarCotizacion,
   eliminarCotizacion,
-} from "../Controllers/cotizacion.js";
+} from "../Controllers/cotizacionC.js";
 import {
   cotizacionSchema,
   updateCotizacionSchema,
-} from "../Schemas/cotizacion.js";
+} from "../Schemas/cotizacionSch.js";
 import { validateSchema } from "../Middlewares/validarM.js";
 
 const router = Router();
