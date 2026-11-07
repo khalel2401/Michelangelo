@@ -82,7 +82,40 @@ model Evento {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+   valoraciones Valoracion[] 
+  localId          Int?
+  local            Local?   @relation(fields: [localId], references: [id])
 
+  cotizacionesServicios CotizacionServicio[]
+  evento                Evento?
+
+  @@map("cotizaciones")
+}
+
+model CotizacionServicio {
+  id           Int        @id @default(autoincrement())
+  cotizacionId Int
+  servicioId   Int
+
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  servicio     Servicio   @relation(fields: [servicioId], references: [id], onDelete: Cascade)
+
+  @@map("cotizaciones_servicios")
+}
+
+model Evento {
+  id           Int        @id @default(autoincrement())
+  nombre       String     @db.VarChar(100)
+  fecha        DateTime
+  cotizacionId Int        @unique
+  cotizacion   Cotizacion @relation(fields: [cotizacionId], references: [id])
+
+  contrataciones Contratacion[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  valoraciones Valoracion[] 
   @@map("eventos")
 }
 
@@ -102,6 +135,9 @@ model Usuario {
   rol       String   @default("cliente")
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+   valoracionesHechas     Valoracion[] @relation("ValoracionAutor")
+   valoracionesRecibidas  Valoracion[] @relation("ValoracionTrabajador")
 
   @@map("usuarios")
 }
@@ -143,4 +179,26 @@ model Contratacion {
 
   personal Personal @relation(fields: [id_personal], references: [id])
   evento   Evento   @relation(fields: [id_evento], references: [id])
+}
+model Valoracion {
+ id             Int @id   @default(autoincrement())
+ calificacion   Int
+ comentario     String?   @db.Text
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  //autor coso
+  autorId       Int
+  autor         Usuario @relation("ValoracionAutor", fields: [autorId], references: [id], onDelete: Cascade)
+  eventoId      Int?
+  evento        Evento? @relation(fields: [eventoId], references: [id], onDelete:Cascade)
+
+  //trabajador
+  trabajadorId    Int?
+  trabajador      Usuario? @relation("ValoracionTrabajador", fields: [trabajadorId], references: [id], onDelete: Cascade)
+
+  @@unique([autorId, trabajadorId])
+  @@unique([autorId, eventoId])
+  @@map("valoraciones")
+  @@index([trabajadorId])
+  @@index([eventoId])
 }
