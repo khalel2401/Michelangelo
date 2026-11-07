@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const cotizacionSchema = z.object({
-  localId: z.number().int().optional(),
+  localId: z.number().int().positive().optional(),
   cantidadPersonas: z.number().int().positive(),
   valorTotal: z.number(),
   abono: z.number(),
