@@ -17,6 +17,7 @@ import Cotizaciones from './pages/Cotizacion.jsx';
 import Vehiculos from './pages/Vehiculos.jsx';
 import UsersHome from './pages/UsersHome.jsx';
 import { getHomeRoute, isRouteAllowed, isValidRole, USER_ROLES } from './auth/roles.js';
+import Servicios from './pages/Servicios.jsx';
 
 const routeFadeDuration = 180;
 
