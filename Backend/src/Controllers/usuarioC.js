@@ -38,9 +38,9 @@ export const getUsuarioPorNombre = async (req, res) => {
 };
 
 export const getUsuarioPorCorreo = async (req, res) => {
-  const { correo } = req.params;
+  const { email } = req.params;
   try{
-    const usuario = await usuarioService.getUsuarioByCorreo(correo);
+    const usuario = await usuarioService.getUsuarioByCorreo(email);
     if(!usuario){
       return res.status(404).json({message: "Usuario no encontrado"});
     }

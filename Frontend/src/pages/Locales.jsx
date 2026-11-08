@@ -15,7 +15,7 @@ export default function Locales() {
     const navigate = useNavigate();
     const [tabActiva, setTabActiva] = useState(tabla[0].id);
     const TabComponent = tabla.find((t) => t.id === tabActiva)?.component;
-
+    
     return (
         <div className= "right" id="right">
             <div className="Locales">
