@@ -7,9 +7,6 @@
   - Added the required column `capacidad` to the `locales` table without a default value. This is not possible if the table is not empty.
 
 */
--- AlterEnum
-ALTER TYPE "Rol" ADD VALUE 'externo';
-
 -- DropForeignKey
 ALTER TABLE "cotizaciones" DROP CONSTRAINT "cotizaciones_servicioId_fkey";
 

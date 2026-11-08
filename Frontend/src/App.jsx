@@ -15,17 +15,45 @@ import Legal from './pages/TerminosCondiciones.jsx';
 import Eventos from "./pages/Eventos.jsx";
 import Cotizaciones from './pages/Cotizacion.jsx';
 import Vehiculos from './pages/Vehiculos.jsx';
+import UsersHome from './pages/UsersHome.jsx';
+import { getHomeRoute, isRouteAllowed, isValidRole, USER_ROLES } from './auth/roles.js';
+import Servicios from './pages/Servicios.jsx';
 import Valoraciones from './pages/Valoraciones.jsx';
 import { haySesion, cerrarSesion } from './Services/sesionS.js';
 
 const routeFadeDuration = 180;
 
+function ProtectedRoute({ isLoggedIn, role, allowedRoles = USER_ROLES, children }) {
+  if (!isLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
+
+  if (!allowedRoles.includes(role)) {
+    return <Navigate to={getHomeRoute(role)} replace />;
+  }
+
+  return children;
+}
+
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(() => haySesion()); // si hay cookie de sesión, F5 ya no te saca
+  const [role, setRole] = React.useState(() => {
+    const storedRole = localStorage.getItem('role');
+    return isValidRole(storedRole) ? storedRole : null;
+  });
+  const [isLoggedIn, setIsLoggedIn] = React.useState(
+    () => Boolean(localStorage.getItem('token') && isValidRole(localStorage.getItem('role'))),
+  );
   const location = useLocation();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const [displayedLocation, setDisplayedLocation] = React.useState(location);
   const [fadingOut, setFadingOut] = React.useState(false);
+
+  React.useEffect(() => {
+    if (!role) {
+      localStorage.removeItem('token');
+      localStorage.removeItem('role');
+    }
+  }, [role]);
 
   React.useEffect(() => {
     if (location.pathname === displayedLocation.pathname) {
@@ -63,22 +91,60 @@ export default function App() {
       <Routes location={displayedLocation}>
         <Route
           path="/"
-          element={isLoggedIn ? <Home /> : (
+          element={isLoggedIn ? (
+            role === 'admin' ? <Home /> : <UsersHome />
+          ) : (
             <Container maxWidth="sm">
               <Box sx={{ my: 4 }}>
-                <Login onLogin={() => setIsLoggedIn(true)} />
+                <Login onLogin={(authenticatedRole) => {
+                  setRole(authenticatedRole);
+                  setIsLoggedIn(true);
+                }} />
               </Box>
               <ProTip />
             </Container>
           )}
         />
-        <Route path="/locales" element={isLoggedIn ? <Locales /> : <Navigate to="/" replace />} />
-        <Route path="/personal" element={isLoggedIn ? <Personal /> : <Navigate to="/" replace />} />
-        <Route path="/eventos" element={<Eventos />} />
-        <Route path="/cotizaciones" element={<Cotizaciones />} />
-        <Route path="/inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
-        <Route path="/vehiculos" element={isLoggedIn ? <Vehiculos /> : <Navigate to="/" replace />} />
-        <Route path="/valoraciones" element={isLoggedIn ? <Valoraciones /> : <Navigate to="/" replace />} />
+        <Route path="/locales" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Locales />
+          </ProtectedRoute>
+        } />
+        <Route path="/personal" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Personal />
+          </ProtectedRoute>
+        } />
+        <Route path="/eventos" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Eventos />
+          </ProtectedRoute>
+        } />
+        <Route path="/cotizaciones" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Cotizaciones />
+          </ProtectedRoute>
+        } />
+        <Route path="/inventario" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Inventario />
+          </ProtectedRoute>
+        } />
+        <Route path="/vehiculos" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Vehiculos />
+          </ProtectedRoute>
+        } />
+        <Route path="/valoraciones" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Valoraciones />
+          </ProtectedRoute>
+        } />
+        <Route path="/userHome" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role}>
+            <UsersHome />
+          </ProtectedRoute>
+        } />
         <Route path="/legal" element={<Legal />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
@@ -91,7 +157,13 @@ export default function App() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <MiniDrawer onLogout={() => { cerrarSesion(); setIsLoggedIn(false); }} />
+      <MiniDrawer
+        role={role}
+        onLogout={() => {
+          setRole(null);
+          setIsLoggedIn(false);
+        }}
+      />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {pages}

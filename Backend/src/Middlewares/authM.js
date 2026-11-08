@@ -1,4 +1,6 @@
+import { verificarToken } from "../Services/authS.js";
 import { extraerSesion } from "../Utils/extraerSesion.js";
+
 
 export const verificarAuth = async(req, res, next) => {
     const usuario = await extraerSesion(req);

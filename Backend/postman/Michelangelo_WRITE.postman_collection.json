@@ -1,0 +1,1466 @@
+{
+  "info": {
+    "_postman_id": "e963cf4e-c722-447a-a361-96150e0c62e5",
+    "name": "Michelangelo API - POST PUT DELETE Copy",
+    "description": "Operaciones de escritura disponibles. Los IDs se actualizan automáticamente al crear registros. Ejecuta la colección completa para crear y actualizar primero; las eliminaciones están agrupadas al final. No hay ruta PUT para cotizaciones-servicios.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "56400735"
+  },
+  "item": [
+    {
+      "name": "Autenticación",
+      "item": [
+        {
+          "name": "Iniciar sesión (guarda token para valoraciones)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const response = pm.response.json();\nif (response.success && response.data && response.data.token) {\n  pm.collectionVariables.set('token', response.data.token);\n} else {\n  throw new Error('No se recibió un token. Revisa las credenciales y la respuesta del login.');\n}\n\npm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{emailLogin}}\",\n  \"password\": \"{{passwordLogin}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Artículos",
+      "item": [
+        {
+          "name": "Crear artículo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sillas plegables\",\n  \"cantidad\": 20,\n  \"enUso\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/articulos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "articulos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar artículo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Sillas plegables\",\n  \"cantidad\": 25,\n  \"enUso\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/articulos/{{articuloId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "articulos",
+                "{{articuloId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Usuarios",
+      "item": [
+        {
+          "name": "Crear usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"nuevo.usuario@example.com\",\n  \"password\": \"password123\",\n  \"nombre\": \"Nuevo\",\n  \"apellido\": \"Usuario\",\n  \"telefono\": \"+56912345678\",\n  \"rol\": \"admin\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Usuario actualizado\",\n  \"apellido\": \"Ejemplo\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Vehículos",
+      "item": [
+        {
+          "name": "Crear vehículo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Hiace\",\n  \"patente\": \"EJMP-02\",\n  \"disponible\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/vehiculos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vehiculos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar vehículo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"marca\": \"Toyota\",\n  \"modelo\": \"Hiace\",\n  \"patente\": \"EJMP-02\",\n  \"disponible\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/vehiculos/{{vehiculoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vehiculos",
+                "{{vehiculoId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Locales",
+      "item": [
+        {
+          "name": "Crear local",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Salón de ejemplo\",\n  \"precio\": 250000,\n  \"contacto\": \"+56912345678\",\n  \"nombreDueno\": \"Dueño Ejemplo\",\n  \"aforo\": 100,\n  \"direccion\": \"Avenida Ejemplo 123\",\n  \"disponibilidad\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/local",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "local"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar local",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"disponibilidad\": false,\n  \"precio\": 275000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/local/{{localId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "local",
+                "{{localId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Servicios",
+      "item": [
+        {
+          "name": "Crear servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Catering de ejemplo\",\n  \"precio\": 150000,\n  \"descripcion\": \"Servicio de catering para eventos\",\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/servicios",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"precio\": 175000,\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/servicios/{{servicioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                "{{servicioId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cotizaciones",
+      "item": [
+        {
+          "name": "Crear cotización",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"localId\": {{localId}},\n  \"cantidadPersonas\": 50,\n  \"valorTotal\": 500000,\n  \"abono\": 250000,\n  \"estado\": \"pendiente\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cotizaciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cotizaciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar cotización",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cantidadPersonas\": 60,\n  \"valorTotal\": 550000,\n  \"abono\": 275000,\n  \"estado\": \"aprobada\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/cotizaciones/{{cotizacionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cotizaciones",
+                "{{cotizacionId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Cotizaciones de servicios",
+      "item": [
+        {
+          "name": "Crear relación cotización-servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"cotizacionId\": {{cotizacionId}},\n  \"servicioId\": {{servicioId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/cotizaciones-servicios/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cotizaciones-servicios",
+                ""
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "El backend solo define POST y DELETE para esta relación; no existe una ruta PUT."
+    },
+    {
+      "name": "Eventos",
+      "item": [
+        {
+          "name": "Crear evento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Evento de ejemplo\",\n  \"fecha\": \"2026-12-15T18:00:00.000Z\",\n  \"cotizacionId\": {{cotizacionId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/eventos",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "eventos"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar evento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Evento actualizado\",\n  \"fecha\": \"2026-12-16T18:00:00.000Z\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/eventos/{{eventoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "eventos",
+                "{{eventoId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Personal",
+      "item": [
+        {
+          "name": "Crear persona",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Alex\",\n  \"apellido\": \"Ejemplo\",\n  \"telefono\": \"+56912345678\",\n  \"calificacion\": 5\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/personas",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "personas"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar persona",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"telefono\": \"+56987654321\",\n  \"calificacion\": 4\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/personas/{{personalId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "personas",
+                "{{personalId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Contrataciones",
+      "item": [
+        {
+          "name": "Crear contratación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"idPersonal\": {{personalId}},\n  \"idEvento\": {{eventoId}},\n  \"fechaContratacion\": \"2026-12-15\",\n  \"salario\": 50000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contrataciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "contrataciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar salario de contratación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"salario\": 55000\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/contrataciones/{{contratacionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "contrataciones",
+                "{{contratacionId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Valoraciones (requiere token)",
+      "item": [
+        {
+          "name": "Crear valoración de trabajador",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 201', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        201\n    ]);\n})\n\npm.test('Response is JSON', function () {\n    pm.response.to.be.json;\n})\n\npm.test('Response has id field', function () {\n    var json = pm.response.json();\n    pm.expect(json).to.have.property('id');\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"calificacion\": 5,\n  \"comentario\": \"Excelente trabajo\",\n  \"trabajadorId\": {{trabajadorId}}\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Actualizar valoración",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200 or 204', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"calificacion\": 4,\n  \"comentario\": \"Comentario actualizado\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones/{{valoracionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones",
+                "{{valoracionId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Inicia sesión como usuario válido. La valoración se crea a nombre del usuario autenticado; no envíes autorId."
+    },
+    {
+      "name": "Eliminar registros creados (ejecutar al final)",
+      "item": [
+        {
+          "name": "Eliminar valoración",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{token}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/valoraciones/{{valoracionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "valoraciones",
+                "{{valoracionId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar contratación",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/contrataciones/{{contratacionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "contrataciones",
+                "{{contratacionId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar evento",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/eventos/{{eventoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "eventos",
+                "{{eventoId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar relación cotización-servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/cotizaciones-servicios/{{cotizacionServicioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "api",
+                "cotizaciones-servicios",
+                "{{cotizacionServicioId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar cotización",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/cotizaciones/{{cotizacionId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "cotizaciones",
+                "{{cotizacionId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar local",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/local/{{localId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "local",
+                "{{localId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar servicio",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/servicios/{{servicioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "servicios",
+                "{{servicioId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar persona",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/personas/{{personalId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "personas",
+                "{{personalId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar artículo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/articulos/{{articuloId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "articulos",
+                "{{articuloId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar vehículo",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/vehiculos/{{vehiculoId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "vehiculos",
+                "{{vehiculoId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Eliminar usuario",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status code is 200, 204 or 404', function () {\n    pm.expect(pm.response.code).to.be.oneOf([\n        200,\n        204,\n        404\n    ]);\n})\n\npm.test('Response time is under 5000ms', function () {\n    pm.expect(pm.response.responseTime).to.be.below(5000);\n})"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/usuarios/{{usuarioId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "usuarios",
+                "{{usuarioId}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ],
+      "description": "Elimina únicamente los registros cuyos IDs se guardaron desde las respuestas POST. El orden respeta las dependencias entre registros."
+    }
+  ],
+  "event": [
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "const idVariables = {",
+          "  'Crear artículo': 'articuloId',",
+          "  'Crear usuario': 'usuarioId',",
+          "  'Crear vehículo': 'vehiculoId',",
+          "  'Crear local': 'localId',",
+          "  'Crear servicio': 'servicioId',",
+          "  'Crear cotización': 'cotizacionId',",
+          "  'Crear relación cotización-servicio': 'cotizacionServicioId',",
+          "  'Crear evento': 'eventoId',",
+          "  'Crear persona': 'personalId',",
+          "  'Crear contratación': 'contratacionId',",
+          "  'Crear valoración de trabajador': 'valoracionId'",
+          "};",
+          "const variableName = idVariables[pm.info.requestName];",
+          "if (variableName && pm.response.code >= 200 && pm.response.code < 300) {",
+          "  const response = pm.response.json();",
+          "  const created = response.data || response;",
+          "  if (!created.id) {",
+          "    throw new Error('La respuesta de creación no contiene un ID para ' + pm.info.requestName);",
+          "  }",
+          "  pm.collectionVariables.set(variableName, String(created.id));",
+          "  if (pm.info.requestName === 'Crear usuario') {",
+          "    pm.collectionVariables.set('trabajadorId', String(created.id));",
+          "  }",
+          "}"
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:3000"
+    },
+    {
+      "key": "token",
+      "value": ""
+    },
+    {
+      "key": "emailLogin",
+      "value": "test@example.com"
+    },
+    {
+      "key": "passwordLogin",
+      "value": "password123"
+    },
+    {
+      "key": "usuarioId",
+      "value": ""
+    },
+    {
+      "key": "articuloId",
+      "value": ""
+    },
+    {
+      "key": "vehiculoId",
+      "value": ""
+    },
+    {
+      "key": "localId",
+      "value": ""
+    },
+    {
+      "key": "servicioId",
+      "value": ""
+    },
+    {
+      "key": "cotizacionId",
+      "value": ""
+    },
+    {
+      "key": "cotizacionServicioId",
+      "value": ""
+    },
+    {
+      "key": "eventoId",
+      "value": ""
+    },
+    {
+      "key": "personalId",
+      "value": ""
+    },
+    {
+      "key": "contratacionId",
+      "value": ""
+    },
+    {
+      "key": "valoracionId",
+      "value": ""
+    },
+    {
+      "key": "trabajadorId",
+      "value": ""
+    }
+  ]
+}
