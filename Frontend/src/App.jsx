@@ -15,11 +15,13 @@ import Legal from './pages/TerminosCondiciones.jsx';
 import Eventos from "./pages/Eventos.jsx";
 import Cotizaciones from './pages/Cotizacion.jsx';
 import Vehiculos from './pages/Vehiculos.jsx';
+import Valoraciones from './pages/Valoraciones.jsx';
+import { haySesion, cerrarSesion } from './Services/sesionS.js';
 
 const routeFadeDuration = 180;
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = React.useState(false);
+  const [isLoggedIn, setIsLoggedIn] = React.useState(() => haySesion()); // si hay cookie de sesión, F5 ya no te saca
   const location = useLocation();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
   const [displayedLocation, setDisplayedLocation] = React.useState(location);
@@ -76,6 +78,7 @@ export default function App() {
         <Route path="/cotizaciones" element={<Cotizaciones />} />
         <Route path="/inventario" element={isLoggedIn ? <Inventario /> : <Navigate to="/" replace />} />
         <Route path="/vehiculos" element={isLoggedIn ? <Vehiculos /> : <Navigate to="/" replace />} />
+        <Route path="/valoraciones" element={isLoggedIn ? <Valoraciones /> : <Navigate to="/" replace />} />
         <Route path="/legal" element={<Legal />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
@@ -88,7 +91,7 @@ export default function App() {
 
   return (
     <Box sx={{ display: 'flex' }}>
-      <MiniDrawer />
+      <MiniDrawer onLogout={() => { cerrarSesion(); setIsLoggedIn(false); }} />
       <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
         <Toolbar />
         {pages}

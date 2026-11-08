@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { API_URL } from '../api/config';
+import { guardarSesion } from '../Services/sesionS.js';
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import FilledInput from '@mui/material/FilledInput';
@@ -51,7 +52,8 @@ export default function Login({ onLogin }) {
       }
 
       if (data.data?.token) {
-        localStorage.setItem("token", data.data.token);
+        // Guarda el token en la cookie que lee rootS.js (+ el usuario si el backend lo envía)
+        guardarSesion({ token: data.data.token, usuario: data.data.usuario });
       }
 
       onLogin?.();

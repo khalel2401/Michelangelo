@@ -12,8 +12,8 @@ export const login = async (req, res) => {
             return sendError(res, "Datos de inicio de sesión inválidos", 400, error.issues[0].message);
         }
 
-        const { token, usuario } = await authService.login(email, password);
-        return sendSuccess(res, { token, usuario }, "Inicio de sesión exitoso", 200);
+        const { token } = await authService.login(email, password);
+        return sendSuccess(res, { token }, "Inicio de sesión exitoso", 200);
     } catch (error) {
         if (error.message === "Usuario no encontrado" || error.message === "Contraseña incorrecta") {
             return sendError(res, error.message, 401);

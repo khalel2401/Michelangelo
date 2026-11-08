@@ -18,9 +18,7 @@ export const login = async (email, password) => {
     const jwtSecret = process.env.JWT_SECRET || "michelangelo-dev-secret";
     const token = jwt.sign({ id: usuario.id, email: usuario.email }, jwtSecret, { expiresIn: "1h" });
 
-    // El frontend necesita saber quién es y su rol (para mostrar/ocultar pantallas). NUNCA enviamos la contraseña.
-    const { id, nombre, apellido, rol } = usuario;
-    return { token, usuario: { id, nombre, apellido, email: usuario.email, rol } };
+    return { token };
 };
 
 export const verificarToken = async (token) => {

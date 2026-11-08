@@ -31,6 +31,8 @@ import AccessibleIcon from '@mui/icons-material/Accessible';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import EventIcon from '@mui/icons-material/Event';
+import StarIcon from '@mui/icons-material/Star';
+import LogoutIcon from '@mui/icons-material/Logout';
 //
 
 
@@ -151,7 +153,7 @@ const Drawer = styled(MuiDrawer, { shouldForwardProp: (prop) => prop !== 'open' 
   }),
 );
 
-export default function MiniDrawer() {
+export default function MiniDrawer({ onLogout }) {
   const theme = useTheme();
   const { mode, setMode } = useColorScheme();
   const navigate = useNavigate();
@@ -162,6 +164,7 @@ export default function MiniDrawer() {
     Inventario: '/Inventario',
     Personal: '/personal',
     Cotizaciones: '/cotizaciones',
+    Valoraciones: '/valoraciones',
   };
 
   const handleDrawerOpen = () => {
@@ -233,6 +236,13 @@ export default function MiniDrawer() {
               </IconButton>
             </span>
           </Tooltip>
+          {onLogout && (
+            <Tooltip title="Cerrar sesión">
+              <IconButton color="inherit" aria-label="Cerrar sesión" onClick={onLogout}>
+                <LogoutIcon />
+              </IconButton>
+            </Tooltip>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer variant="permanent" open={open}>
@@ -253,7 +263,7 @@ export default function MiniDrawer() {
         <Divider />
         
         <List>
-          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones'].map((text, index) => (
+          {['Locales', 'Eventos', 'Inventario', 'Personal', 'Cotizaciones', 'Valoraciones'].map((text, index) => (
             
             <ListItem key={text} disablePadding sx={{ display: 'block' }}>
               <ListItemButton
@@ -266,6 +276,7 @@ export default function MiniDrawer() {
                   {text === 'Cotizaciones' ? <PointOfSaleIcon /> : null }
                   {text === 'Inventario' ? <InventoryIcon /> : null }
                   {text === 'Eventos' ? <EventIcon />: null }
+                  {text === 'Valoraciones' ? <StarIcon /> : null }
                 </ListItemIcon>
 
                 <ListItemText primary={text} sx={[ open ? { opacity: 1, } : { opacity: 0, }, ]}/>
