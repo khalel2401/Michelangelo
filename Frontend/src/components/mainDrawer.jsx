@@ -253,6 +253,13 @@ export default function MiniDrawer({ role, onLogout }) {
               </IconButton>
             </span>
           </Tooltip>
+          {onLogout && (
+            <Tooltip title="Cerrar sesión">
+              <IconButton color="inherit" aria-label="Cerrar sesión" onClick={onLogout}>
+                <LogoutIcon />
+              </IconButton>
+            </Tooltip>
+          )}
         </Toolbar>
       </AppBar>
       <Drawer

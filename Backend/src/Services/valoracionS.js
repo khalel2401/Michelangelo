@@ -86,9 +86,6 @@ export const createValoracion = async ({ calificacion, comentario, trabajadorId,
     await buscarTrabajador(trabajadorId);
   } else {
     const evento = await buscarEvento(eventoId);
-    if (!evento.confirmado) {
-      throw crearError(400, 'Error: Solo puedes valorar eventos confirmados');
-    }
     if (evento.fecha > new Date()) {
       throw crearError(400, 'El evento aun no ocurre, no se puede valorar');
     }

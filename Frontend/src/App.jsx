@@ -18,6 +18,8 @@ import Vehiculos from './pages/Vehiculos.jsx';
 import UsersHome from './pages/UsersHome.jsx';
 import { getHomeRoute, isRouteAllowed, isValidRole, USER_ROLES } from './auth/roles.js';
 import Servicios from './pages/Servicios.jsx';
+import Valoraciones from './pages/Valoraciones.jsx';
+import { haySesion, cerrarSesion } from './Services/sesionS.js';
 
 const routeFadeDuration = 180;
 
@@ -131,6 +133,11 @@ export default function App() {
         <Route path="/vehiculos" element={
           <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
             <Vehiculos />
+          </ProtectedRoute>
+        } />
+        <Route path="/valoraciones" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Valoraciones />
           </ProtectedRoute>
         } />
         <Route path="/userHome" element={
