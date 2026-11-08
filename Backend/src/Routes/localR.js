@@ -5,7 +5,8 @@ import {
     crearLocal,
     actualizarLocal,
     eliminarLocal,
-    getLocalPorNombreDueno
+    getLocalPorNombreDueno,
+    getLocalPorDisponibilidad
 } from "../Controllers/localC.js";
 
 import {
@@ -14,15 +15,15 @@ import {
 } from "../Schemas/localSch.js";
 
 import { validateSchema } from "../Middlewares/validarM.js";
-import { getLocalesDisponibles } from "../Services/localS.js";
+
 
 const router = Router();
 
 router.get("/local",getLocales);
 router.post("/local",validateSchema(localSchema), crearLocal);
-router.get("/local/:id",getLocalPorId);
-router.get("/local/disponibilidad/",getLocalesDisponibles);
+router.get("/local/disponibilidad/", getLocalPorDisponibilidad);
 router.get("/local/nombreDueno/:nombreDueno", getLocalPorNombreDueno);
+router.get("/local/:id",getLocalPorId);
 router.put("/local/:id",validateSchema(localUpdateSchema), actualizarLocal);
 router.delete("/local/:id", eliminarLocal);
 

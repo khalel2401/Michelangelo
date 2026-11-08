@@ -12,7 +12,7 @@ function LightBulbIcon(props) {
 
 export default function ProTip() {
   let tip = 'ERROR';
-  switch (Math.floor(Math.random() * 8) + 1){ //genera un numero aleatorio para elegir entre distintos tips
+  switch (Math.floor(Math.random() * 15) + 1){ //genera un numero aleatorio para elegir entre distintos tips
     case 1:
       tip = 'Pone bien tu contraseña.';
       break;
@@ -39,6 +39,24 @@ export default function ProTip() {
       break;
     case 9:
       tip = 'Quien tiene un porqué para vivir puede soportar casi cualquier cómo.';
+      break;
+    case 10:
+      tip = 'Cuando no estas parado, definitivamente estas sentado';
+      break;
+    case 11:
+      tip = '¡Ajustate el wiimote en la muñeca para evitar accidentes!';
+      break;
+    case 12:
+      tip = 'Yakuzas reales prefieren usar mando';
+      break;
+    case 13:
+      tip = 'Se robaron la pala, quedó la pura escoba.';
+      break;
+    case 14:
+      tip = 'Necesitas tomar agua todos los dias.';
+      break;
+    case 15:
+      tip = 'Tomate tu tiempo.';
       break;
     default:
       tip = 'ERROR DE RANDOM';

@@ -30,6 +30,16 @@ export const crearContratacion = async (contratacionData) => {
     });
 }
 
+export const getContratacionById = async (id) => {
+    return await prisma.contratacion.findUnique({
+        where: { id: parseInt(id) },
+        include: {
+            personal: true,
+            evento: true
+        }
+    });
+}
+
 export const updateContratacion = async (id, contratacionData) => {
   return await prisma.contratacion.update({
     where: { id: parseInt(id) },

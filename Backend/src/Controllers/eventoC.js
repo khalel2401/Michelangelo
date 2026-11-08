@@ -5,7 +5,7 @@ export const getEventos = async (req, res) => {
     const eventos = await eventoService.obtenerEventos();
     res.status(200).json(eventos);
   } catch (error) {
-    res.status(500).json({ mensaje: "Error interno del servidor" });
+    res.status(500).json({ mensaje: "Error interno del servidor", message: error.message });
   }
 };
 

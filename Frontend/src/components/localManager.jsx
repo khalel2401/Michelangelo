@@ -44,6 +44,17 @@ export function localManager(){
   const [errorForm, setErrorForm] = useState(null);
   const [eliminandoId, setEliminandoId] = useState(null);
 
+  console.log("Renderizando LocalManager, estado actual:", { 
+    locales, 
+    cargando, 
+    error, 
+    mostrarForm, 
+    editandoId, 
+    formData, 
+    guardando, 
+    errorForm, 
+    eliminandoId });
+
   useEffect(() => {
     fetchLocales();
   }, []);
