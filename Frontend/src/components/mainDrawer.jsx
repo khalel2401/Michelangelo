@@ -242,17 +242,6 @@ export default function MiniDrawer({ role, onLogout }) {
             NES eventos
           </Typography>
           <Box sx={{ flexGrow: 1 }} />
-          <Tooltip title="Cerrar sesión" slotProps={tooltipSlotProps}>
-            <span>
-              <IconButton
-                color="inherit"
-                aria-label="Cerrar sesión"
-                onClick={handleLogout}
-              >
-                <LogoutIcon />
-              </IconButton>
-            </span>
-          </Tooltip>
           {onLogout && (
             <Tooltip title="Cerrar sesión">
               <IconButton color="inherit" aria-label="Cerrar sesión" onClick={onLogout}>
