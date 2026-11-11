@@ -138,6 +138,11 @@ export default function App() {
             <UsersHome />
           </ProtectedRoute>
         } />
+        <Route path="/servicios" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+          <Servicios />
+        </ProtectedRoute>
+        } />
         <Route path="/legal" element={<Legal />} />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>

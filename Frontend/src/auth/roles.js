@@ -7,6 +7,14 @@ export const ADMIN_ROUTES = [
   '/cotizaciones',
   '/inventario',
   '/vehiculos',
+  '/servicios',
+];
+
+export const EXTERNO_RUTES = [
+  '/locales',
+  '/personal',
+  '/eventos',
+  '/inventario',
 ];
 
 export const isValidRole = (role) => USER_ROLES.includes(role);
