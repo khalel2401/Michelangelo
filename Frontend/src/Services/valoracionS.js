@@ -15,6 +15,7 @@ function mensajeDeError(error, porDefecto) {
 
 // Mismo "contrato" que usan eventoS.js y localS.js: siempre devuelve { success, data, message }.
 // La diferencia es que el try/catch vive UNA vez aquí, en vez de repetirse en cada función.
+/*
 async function llamar(peticion, mensajeOk, mensajeError) {
   try {
     const response = await peticion();
@@ -33,7 +34,7 @@ async function llamar(peticion, mensajeOk, mensajeError) {
     };
   }
 }
-
+*/
 export const getMisValoraciones = () =>
   llamar(() => axios.get('/valoraciones/misValoraciones'), 'Valoraciones obtenidas', 'Error al obtener tus valoraciones');
 
