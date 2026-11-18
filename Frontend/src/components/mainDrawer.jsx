@@ -33,6 +33,7 @@ import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightMode';
 import EventIcon from '@mui/icons-material/Event';
 import LogoutIcon from '@mui/icons-material/Logout';
+import MiscellaneousServicesIcon from '@mui/icons-material/MiscellaneousServices';
 //
 
 
@@ -166,6 +167,7 @@ export default function MiniDrawer({ role, onLogout }) {
     { text: 'Inventario', route: '/inventario', icon: <InventoryIcon /> },
     { text: 'Personal', route: '/personal', icon: <PersonIcon /> },
     { text: 'Cotizaciones', route: '/cotizaciones', icon: <PointOfSaleIcon /> },
+    { text: 'Servicios', route: '/servicios', icon: <MiscellaneousServicesIcon /> },
     { text: 'Vehículos', route: '/vehiculos', icon: <DirectionsCarIcon /> },
   ];
   const tooltipSlotProps = {

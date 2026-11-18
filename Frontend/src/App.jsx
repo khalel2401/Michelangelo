@@ -136,8 +136,13 @@ export default function App() {
           </ProtectedRoute>
         } />
         <Route path="/valoraciones" element={
-          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role}>
             <Valoraciones />
+          </ProtectedRoute>
+        } />
+        <Route path="/servicios" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+            <Servicios />
           </ProtectedRoute>
         } />
         <Route path="/userHome" element={
