@@ -1,5 +1,13 @@
 import { instance as axios } from "./rootS.js";
 
+function mensajeDeError(error, porDefecto) {
+    const data = error.response?.data;
+    if (Array.isArray(data?.detalles) && data.detalles.length) {
+        return data.detalles.map(({ campo, mensaje }) => `Error en ${campo}: ${mensaje}`).join('. ');
+    }
+    return data?.message || data?.mensaje || data?.error || porDefecto;
+}
+
 export async function getCotizaciones() {
   try {
     const response = await axios.get('/cotizaciones');
@@ -14,7 +22,7 @@ export async function getCotizaciones() {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.message || 'Error al obtener cotizaciones',
+      message: mensajeDeError(error, 'Error al obtener cotizaciones'),
     };
   }
 }
@@ -33,7 +41,7 @@ export async function obtenerCotizacionPorId(id) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.message || 'Error al obtener cotización',
+      message: mensajeDeError(error, 'Error al obtener cotización'),
     };
   }
 }
@@ -52,7 +60,7 @@ export async function crearCotizacion(datosCotizacion) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.message || 'Error al crear la cotización',
+      message: mensajeDeError(error, 'Error al crear la cotización'),
     };
   }
 }
@@ -71,7 +79,7 @@ export async function actualizarCotizacion(id, datosCotizacion) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.message || 'Error al actualizar la cotización',
+      message: mensajeDeError(error, 'Error al actualizar la cotización'),
     };
   }
 }
@@ -90,7 +98,7 @@ export async function borrarCotizacion(id) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.message || 'Error al eliminar la cotización',
+      message: mensajeDeError(error, 'Error al eliminar la cotización'),
     };
   }
 }

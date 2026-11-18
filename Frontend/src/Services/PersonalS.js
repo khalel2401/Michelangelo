@@ -1,5 +1,13 @@
 import {instance as axios } from "./rootS.js";
 
+function mensajeDeError(error, porDefecto) {
+    const data = error.response?.data;
+    if (Array.isArray(data?.detalles) && data.detalles.length) {
+        return data.detalles.map(({ campo, mensaje }) => `Error en ${campo}: ${mensaje}`).join('. ');
+    }
+    return data?.message || data?.mensaje || data?.error || porDefecto;
+}
+
 export async function getPersonales(){
     try {
         const response = await axios.get('/personas');
@@ -14,7 +22,7 @@ export async function getPersonales(){
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener personales',
+            message: mensajeDeError(error, 'Error al obtener personales'),
         };
     }
 }
@@ -33,7 +41,7 @@ export async function obtenerPersonalPorNombre(nombre) {
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener personal',
+            message: mensajeDeError(error, 'Error al obtener persona'),
         };
     }
 }
@@ -52,7 +60,7 @@ export async function obtenerPersonalPorId(id) {
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener personal',
+            message: mensajeDeError(error, 'Error al obtener Personal'),
         };
     }
 }
@@ -70,7 +78,7 @@ export async function crearPersonal(personalData){
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al crear personal',
+            message: mensajeDeError(error, 'Error al crear Personal'),
         };
     }
 }
@@ -89,7 +97,7 @@ export async function actualizarPersonal(id, personalData) {
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al actualizar personal',
+            message: mensajeDeError(error, 'Error al actualizar Personal'),
         };
     }
 }
@@ -108,7 +116,7 @@ export async function eliminarPersonal(id) {
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al eliminar personal',
+            message: mensajeDeError(error, 'Error al eliminar Personal'),
         };
     }
 }

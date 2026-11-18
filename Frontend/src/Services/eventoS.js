@@ -1,5 +1,14 @@
 import { instance as axios } from "./rootS.js";
 
+function mensajeDeError(error, porDefecto) {
+    const data = error.response?.data;
+    if (Array.isArray(data?.detalles) && data.detalles.length) {
+        return data.detalles.map(({ campo, mensaje }) => `Error en ${campo}: ${mensaje}`).join('. ');
+    }
+    return data?.message || data?.mensaje || data?.error || porDefecto;
+}
+
+
 export async function getEventos() {
   try {
     const response = await axios.get('/eventos');
@@ -14,7 +23,7 @@ export async function getEventos() {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.mensaje || error.response?.data?.message || 'Error al obtener eventos',
+      message: mensajeDeError(error, 'Error al obtener Eventos'),
     };
   }
 }
@@ -33,7 +42,7 @@ export async function obtenerEventoPorId(id) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.mensaje || error.response?.data?.message || 'Error al obtener evento',
+      message: mensajeDeError(error, 'Error al obtener Evento'),
     };
   }
 }
@@ -52,7 +61,7 @@ export async function crearEvento(eventoData) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.mensaje || error.response?.data?.message || 'Error al crear el evento',
+      message: mensajeDeError(error, 'Error al crear Evento'),
     };
   }
 }
@@ -71,7 +80,7 @@ export async function actualizarEvento(id, eventoData) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.mensaje || error.response?.data?.message || 'Error al actualizar el evento',
+      message: mensajeDeError(error, 'Error al actualizar Evento'),
     };
   }
 }
@@ -90,7 +99,7 @@ export async function borrarEvento(id) {
     return {
       success: false,
       data: null,
-      message: error.response?.data?.mensaje || error.response?.data?.message || 'Error al eliminar el evento',
+      message: mensajeDeError(error, 'Error al eliminar Evento'),
     };
   }
 }

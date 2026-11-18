@@ -1,5 +1,13 @@
 import { instance as axios } from "./rootS.js";
 
+function mensajeDeError(error, porDefecto) {
+    const data = error.response?.data;
+    if (Array.isArray(data?.detalles) && data.detalles.length) {
+        return data.detalles.map(({ campo, mensaje }) => `Error en ${campo}: ${mensaje}`).join('. ');
+    }
+    return data?.message || data?.mensaje || data?.error || porDefecto;
+}
+
 export async function getVehiculos(){
     try {
         const response = await axios.get('/vehiculos');
@@ -14,7 +22,7 @@ export async function getVehiculos(){
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener vehiculos',
+            message: mensajeDeError(error, 'Error al obtener vehiculos'),
         };
     }
 }
@@ -32,7 +40,7 @@ export async function obtenerVehiculoPorId(id) {
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener vehiculo',
+            message: mensajeDeError(error, 'Error al obtener vehiculo'),
         };
     }
 }
@@ -50,7 +58,7 @@ export async function crearVehiculo(vehiculoData){
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al crear el vehiculo',
+        message: mensajeDeError(error, 'Error al crear el vehiculo'),
     };
   }
 }
@@ -68,7 +76,7 @@ export async function actualizarVehiculo(id, vehiculoData) {
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al actualizar el vehiculo',
+        message: mensajeDeError(error, 'Error al actualizar el vehiculo'),
     };
   }
 }
@@ -86,7 +94,7 @@ export async function borrarVehiculo(id) {
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al eliminar el vehiculo',
+        message: mensajeDeError(error, 'Error al eliminar el vehiculo'),
     };
   }
 }

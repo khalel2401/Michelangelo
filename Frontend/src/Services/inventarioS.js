@@ -1,5 +1,13 @@
 import { instance as axios } from "./rootS.js";
 
+function mensajeDeError(error, porDefecto) {
+    const data = error.response?.data;
+    if (Array.isArray(data?.detalles) && data.detalles.length) {
+        return data.detalles.map(({ campo, mensaje }) => `Error en ${campo}: ${mensaje}`).join('. ');
+    }
+    return data?.message || data?.mensaje || data?.error || porDefecto;
+}
+
 export async function getArticulos(){
     try {
         const response = await axios.get('/articulos');
@@ -14,7 +22,7 @@ export async function getArticulos(){
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener articulos',
+            message: mensajeDeError(error, 'Error al obtener articulos'),
         };
     }
 }
@@ -32,7 +40,7 @@ export async function obtenerArticuloPorId(id) {
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener articulo',
+            message: mensajeDeError(error, 'Error al obtener articulos'),
         };
     }
 }
@@ -50,7 +58,7 @@ export async function crearArticulos(articuloData){
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al crear el articulo',
+        message: mensajeDeError(error, 'Error al crear articulos'),
     };
   }
 }
@@ -68,7 +76,7 @@ export async function actualizarArticulos(id, articuloData) {
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al actualizar el articulo',
+        message: mensajeDeError(error, 'Error al eliminar articulo'),
     };
   }
 }
@@ -86,7 +94,7 @@ export async function borrarArticulos(id) {
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al eliminar el articulo',
+        message: mensajeDeError(error, 'Error al actualizar articulo'),
     };
   }
 }

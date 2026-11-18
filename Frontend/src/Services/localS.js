@@ -1,5 +1,13 @@
 import { instance as axios } from "./rootS.js";
 
+function mensajeDeError(error, porDefecto) {
+    const data = error.response?.data;
+    if (Array.isArray(data?.detalles) && data.detalles.length) {
+        return data.detalles.map(({ campo, mensaje }) => `Error en ${campo}: ${mensaje}`).join('. ');
+    }
+    return data?.message || data?.mensaje || data?.error || porDefecto;
+}
+
 export async function getLocales(){
     try {
         const response = await axios.get('/local');
@@ -14,7 +22,7 @@ export async function getLocales(){
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener locales',
+            message: mensajeDeError(error, 'Error al obtener locales'),
         };
     }
 }
@@ -33,7 +41,7 @@ export async function obtenerLocalPorId(id) {
         return {
             success: false,
             data: null,
-            message: error.response?.data?.message || 'Error al obtener local',
+            message: mensajeDeError(error, 'Error al obtener local'),
         };
     }
 }
@@ -52,7 +60,7 @@ export async function crearLocal(localData){
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al crear el local',
+        message: mensajeDeError(error, 'Error al obtener local'),
     };
   }
 }
@@ -71,7 +79,7 @@ export async function actualizarLocal(id, localData) {
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al actualizar el local',
+        message: mensajeDeError(error, 'Error al actualizar local'),
     };
   }
 }
@@ -90,7 +98,7 @@ export async function borrarLocal(id) {
     return {
         success: false,
         data: null,
-        message: error.response?.data?.message || 'Error al eliminar el local',
+        message: mensajeDeError(error, 'Error al eliminar local'),
     };
   }
 }

@@ -1,9 +1,13 @@
 import { instance as axios } from "./rootS.js";
 
-const obtenerMensajeError = (error, mensajePredeterminado) =>
-  error.response?.data?.message ||
-  error.response?.data?.mensaje ||
-  mensajePredeterminado;
+function mensajeDeError(error, porDefecto) {
+    const data = error.response?.data;
+    if (Array.isArray(data?.detalles) && data.detalles.length) {
+        return data.detalles.map(({ campo, mensaje }) => `Error en ${campo}: ${mensaje}`).join('. ');
+    }
+    return data?.message || data?.mensaje || data?.error || porDefecto;
+}
+
 
 export async function getContrataciones() {
   try {
@@ -17,7 +21,7 @@ export async function getContrataciones() {
     return {
       success: false,
       data: null,
-      message: obtenerMensajeError(error, "Error al obtener las asignaciones"),
+      message: mensajeDeError(error, "Error al obtener las asignaciones"),
     };
   }
 }
@@ -34,7 +38,7 @@ export async function getEventosParaAsignacion() {
     return {
       success: false,
       data: null,
-      message: obtenerMensajeError(error, "Error al obtener los eventos"),
+      message: mensajeDeError(error, "Error al obtener los eventos"),
     };
   }
 }
@@ -51,7 +55,7 @@ export async function crearAsignacionPersonal(datos) {
     return {
       success: false,
       data: null,
-      message: obtenerMensajeError(error, "Error al asignar personal al evento"),
+      message: mensajeDeError(error, "Error al asignar personal al evento"),
     };
   }
 }
@@ -68,7 +72,7 @@ export async function eliminarAsignacionPersonal(id) {
     return {
       success: false,
       data: null,
-      message: obtenerMensajeError(error, "Error al quitar la asignación"),
+      message: mensajeDeError(error, "Error al quitar la asignación"),
     };
   }
 }
