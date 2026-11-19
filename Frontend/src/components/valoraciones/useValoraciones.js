@@ -1,10 +1,8 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { getMisValoraciones, getTrabajadores } from '../../Services/valoracionS.js';
-import { getEventos } from '../../Services/eventoS.js'; // <- servicio de tu compañero, lo REUTILIZAMOS
+import { getEventos } from '../../Services/eventoS.js';
 import { obtenerUsuario } from '../../Services/sesionS.js';
 
-// Hook propio: concentra la carga de datos y las reglas de "qué se puede valorar".
-// Los componentes que lo usan solo dibujan.
 export function useValoraciones() {
   const [mis, setMis] = useState([]);
   const [eventos, setEventos] = useState([]);
@@ -16,7 +14,7 @@ export function useValoraciones() {
   const recargar = useCallback(async () => {
     setCargando(true);
     setError(null);
-    // Promise.all: las 3 peticiones salen a la vez en vez de una tras otra.
+    
     const [rMis, rEventos, rTrab] = await Promise.all([getMisValoraciones(), getEventos(), getTrabajadores()]);
     const fallo = [rMis, rEventos, rTrab].find((r) => !r.success);
     if (fallo) {
@@ -30,9 +28,7 @@ export function useValoraciones() {
   }, []);
 
   useEffect(() => { recargar(); }, [recargar]);
-
-  // Regla del backend (valoracionS.js): un evento solo se puede valorar cuando YA ocurrió.
-  // Y la BD impide valorar dos veces lo mismo (@@unique). Replicamos ambas para no ofrecer botones que fallarían.
+  
   const eventosPorValorar = useMemo(() => {
     const yaValorados = new Set(mis.map((v) => v.eventoId).filter(Boolean));
     const ahora = new Date();
