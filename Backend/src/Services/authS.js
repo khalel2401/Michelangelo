@@ -1,8 +1,10 @@
-import { 
+import {
     getUsuarioByCorreo,
     getUsuarioById
 } from "./usuarioS.js";
 import jwt from "jsonwebtoken";
+
+const jwtSecret = () => process.env.JWT_SECRET || "michelangelo-dev-secret";
 
 export const login = async (email, password) => {
     const usuario = await getUsuarioByCorreo(email);
@@ -15,15 +17,28 @@ export const login = async (email, password) => {
         throw new Error("Contraseña incorrecta");
     }
 
-    const jwtSecret = process.env.JWT_SECRET || "michelangelo-dev-secret";
-    const token = jwt.sign({ id: usuario.id, email: usuario.email }, jwtSecret, { expiresIn: "1h" });
+    const token = jwt.sign(
+        { id: usuario.id, email: usuario.email, rol: usuario.rol },
+        jwtSecret(),
+        { expiresIn: "1h" }
+    );
 
-    return { token, role: usuario.rol };
+    return {
+        token,
+        role: usuario.rol,
+        usuario: {
+            id: usuario.id,
+            email: usuario.email,
+            rol: usuario.rol,
+            nombre: usuario.nombre,
+            apellido: usuario.apellido,
+        },
+    };
 };
 
 export const verificarToken = async (token) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const decoded = jwt.verify(token, jwtSecret());
         const usuario = await getUsuarioById(decoded.id);
 
         if (!usuario) {
@@ -31,6 +46,7 @@ export const verificarToken = async (token) => {
         }
         return usuario;
     } catch (error) {
+        console.error("verificarToken falló:", error.message); //depurar el 401
         throw new Error("Token inválido");
     }
 };
