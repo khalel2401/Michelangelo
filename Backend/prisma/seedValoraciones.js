@@ -1,49 +1,73 @@
-// Datos de prueba SOLO para desarrollar el módulo de valoraciones.
-// Uso (desde /Backend):  node prisma/seedValoraciones.js
-// No borra nada y puede correrse varias veces. Crea usuarios con clave conocida (123456).
 import { PrismaClient } from '@prisma/client';
 
 const prisma = new PrismaClient();
 const dias = (n) => new Date(Date.now() + n * 24 * 60 * 60 * 1000);
 
-async function main() {
-  const admin = await prisma.usuario.upsert({
-    where: { email: 'admin@michelangelo.cl' },
+const usuario = (email, password, nombre, apellido, rol) =>
+  prisma.usuario.upsert({
+    where: { email },
     update: {},
-    create: { email: 'admin@michelangelo.cl', password: '123456', nombre: 'Ada', apellido: 'Admin', rol: 'admin' },
-  });
-  const cliente = await prisma.usuario.upsert({
-    where: { email: 'cliente@michelangelo.cl' },
-    update: {},
-    create: { email: 'cliente@michelangelo.cl', password: '123456', nombre: 'Carlos', apellido: 'Cliente', rol: 'cliente' },
+    create: { email, password, nombre, apellido, rol },
   });
 
-  // Tu backend solo deja valorar eventos que YA ocurrieron. El seed.js original crea fechas futuras,
-  // por eso aquí creamos eventos en el pasado (y uno futuro para comprobar que NO aparece).
-  // Cada Evento exige una Cotizacion propia (cotizacionId es @unique).
-  const definiciones = [
-    { nombre: 'Boda Los Pérez (pasado)', fecha: dias(-30) },
-    { nombre: 'Cumpleaños de Sofía (pasado)', fecha: dias(-10) },
-    { nombre: 'Concierto Verano (FUTURO)', fecha: dias(20) },
-  ];
-  const eventos = [];
-  for (const def of definiciones) {
-    let evento = await prisma.evento.findFirst({ where: { nombre: def.nombre } });
-    if (!evento) {
-      const cotizacion = await prisma.cotizacion.create({ data: { cantidadPersonas: 50, valorTotal: 1000000, abono: 500000 } });
-      evento = await prisma.evento.create({ data: { nombre: def.nombre, fecha: def.fecha, cotizacionId: cotizacion.id } });
-    }
-    eventos.push(evento);
+// Cada Evento exige una Cotizacion propia
+async function evento(nombre, fecha) {
+  let ev = await prisma.evento.findFirst({ where: { nombre } });
+  if (!ev) {
+    const cotizacion = await prisma.cotizacion.create({
+      data: { cantidadPersonas: 50, valorTotal: 1000000, abono: 500000 },
+    });
+    ev = await prisma.evento.create({ data: { nombre, fecha, cotizacionId: cotizacion.id } });
   }
-
-  // El cliente ya valoró el primer evento, para que "Mis valoraciones" no salga vacío.
-  const yaValoro = await prisma.valoracion.findFirst({ where: { autorId: cliente.id, eventoId: eventos[0].id } });
-  if (!yaValoro) {
-    await prisma.valoracion.create({ data: { autorId: cliente.id, eventoId: eventos[0].id, calificacion: 5, comentario: 'Todo salió perfecto' } });
-  }
-
-  console.log('Listo. Usuarios: admin@michelangelo.cl / cliente@michelangelo.cl  (clave: 123456)');
-  console.log('Admin id:', admin.id, '| Cliente id:', cliente.id);
+  return ev;
 }
 
-main().catch((e) => { console.error(e); process.exit(1); }).finally(() => prisma.$disconnect());
+//Crea la valoración solo si ese autor aún no valoró ese evento
+async function valorar({ autor, evento: ev, trabajador, calificacion, comentario }) {
+  const where = ev
+    ? { autorId: autor.id, eventoId: ev.id }
+    : { autorId: autor.id, trabajadorId: trabajador.id };
+  const existe = await prisma.valoracion.findFirst({ where });
+  if (existe) return existe;
+  return prisma.valoracion.create({ data: { ...where, calificacion, comentario } });
+}
+
+async function main() {
+  // ---- Usuarios
+  const test = await usuario('test@example.com', 'password123', 'Test', 'User', 'admin');
+  const admin = await usuario('admin@michelangelo.cl', '123456', 'Ada', 'Admin', 'admin');
+  const carlos = await usuario('cliente@michelangelo.cl', '123456', 'Carlos', 'Cliente', 'cliente');
+  const camila = await usuario('cliente2@michelangelo.cl', '123456', 'Camila', 'Cliente', 'cliente');
+
+  // ---- Eventos: 3 pasados(para probar ) 
+  const boda = await evento('Boda Los Pérez (pasado)', dias(-30));
+  const cumple = await evento('Cumpleaños de Sofía (pasado)', dias(-10));
+  const aniversario = await evento('Aniversario Empresa (pasado)', dias(-5));
+  await evento('Concierto Verano (FUTURO)', dias(20));
+
+  // ---- Valoraciones de autores distintos
+  await valorar({ autor: carlos, evento: boda, calificacion: 5, comentario: 'Todo salió perfecto' });
+  await valorar({ autor: carlos, evento: cumple, calificacion: 4, comentario: 'Muy buena atención, faltó algo de puntualidad' });
+  await valorar({ autor: carlos, trabajador: admin, calificacion: 5, comentario: 'Excelente coordinación' });
+
+  await valorar({ autor: camila, evento: boda, calificacion: 4, comentario: 'Gran servicio, volveríamos a contratar' });
+  await valorar({ autor: camila, trabajador: test, calificacion: 3, comentario: 'Cumplió, pero puede mejorar la comunicación' });
+
+  await valorar({ autor: test, evento: boda, calificacion: 5, comentario: 'Evento muy bien organizado' });
+  await valorar({ autor: test, trabajador: admin, calificacion: 5, comentario: 'Gran compañera de trabajo' });
+
+  await valorar({ autor: admin, evento: cumple, calificacion: 4, comentario: 'Buen evento en general' });
+
+  const total = await prisma.valoracion.count();
+  console.log('\nListo. Valoraciones en la BD:', total);
+  console.log('\nUsuarios para probar:');
+  console.log('  admin    test@example.com           / password123');
+  console.log('  admin    admin@michelangelo.cl      / 123456');
+  console.log('  cliente  cliente@michelangelo.cl    / 123456   (3 valoraciones; le falta "Aniversario Empresa")');
+  console.log('  cliente  cliente2@michelangelo.cl   / 123456   (2 valoraciones)');
+  console.log('\nEvento pendiente para crear una valoración nueva:', aniversario.nombre);
+}
+
+main()
+  .catch((e) => { console.error(e); process.exit(1); })
+  .finally(() => prisma.$disconnect());
