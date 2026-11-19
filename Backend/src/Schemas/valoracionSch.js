@@ -29,7 +29,7 @@ export const valoracionSchema = z
 export const updateValoracionSchema = z
   .object({
     calificacion: calificacion.optional(),
-    comentario: comentario.optional(),
+    comentario: comentario.nullable().optional(),
   })
 
   .refine((d) => d.calificacion !== undefined || d.comentario !== undefined, {
