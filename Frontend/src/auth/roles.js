@@ -7,13 +7,15 @@ export const ADMIN_ROUTES = [
   '/cotizaciones',
   '/inventario',
   '/vehiculos',
+  '/valoraciones'
 ];
+
+export const COMMON_ROUTES = ['/', '/userHome', '/valoraciones'];
 
 export const isValidRole = (role) => USER_ROLES.includes(role);
 
 export const isRouteAllowed = (role, route) => (
-  route === '/' ||
-  route === '/userHome' ||
+  COMMON_ROUTES.includes(route) ||
   (role === 'admin' && ADMIN_ROUTES.includes(route))
 );
 
