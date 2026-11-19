@@ -41,7 +41,7 @@ export default function App() {
     return isValidRole(storedRole) ? storedRole : null;
   });
   const [isLoggedIn, setIsLoggedIn] = React.useState(
-    () => Boolean(localStorage.getItem('token') && isValidRole(localStorage.getItem('role'))),
+    () => Boolean(haySesion() && isValidRole(localStorage.getItem('role'))),
   );
   const location = useLocation();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
@@ -136,7 +136,7 @@ export default function App() {
           </ProtectedRoute>
         } />
         <Route path="/valoraciones" element={
-          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role}>
             <Valoraciones />
           </ProtectedRoute>
         } />
@@ -160,6 +160,7 @@ export default function App() {
       <MiniDrawer
         role={role}
         onLogout={() => {
+          cerrarSesion();
           setRole(null);
           setIsLoggedIn(false);
         }}
