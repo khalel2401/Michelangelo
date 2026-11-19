@@ -17,10 +17,12 @@ export default function UsersHome() {
         {
             url: `${import.meta.env.BASE_URL}Cotizacion.jpg`,
             title: 'Hace tu cotización',
+            route: '/cotizaciones',
         },
         {
             url: `${import.meta.env.BASE_URL}Evento.jpg`,
             title: 'Tu evento',
+            route: '/eventos',
         },
     ];
     const ImageButton = styled(ButtonBase)(() => ({
@@ -131,6 +133,8 @@ export default function UsersHome() {
                                 <ImageButton
                                     focusRipple
                                     key={image.title}
+                                    onClick={() => navigate(image.route)}
+                                    
                                 >
                                     <ImageSrc src={image.url} alt="" />
                                     <ImageBackdrop className="MuiImageBackdrop-root" />

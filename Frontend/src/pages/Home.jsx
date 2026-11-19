@@ -1,28 +1,24 @@
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Container from '@mui/material/Container';
 import Typography from '@mui/material/Typography';
 import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
-import Paper from '@mui/material/Paper';
-import Card from '@mui/material/Card';
-import CardContent from '@mui/material/CardContent';
-import Chip from '@mui/material/Chip';
-import IconButton from '@mui/material/IconButton';
-import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
-import ChevronRightIcon from '@mui/icons-material/ChevronRight';
-import { useNavigate } from 'react-router-dom';
+
+// Importamos el nuevo componente del calendario
+import CalendarioEventos from '../components/calendarioEventosManager.jsx';
 import FetchLocales from '../components/fetchLocales.jsx';
 import { getEventos } from '../Services/eventoS.js';
 
 export default function Home(){
   const navigate = useNavigate();
-
-  const [fechaActual, setFechaActual] = useState(new Date());
+  
+  // Estado para guardar los datos que trae el backend
   const [eventos, setEventos] = useState([]);
-  const [diaSeleccionado, setDiaSeleccionado] = useState(null);
 
+  // Cargar eventos al iniciar la página
   useEffect(() => {
-    cargarEventos();
+    cargarEventos(); 
   }, []);
 
   const cargarEventos = async () => {
@@ -36,33 +32,10 @@ export default function Home(){
     }
   };
 
-  const anio = fechaActual.getFullYear();
-  const mes = fechaActual.getMonth();
-  const nombresMeses = [
-    "Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio",
-    "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"
-  ];
-
-  const mesAnterior = () => setFechaActual(new Date(anio, mes - 1, 1));
-  const mesSiguiente = () => setFechaActual(new Date(anio, mes + 1, 1));
-
-  const diaInicioSemana = new Date(anio, mes, 1).getDay();
-  const primerDiaSemana = (diaInicioSemana + 6) % 7;
-  const totalDiasMes = new Date(anio, mes + 1, 0).getDate();
-
-  const obtenerEventosDelDia = (dia) => {
-    return eventos.filter((ev) => {
-      const f = new Date(ev.fecha || ev.fechaInicio || ev.createdAt);
-      return (
-        f.getDate() === dia &&
-        f.getMonth() === mes &&
-        f.getFullYear() === anio
-      );
-    });
-  };
-
   return (
     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 3, width: '100%', justifyContent: 'center', bgcolor: 'background.default', py: 4 }}>
+      
+      {/* ===================== PANEL IZQUIERDO ===================== */}
       <Container maxWidth="sm" sx={{
         border: 4,
         borderColor: 'secondary.main',
@@ -91,113 +64,22 @@ export default function Home(){
               maxWidth: { xs: 350, md: 250 },
             }}
             alt='imagen'
-            src='../informatica.jpg'
+            src='../informatica.jpg' 
           />
         </Box>
-        <Button onClick={() => navigate('/locales')} sx={{ alignSelf: 'center' }}>Ver locales</Button>
-        <Button onClick={() => navigate('/inventario')} sx={{ alignSelf: 'center' }}>Revisar Inventario</Button>
-        <Button onClick={() => navigate('/vehiculos')} sx={{ alignSelf: 'center' }}>Revisar Vehiculos</Button>
+        <Button onClick={() => navigate('/locales')} sx={{ alignSelf: 'center' }}>VER LOCALES</Button>
+        <Button onClick={() => navigate('/inventario')} sx={{ alignSelf: 'center' }}>REVISAR INVENTARIO</Button>
+        <Button onClick={() => navigate('/vehiculos')} sx={{ alignSelf: 'center' }}>REVISAR VEHICULOS</Button>
       </Container>
 
+      {/* ===================== PANEL DERECHO (CALENDARIO Y LOCALES) ===================== */}
       <Box sx={{ flex: 1, display: 'flex', flexDirection: 'column', gap: 2 }}>
-        <Paper variant="outlined" sx={{ p: 2, borderRadius: 3 }}>
-          <Box sx={{ display: "flex", justifyContent: "space-between", alignItems: "center", mb: 2 }}>
-            <IconButton onClick={mesAnterior}>
-              <ChevronLeftIcon />
-            </IconButton>
-            <Typography variant="h6" sx={{ fontWeight: "bold" }}>
-              {nombresMeses[mes]} {anio}
-            </Typography>
-            <IconButton onClick={mesSiguiente}>
-              <ChevronRightIcon />
-            </IconButton>
-          </Box>
+        
+        {/* Aquí insertamos el calendario como componente y le pasamos los eventos del backend */}
+        <CalendarioEventos eventos={eventos} />
 
-          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1, mb: 1, textAlign: "center" }}>
-            {["Lun", "Mar", "Mié", "Jue", "Vie", "Sáb", "Dom"].map((d) => (
-              <Typography key={d} variant="caption" sx={{ fontWeight: "bold", color: "text.secondary" }}>
-                {d}
-              </Typography>
-            ))}
-          </Box>
-
-          <Box sx={{ display: "grid", gridTemplateColumns: "repeat(7, 1fr)", gap: 1 }}>
-            {Array.from({ length: primerDiaSemana }).map((_, i) => (
-              <Box key={`vacio-${i}`} />
-            ))}
-
-            {Array.from({ length: totalDiasMes }).map((_, i) => {
-              const dia = i + 1;
-              const eventosDia = obtenerEventosDelDia(dia);
-              const tieneEvento = eventosDia.length > 0;
-
-              return (
-                <Paper
-                  key={dia}
-                  variant="outlined"
-                  onClick={() => {
-                    if (tieneEvento) {
-                      setDiaSeleccionado({ dia, lista: eventosDia });
-                    }
-                  }}
-                  sx={(theme) => ({
-                    p: 1,
-                    minHeight: 45,
-                    display: "flex",
-                    flexDirection: "column",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    cursor: tieneEvento ? "pointer" : "default",
-                    backgroundColor: tieneEvento ? theme.palette.success.main : theme.palette.background.paper,
-                    color: tieneEvento ? "#fff" : "inherit",
-                    borderRadius: 2,
-                  })}
-                >
-                  <Typography variant="body2" sx={{ fontWeight: "bold" }}>
-                    {dia}
-                  </Typography>
-                  {tieneEvento && (
-                    <Typography variant="caption" sx={{ fontSize: "0.6rem" }}>
-                      {eventosDia.length} ev.
-                    </Typography>
-                  )}
-                </Paper>
-              );
-            })}
-          </Box>
-        </Paper>
-
-        {diaSeleccionado && (
-          <Paper variant="outlined" sx={{ p: 2, borderRadius: 3, border: '1px solid green' }}>
-            <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', mb: 2 }}>
-              <Typography variant="h6">
-                Eventos del día {diaSeleccionado.dia} de {nombresMeses[mes]}
-              </Typography>
-              <Button size="small" variant="outlined" onClick={() => setDiaSeleccionado(null)}>
-                Cerrar
-              </Button>
-            </Box>
-
-            {diaSeleccionado.lista.map((ev, index) => (
-              <Card key={ev.id || index} variant="outlined" sx={{ mb: 1.5, borderRadius: 2 }}>
-                <CardContent sx={{ p: 2 }}>
-                  <Typography variant="h6" color="primary">
-                    {ev.nombre || `Evento #${ev.id}`}
-                  </Typography>
-                  {ev.estado && (
-                    <Chip label={ev.estado} color="success" size="small" sx={{ my: 1 }} />
-                  )}
-                  <Box sx={{ display: "grid", gap: 0.5, mt: 1 }}>
-                    {ev.descripcion && <Typography variant="body2"><strong>Descripción:</strong> {ev.descripcion}</Typography>}
-                    {ev.contacto && <Typography variant="body2"><strong>Contacto:</strong> {ev.contacto}</Typography>}
-                    {ev.local && <Typography variant="body2"><strong>Local:</strong> {ev.local.nombre || ev.local}</Typography>}
-                  </Box>
-                </CardContent>
-              </Card>
-            ))}
-          </Paper>
-        )}
-
+        {/* Componente extra de locales */}
+        <Typography variant="h6" sx={{ mt: 2 }}>Locales</Typography>
         <FetchLocales />
       </Box>
     </Box>
