@@ -6,6 +6,7 @@ import Button from '@mui/material/Button';
 import Tab from '@mui/material/Tab';
 import Tabs from '@mui/material/Tabs';
 import Typography from '@mui/material/Typography';
+import { cerrarSesion } from '../Services/sesionS.js';
 import { useValoraciones } from '../components/valoraciones/useValoraciones.js';
 import ListaPorValorar from '../components/valoraciones/ListaPorValorar.jsx';
 import MisValoraciones from '../components/valoraciones/MisValoraciones.jsx';
@@ -15,12 +16,18 @@ import ValoracionForm from '../components/valoraciones/ValoracionForm.jsx';
 export default function Valoraciones() {
   const navigate = useNavigate();
   const {
-    usuario, mis, eventos, trabajadores, eventosPorValorar, trabajadoresPorValorar, cargando, error, recargar,
+    esAdmin, mis, todas, eventos, trabajadores, eventosPorValorar, trabajadoresPorValorar,
+    cargando, error, sesionExpirada, recargar,
   } = useValoraciones();
-  const esAdmin = usuario?.rol === 'admin';
+
+  //token dura 1 hora o falta
+  const volverALogin = () => {
+    cerrarSesion();
+    localStorage.removeItem('role');
+    window.location.assign('/');
+  };
 
   const [tab, setTab] = useState('eventos');
-  // Un solo diálogo para crear/editar: guardamos QUÉ se está valorando.
   const [dialogo, setDialogo] = useState({ open: false, objetivo: null, valoracion: null });
   const cerrarDialogo = () => setDialogo((d) => ({ ...d, open: false }));
 
@@ -32,11 +39,20 @@ export default function Valoraciones() {
         <Tab value="eventos" label={`Eventos por valorar (${eventosPorValorar.length})`} />
         <Tab value="trabajadores" label={`Trabajadores por valorar (${trabajadoresPorValorar.length})`} />
         <Tab value="mias" label={`Mis valoraciones (${mis.length})`} />
+        {esAdmin && <Tab value="todas" label={`Todas (admin) (${todas.length})`} />}
         {esAdmin && <Tab value="resumen" label="Resumen (admin)" />}
       </Tabs>
 
       {cargando && <Typography role="status" align="center">Cargando valoraciones...</Typography>}
-      {error && <Alert severity="error" sx={{ maxWidth: 700, mx: 'auto', mb: 2 }}>{error}</Alert>}
+      {error && (
+        <Alert
+          severity="error"
+          sx={{ maxWidth: 700, mx: 'auto', mb: 2 }}
+          action={sesionExpirada ? <Button color="inherit" size="small" onClick={volverALogin}>Iniciar sesión</Button> : undefined}
+        >
+          {error}
+        </Alert>
+      )}
 
       {!cargando && !error && tab === 'eventos' && (
         <ListaPorValorar
@@ -62,6 +78,16 @@ export default function Valoraciones() {
         <MisValoraciones
           valoraciones={mis}
           onEditar={(valoracion) => setDialogo({ open: true, objetivo: null, valoracion })}
+          onCambio={recargar}
+        />
+      )}
+
+      {!cargando && !error && tab === 'todas' && esAdmin && (
+        <MisValoraciones
+          valoraciones={todas}
+          mostrarAutor
+          soloEliminar
+          vacio="Todavía no hay valoraciones de ningún usuario."
           onCambio={recargar}
         />
       )}

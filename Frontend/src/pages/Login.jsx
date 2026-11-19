@@ -43,7 +43,7 @@ export default function Login({ onLogin }) {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({ email, password }),
+        body: JSON.stringify({ email: email.trim(), password }),
       });
 
       const data = await response.json();
@@ -56,7 +56,7 @@ export default function Login({ onLogin }) {
         throw new Error("La respuesta de inicio de sesión no incluye un rol válido");
       }
 
-      localStorage.setItem("token", data.data.token);
+      guardarSesion({ token: data.data.token, usuario: data.data.usuario });
       localStorage.setItem("role", data.data.role);
       onLogin?.(data.data.role);
     } catch (err) {
