@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { API_URL } from '../api/config';
+import { guardarSesion } from '../Services/sesionS.js';
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import FilledInput from '@mui/material/FilledInput';
@@ -15,6 +16,7 @@ import Typography from "@mui/material/Typography";
 import Link from "@mui/material/Link";
 import { Link as RouterLink } from "react-router-dom"
 import { alpha } from "@mui/material/styles";
+import { isValidRole } from "../auth/roles.js";
 
 export default function Login({ onLogin }) {
   const [cargando, setCargando] = useState(false);
@@ -29,7 +31,7 @@ export default function Login({ onLogin }) {
   const handleClickShowPassword = () => setShowPassword((show) => !show);
   const handleMouseDownPassword = (event) => event.preventDefault();
   const handleMouseUpPassword = (event) => event.preventDefault();
-
+  console.log('Login.jsx');
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError(null);
@@ -50,11 +52,13 @@ export default function Login({ onLogin }) {
         throw new Error(data.message || "Usuario o contraseña incorrectos");
       }
 
-      if (data.data?.token) {
-        localStorage.setItem("token", data.data.token);
+      if (!data.data?.token || !isValidRole(data.data?.role)) {
+        throw new Error("La respuesta de inicio de sesión no incluye un rol válido");
       }
 
-      onLogin?.();
+      localStorage.setItem("token", data.data.token);
+      localStorage.setItem("role", data.data.role);
+      onLogin?.(data.data.role);
     } catch (err) {
       setError(err.message || "Error al iniciar sesión");
       alert(err.message || "Usuario o contraseña incorrectos");

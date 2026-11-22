@@ -1,7 +1,7 @@
 import { Router } from "express";
-import * as controller from "../Controllers/cotizacionServicio.js";
+import * as controller from "../Controllers/cotizacionServicioC.js";
 import { validateSchema } from "../Middlewares/validarM.js";
-import { cotizacionServicioSchema } from "../Schemas/cotizacionServicio.js";
+import { cotizacionServicioSchema } from "../Schemas/cotizacionServicioSch.js";
 
 const router = Router();
 

@@ -25,6 +25,5 @@ export const getLocalByNombreDueno = async (nombreDueno) => {
 };
 
 export const getLocalesDisponibles = async () => {
-	return await prisma.local.findMany({ where: { Disponibilidad: true } });
+	return await prisma.local.findMany({ where: { disponibilidad: true } });
 };
-

@@ -44,6 +44,17 @@ export function localManager(){
   const [errorForm, setErrorForm] = useState(null);
   const [eliminandoId, setEliminandoId] = useState(null);
 
+  console.log("Renderizando LocalManager, estado actual:", { 
+    locales, 
+    cargando, 
+    error, 
+    mostrarForm, 
+    editandoId, 
+    formData, 
+    guardando, 
+    errorForm, 
+    eliminandoId });
+
   useEffect(() => {
     fetchLocales();
   }, []);
@@ -247,7 +258,7 @@ export function localManager(){
         <Box
           sx={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(min(100%, 300px), 340px))",
+            gridTemplateColumns: "repeat(3, 340px)",
             justifyContent: "center",
             alignItems: "stretch",
             gap: 3,
@@ -262,7 +273,7 @@ export function localManager(){
                 key={local.id}
                 variant="outlined"
                 sx={(theme) => ({
-                  width: "100%",
+                  width: 340,
                   aspectRatio: editandoEsteLocal ? "auto" : "1 / 1",
                   minHeight: editandoEsteLocal ? 0 : 300,
                   display: "flex",

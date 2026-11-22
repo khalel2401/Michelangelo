@@ -10,7 +10,7 @@ import './theme/theme-transitions.css';
 
 const rootElement = document.getElementById('root');
 const root = ReactDOM.createRoot(rootElement);
-console.log('funciona te lo suplico');
+console.log('Main.jsx');
 root.render(
   <React.StrictMode>
     <ThemeProvider theme={theme} defaultMode="system">

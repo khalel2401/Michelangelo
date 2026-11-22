@@ -29,6 +29,10 @@ const theme = createTheme({
         warning: {
           main: '#ffc400',
         },
+        background: {
+          default: '#ededed',
+          paper: '#ffffff',
+        },
       },
     },
     dark: {
@@ -45,6 +49,10 @@ const theme = createTheme({
         },
         warning: {
           main: '#ffc400',
+        },
+        background: {
+          default: '#000000',
+          paper: '#101010',
         },
       },
     },

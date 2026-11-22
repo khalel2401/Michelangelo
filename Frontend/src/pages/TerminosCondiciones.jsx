@@ -8,7 +8,7 @@ import { useNavigate } from 'react-router-dom';
 
 export default function TerminosCondiciones(){
     const navigate = useNavigate();
-
+    console.log('TerminosCondiciones.jsx');
     return (
         <Container maxWidth="md" sx={{ py: 4, display: 'grid', justifyItems: 'center', gap: 2 }}>
             <Typography variant="h4" component="h1" textAlign="center">

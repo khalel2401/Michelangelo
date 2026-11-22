@@ -1,4 +1,4 @@
-import * as cotizacionService from "../Services/cotizacion.js";
+import * as cotizacionService from "../Services/cotizacionS.js";
 
 export const getCotizaciones = async (req, res) => {
   try {
@@ -26,7 +26,13 @@ export const crearCotizacion = async (req, res) => {
     const nuevaCotizacion = await cotizacionService.crearCotizacion(req.body);
     res.status(201).json(nuevaCotizacion);
   } catch (error) {
-    res.status(500).json({ mensaje: "Error interno del servidor" });
+    console.error("Error al crear cotización:", error);
+    if (error.code === "P2003") {
+      return res.status(400).json({
+        mensaje: "El local indicado no existe. Verifica localId e inténtalo nuevamente.",
+      });
+    }
+    res.status(500).json({ mensaje: "Error al realizar la cotización" });
   }
 };
 

@@ -33,6 +33,17 @@ export const getLocalPorNombreDueno = async (req, res) =>{
     }
 };
 
+export const getLocalPorDisponibilidad = async (req, res) => {
+    try {
+        const local = await localS.getLocalesDisponibles();
+        return res.status(200).json(local);
+	} catch(err) {
+		console.error(err);
+		res.status(500).json({message: "Error interno del servidor"});
+	}
+};
+
+
 export const crearLocal = async (req, res) => {
 	try {
 		const result = await localS.createLocal(req.body);
