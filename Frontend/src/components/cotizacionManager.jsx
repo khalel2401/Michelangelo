@@ -21,21 +21,25 @@ import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
 import FilterListIcon from "@mui/icons-material/FilterList";
 
+import { instance as axios } from "../Services/rootS.js";
 import { getCotizaciones, crearCotizacion, actualizarCotizacion, borrarCotizacion } from "../Services/cotizacionS.js";
 import { getLocales } from "../Services/localS.js";
 import { getServicios } from "../Services/servicioS.js"; 
+import { getArticulos } from "../Services/inventarioS.js";
 
 const formVacio = {
   cantidadPersonas: "",
   abono: "",
   localId: "",
   serviciosIds: [],
+  articulosIds: [],
 };
 
 export function cotizacionManager(){
   const [cotizaciones, setCotizaciones] = useState([]); 
   const [locales, setLocales] = useState([]); 
   const [servicios, setServicios] = useState([]); 
+  const [articulos, setArticulos] = useState([]);
   const [cargando, setCargando] = useState(true);
   const [error, setError] = useState(null);
 
@@ -70,6 +74,10 @@ export function cotizacionManager(){
 
       const resServicios = await getServicios();
       if (resServicios.success) setServicios(Array.isArray(resServicios.data) ? resServicios.data : []);
+
+      const resArticulos = await getArticulos();
+      if (resArticulos.success) setArticulos(Array.isArray(resArticulos.data) ? resArticulos.data : []);
+
     } catch (err) {
       setError(err.message);
     } finally {
@@ -79,7 +87,7 @@ export function cotizacionManager(){
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    if (name === "serviciosIds") {
+    if (name === "serviciosIds" || name === "articulosIds") {
       const valores = typeof value === 'string' ? value.split(',') : value;
       setFormData({ ...formData, [name]: valores.map(Number) });
     } else {
@@ -97,6 +105,10 @@ export function cotizacionManager(){
       const servElegido = servicios.find(s => s.id === id);
       if (servElegido) total += Number(servElegido.precio || 0);
     });
+    formData.articulosIds.forEach(id => {
+      const articuloElegido = articulos.find(a => a.id === id);
+      if (articuloElegido) total += Number(articuloElegido.precio || 0);
+    });
     return total;
   };
 
@@ -109,14 +121,23 @@ export function cotizacionManager(){
 
   const iniciarEdicion = (cotizacion) => {
     setEditandoId(cotizacion.id);
+    
+    const sIds = Array.isArray(cotizacion.cotizacionesServicios)
+      ? cotizacion.cotizacionesServicios.map(cs => cs.servicioId || cs.servicio?.id).filter(Boolean)
+      : [];
+    
+    const aIds = Array.isArray(cotizacion.cotizacionesArticulos)
+      ? cotizacion.cotizacionesArticulos.map(ca => ca.articuloId || ca.articulo?.id).filter(Boolean)
+      : [];
+
     setFormData({
-      cantidadPersonas: cotizacion.cantidadPersonas,
-      abono: cotizacion.abono,
+      cantidadPersonas: cotizacion.cantidadPersonas || "",
+      abono: cotizacion.abono || 0,
       localId: cotizacion.localId || "",
-      serviciosIds: cotizacion.cotizacionesServicios 
-        ? cotizacion.cotizacionesServicios.map(cs => cs.servicioId) 
-        : [],
+      serviciosIds: sIds,
+      articulosIds: aIds,
     });
+    
     setErrorForm(null);
     setMostrarAlta(false);
   };
@@ -138,7 +159,6 @@ export function cotizacionManager(){
       cantidadPersonas: Number(formData.cantidadPersonas),
       valorTotal: calcularTotal(), 
       abono: Number(formData.abono),
-      serviciosIds: formData.serviciosIds, 
     };
 
     try {
@@ -146,18 +166,64 @@ export function cotizacionManager(){
         ? await actualizarCotizacion(editandoId, datosCotizacion)
         : await crearCotizacion(datosCotizacion);
 
-      if (res.success) {
-        if (editandoId) {
-          setCotizaciones((actuales) => actuales.map((cot) => (cot.id === editandoId ? res.data : cot)));
-        } else {
-          setCotizaciones((actuales) => [...actuales, res.data]);
-        }
-        cancelarForm();
-      } else {
+      if (!res.success) {
         setErrorForm(res.message);
+        setGuardando(false);
+        return;
       }
+
+      const cotizacionId = editandoId || res.data.id;
+
+      // Si estamos editando, limpiamos las relaciones anteriores en las tablas intermedias
+      if (editandoId) {
+        const cotActual = cotizaciones.find(c => c.id === editandoId);
+        
+        if (cotActual?.cotizacionesServicios?.length > 0) {
+          await Promise.all(
+            cotActual.cotizacionesServicios.map(cs => 
+              axios.delete(`/api/cotizaciones-servicios/${cs.id}`)
+            )
+          );
+        }
+
+        if (cotActual?.cotizacionesArticulos?.length > 0) {
+          await Promise.all(
+            cotActual.cotizacionesArticulos.map(ca => 
+              axios.delete(`/cotizaciones-articulos/${ca.id}`)
+            )
+          );
+        }
+      }
+
+      // Guardamos los nuevos servicios seleccionados en la tabla intermedia
+      if (formData.serviciosIds.length > 0) {
+        await Promise.all(
+          formData.serviciosIds.map(servicioId =>
+            axios.post("/api/cotizaciones-servicios", {
+              cotizacionId,
+              servicioId,
+            })
+          )
+        );
+      }
+
+      // Guardamos los nuevos artículos seleccionados en la tabla intermedia
+      if (formData.articulosIds.length > 0) {
+        await Promise.all(
+          formData.articulosIds.map(articuloId =>
+            axios.post("/cotizaciones-articulos", {
+              cotizacionId,
+              articuloId,
+              cantidadAsignada: 1,
+            })
+          )
+        );
+      }
+
+      await fetchCotizaciones();
+      cancelarForm();
     } catch (err) {
-      setErrorForm(err.message || "No se pudo guardar la cotización");
+      setErrorForm(err.response?.data?.mensaje || err.response?.data?.message || err.message || "No se pudo guardar la cotización");
     } finally {
       setGuardando(false);
     }
@@ -226,11 +292,30 @@ export function cotizacionManager(){
             value={formData.serviciosIds}
             onChange={handleChange}
             input={<OutlinedInput label="Servicios" />}
-            renderValue={(selected) => `${selected.length} servicio(s) seleccionado(s)`}
+            renderValue={(selected) => `${selected.length} servicio(s)`}
           >
             {servicios.map((servicio) => (
               <MenuItem key={servicio.id} value={servicio.id}>
-                {servicio.nombre}
+                {servicio.nombre} (${servicio.precio?.toLocaleString("es-CL")})
+              </MenuItem>
+            ))}
+          </Select>
+        </FormControl>
+
+        <FormControl size="small" fullWidth>
+          <InputLabel id="articulos-label">Artículos</InputLabel>
+          <Select
+            labelId="articulos-label"
+            multiple
+            name="articulosIds"
+            value={formData.articulosIds}
+            onChange={handleChange}
+            input={<OutlinedInput label="Artículos" />}
+            renderValue={(selected) => `${selected.length} artículo(s)`}
+          >
+            {articulos.map((articulo) => (
+              <MenuItem key={articulo.id} value={articulo.id}>
+                {articulo.nombre} (${articulo.precio?.toLocaleString("es-CL")})
               </MenuItem>
             ))}
           </Select>
@@ -272,23 +357,41 @@ export function cotizacionManager(){
         />
       </Box>
 
-      {formData.serviciosIds.length > 0 && (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            Servicios seleccionados:
-          </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {formData.serviciosIds.map((id) => {
-              const servicioObj = servicios.find((s) => s.id === id);
-              return servicioObj ? (
-                <Chip key={id} label={servicioObj.nombre} size="small" color="primary" />
-              ) : null;
-            })}
+      <Box sx={{ display: "grid", gridTemplateColumns: { xs: "1fr", sm: "repeat(2, 1fr)" }, gap: 2 }}>
+        {formData.serviciosIds.length > 0 && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Servicios seleccionados:
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {formData.serviciosIds.map((id) => {
+                const servicioObj = servicios.find((s) => s.id === id);
+                return servicioObj ? (
+                  <Chip key={id} label={servicioObj.nombre} size="small" color="primary" />
+                ) : null;
+              })}
+            </Box>
           </Box>
-        </Box>
-      )}
+        )}
 
-      <Box sx={{ display: "flex", gap: 1 }}>
+        {formData.articulosIds.length > 0 && (
+          <Box sx={{ display: 'flex', flexDirection: 'column', gap: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Artículos seleccionados:
+            </Typography>
+            <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
+              {formData.articulosIds.map((id) => {
+                const articuloObj = articulos.find((a) => a.id === id);
+                return articuloObj ? (
+                  <Chip key={id} label={articuloObj.nombre} size="small" color="secondary" />
+                ) : null;
+              })}
+            </Box>
+          </Box>
+        )}
+      </Box>
+
+      <Box sx={{ display: "flex", gap: 1, mt: 1 }}>
         <Button type="submit" variant="contained" disabled={guardando}>
           {guardando ? "Guardando..." : "GUARDAR"}
         </Button>
@@ -329,7 +432,7 @@ export function cotizacionManager(){
         </Paper>
       ) : !error && (
         <Box sx={{ display: "grid", gap: 1.5 }}>
-          {/* Barra de Filtros (zenon no te copie guiño, guiño*/}
+          {/* Barra de Filtros */}
           <Paper variant="outlined" sx={{ px: 1.5, py: 0.5, borderRadius: 2 }}>
             <Box sx={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
               <Typography variant="body2" color="text.secondary">
@@ -390,7 +493,7 @@ export function cotizacionManager(){
                   <TableRow>
                     <TableCell><strong>ID</strong></TableCell>
                     <TableCell><strong>Local</strong></TableCell>
-                    <TableCell><strong>Servicios</strong></TableCell>
+                    <TableCell><strong>Extras (Serv./Art.)</strong></TableCell> 
                     <TableCell align="center"><strong>Personas</strong></TableCell>
                     <TableCell align="right"><strong>Total / Abono</strong></TableCell>
                     <TableCell align="center"><strong>Fecha</strong></TableCell>
@@ -403,10 +506,18 @@ export function cotizacionManager(){
                     const editando = editandoId === cotizacion.id;
                     const localAsociado = locales.find((l) => l.id === cotizacion.localId) || cotizacion.local;
                     
-                    let nombresServicios = "—";
+                    let nombresServicios = "";
                     if (cotizacion.cotizacionesServicios && cotizacion.cotizacionesServicios.length > 0) {
                       nombresServicios = cotizacion.cotizacionesServicios
                         .map(cs => cs.servicio?.nombre || servicios.find(s => s.id === cs.servicioId)?.nombre)
+                        .filter(Boolean)
+                        .join(", ");
+                    }
+
+                    let nombresArticulos = "";
+                    if (cotizacion.cotizacionesArticulos && cotizacion.cotizacionesArticulos.length > 0) {
+                      nombresArticulos = cotizacion.cotizacionesArticulos
+                        .map(ca => ca.articulo?.nombre || articulos.find(a => a.id === ca.articuloId)?.nombre)
                         .filter(Boolean)
                         .join(", ");
                     }
@@ -421,9 +532,16 @@ export function cotizacionManager(){
                           <>
                             <TableCell>#{cotizacion.id}</TableCell>
                             <TableCell>{localAsociado ? localAsociado.nombre : "Sin asignar"}</TableCell>
-                            <TableCell sx={{ maxWidth: 200, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
-                              {nombresServicios}
+                            
+                            <TableCell sx={{ maxWidth: 200 }}>
+                                <Typography variant="body2" sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                    <Box component="span" sx={{ fontWeight: 'bold', color: 'primary.main' }}>S:</Box> {nombresServicios || "—"}
+                                </Typography>
+                                <Typography variant="body2" sx={{ whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" }}>
+                                    <Box component="span" sx={{ fontWeight: 'bold', color: 'secondary.main' }}>A:</Box> {nombresArticulos || "—"}
+                                </Typography>
                             </TableCell>
+
                             <TableCell align="center">{cotizacion.cantidadPersonas}</TableCell>
                             <TableCell align="right">
                               Total: ${cotizacion.valorTotal?.toLocaleString("es-CL")}<br/>
