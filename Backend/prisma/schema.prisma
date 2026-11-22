@@ -55,6 +55,8 @@ model Cotizacion {
   local   Local? @relation(fields: [localId], references: [id])
 
   cotizacionesServicios CotizacionServicio[]
+  cotizacionesArticulos CotizacionArticulo[]
+  
   evento                Evento?
 
   @@map("cotizaciones")
@@ -69,6 +71,18 @@ model CotizacionServicio {
   servicio   Servicio   @relation(fields: [servicioId], references: [id], onDelete: Cascade)
 
   @@map("cotizaciones_servicios")
+}
+
+model CotizacionArticulo {
+  id               Int @id @default(autoincrement())
+  cotizacionId     Int
+  articuloId       Int
+  cantidadAsignada Int @default(1)
+
+  cotizacion Cotizacion @relation(fields: [cotizacionId], references: [id], onDelete: Cascade)
+  articulo   Articulo   @relation(fields: [articuloId], references: [id], onDelete: Cascade)
+
+  @@map("cotizaciones_articulos")
 }
 
 model Evento {
@@ -115,7 +129,10 @@ model Articulo {
   id       Int     @id @default(autoincrement())
   nombre   String  @db.VarChar(100)
   cantidad Int
+  precio   Float   @default(0)
   enUso    Boolean @default(true)
+
+  cotizacionesArticulos CotizacionArticulo[]
 
   @@map("articulos")
 }
@@ -156,13 +173,13 @@ model Valoracion {
   comentario   String?  @db.Text
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
-  //autor coso
+  
   autorId      Int
   autor        Usuario  @relation("ValoracionAutor", fields: [autorId], references: [id], onDelete: Cascade)
+  
   eventoId     Int?
   evento       Evento?  @relation(fields: [eventoId], references: [id], onDelete: Cascade)
 
-  //trabajador
   trabajadorId Int?
   trabajador   Usuario? @relation("ValoracionTrabajador", fields: [trabajadorId], references: [id], onDelete: Cascade)
 

@@ -7,6 +7,9 @@ export const obtenerCotizaciones = async () => {
       cotizacionesServicios: {
         include: { servicio: true },
       },
+      cotizacionesArticulos: {
+        include: { articulo: true },
+      },
       evento: true,
     },
   });
@@ -20,6 +23,9 @@ export const obtenerCotizacionPorId = async (id) => {
       cotizacionesServicios: {
         include: { servicio: true },
       },
+      cotizacionesArticulos: {
+        include: { articulo: true },
+      },
       evento: true,
     },
   });
@@ -29,11 +35,9 @@ export const crearCotizacion = async (cotizacionData) => {
   return await prisma.cotizacion.create({
     data: cotizacionData,
     include: {
-      cotizacionesServicios: {
-        include: {
-          servicio: true,
-        },
-      },
+      local: true,
+      cotizacionesServicios: { include: { servicio: true } },
+      cotizacionesArticulos: { include: { articulo: true } },
     },
   });
 };
@@ -43,11 +47,9 @@ export const actualizarCotizacion = async (id, cotizacionData) => {
     where: { id: parseInt(id) },
     data: cotizacionData,
     include: {
-      cotizacionesServicios: {
-        include: {
-          servicio: true,
-        },
-      },
+      local: true,
+      cotizacionesServicios: { include: { servicio: true } },
+      cotizacionesArticulos: { include: { articulo: true } },
     },
   });
 };
