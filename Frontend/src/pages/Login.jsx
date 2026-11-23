@@ -56,7 +56,10 @@ export default function Login({ onLogin }) {
         throw new Error("La respuesta de inicio de sesión no incluye un rol válido");
       }
 
-      localStorage.setItem("token", data.data.token);
+      guardarSesion({
+        token: data.data.token,
+        usuario: data.data.usuario ?? null,
+      });
       localStorage.setItem("role", data.data.role);
       onLogin?.(data.data.role);
     } catch (err) {

@@ -19,6 +19,7 @@ import UsersHome from './pages/UsersHome.jsx';
 import { getHomeRoute, isRouteAllowed, isValidRole, USER_ROLES } from './auth/roles.js';
 import Servicios from './pages/Servicios.jsx';
 import Valoraciones from './pages/Valoraciones.jsx';
+import MisCotizaciones from './pages/MisCotizaciones.jsx';
 import { haySesion, cerrarSesion } from './Services/sesionS.js';
 
 const routeFadeDuration = 180;
@@ -41,7 +42,7 @@ export default function App() {
     return isValidRole(storedRole) ? storedRole : null;
   });
   const [isLoggedIn, setIsLoggedIn] = React.useState(
-    () => Boolean(localStorage.getItem('token') && isValidRole(localStorage.getItem('role'))),
+    () => Boolean(haySesion() && isValidRole(localStorage.getItem('role'))),
   );
   const location = useLocation();
   const reduceMotion = useMediaQuery('(prefers-reduced-motion: reduce)');
@@ -123,6 +124,11 @@ export default function App() {
         <Route path="/cotizaciones" element={
           <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={['admin']}>
             <Cotizaciones />
+          </ProtectedRoute>
+        } />
+        <Route path="/mis-cotizaciones" element={
+          <ProtectedRoute isLoggedIn={isLoggedIn} role={role} allowedRoles={USER_ROLES}>
+            <MisCotizaciones />
           </ProtectedRoute>
         } />
         <Route path="/inventario" element={

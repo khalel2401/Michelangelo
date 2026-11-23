@@ -17,6 +17,7 @@ import ListItemText from '@mui/material/ListItemText';
 import Tooltip from '@mui/material/Tooltip';
 import { useNavigate } from 'react-router-dom';
 import { isRouteAllowed } from '../auth/roles.js';
+import { cerrarSesion } from '../Services/sesionS.js';
 
 
 //iconos
@@ -166,6 +167,7 @@ export default function MiniDrawer({ role, onLogout }) {
     { text: 'Inventario', route: '/inventario', icon: <InventoryIcon /> },
     { text: 'Personal', route: '/personal', icon: <PersonIcon /> },
     { text: 'Cotizaciones', route: '/cotizaciones', icon: <PointOfSaleIcon /> },
+    { text: 'Pagar cotizaciones', route: '/mis-cotizaciones', icon: <PointOfSaleIcon /> },
     { text: 'Vehículos', route: '/vehiculos', icon: <DirectionsCarIcon /> },
   ];
   const tooltipSlotProps = {
@@ -213,7 +215,7 @@ export default function MiniDrawer({ role, onLogout }) {
   };
 
   const handleLogout = () => {
-    localStorage.removeItem('token');
+    cerrarSesion();
     localStorage.removeItem('role');
     onLogout?.();
     navigate('/', { replace: true });
