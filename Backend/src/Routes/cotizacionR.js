@@ -5,6 +5,7 @@ import {
   crearCotizacion,
   actualizarCotizacion,
   eliminarCotizacion,
+  pagoCotizacion,
 } from "../Controllers/cotizacionC.js";
 import {
   cotizacionSchema,
@@ -18,6 +19,7 @@ router.get("/cotizaciones", getCotizaciones);
 router.get("/cotizaciones/:id", getCotizacionPorId);
 router.post("/cotizaciones", validateSchema(cotizacionSchema), crearCotizacion);
 router.put("/cotizaciones/:id", validateSchema(updateCotizacionSchema), actualizarCotizacion);
+router.put("/cotizaciones/pago/:id", pagoCotizacion);
 router.delete("/cotizaciones/:id", eliminarCotizacion);
 
 export default router;

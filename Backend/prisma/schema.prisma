@@ -108,7 +108,23 @@ model Usuario {
   valoracionesHechas    Valoracion[] @relation("ValoracionAutor")
   valoracionesRecibidas Valoracion[] @relation("ValoracionTrabajador")
 
+  tarjetas  Tarjeta[]
+
   @@map("usuarios")
+}
+
+model Tarjeta {
+  id                Int     @id @default(autoincrement())
+  numero            String
+  cvv               String
+  fechaVencimiento  String
+  titular           String
+  tipo              String
+
+  usuarioId         Int
+  usuario           Usuario @relation(fields: [usuarioId], references: [id])
+
+  @@map("tarjetas")
 }
 
 model Articulo {

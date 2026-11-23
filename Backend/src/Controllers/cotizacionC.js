@@ -63,3 +63,18 @@ export const eliminarCotizacion = async (req, res) => {
     res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
+
+export const pagoCotizacion = async (req, res) => {
+  const { id } = req.params;
+  try {
+    const cotizacion = await cotizacionService.obtenerCotizacionPorId(id);
+    if (!cotizacion) {
+      return res.status(404).json({ mensaje: "Cotización no encontrada" });
+    }
+    cotizacion.estado = "Pagada"; 
+    const cotizacionActualizada = await cotizacionService.actualizarCotizacion(id, cotizacion);
+    res.status(200).json(cotizacionActualizada);
+  } catch (error) {
+    res.status(500).json({ mensaje: "Error interno del servidor" });
+  }
+};
