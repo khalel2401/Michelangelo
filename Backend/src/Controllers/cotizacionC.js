@@ -1,4 +1,5 @@
 import * as cotizacionService from "../Services/cotizacionS.js";
+import { procesarPagoCotizacion } from "../Services/pagoS.js";
 
 export const getCotizaciones = async (req, res) => {
   try {
@@ -67,14 +68,21 @@ export const eliminarCotizacion = async (req, res) => {
 export const pagoCotizacion = async (req, res) => {
   const { id } = req.params;
   try {
-    const cotizacion = await cotizacionService.obtenerCotizacionPorId(id);
-    if (!cotizacion) {
-      return res.status(404).json({ mensaje: "Cotización no encontrada" });
-    }
-    cotizacion.estado = "Pagada"; 
-    const cotizacionActualizada = await cotizacionService.actualizarCotizacion(id, cotizacion);
-    res.status(200).json(cotizacionActualizada);
+    const pago = await procesarPagoCotizacion({
+      cotizacionId: parseInt(id),
+      tarjetaId: parseInt(req.body.tarjetaId),
+      usuarioId: parseInt(req.body.usuarioId),
+      monto: req.body.monto,
+    });
+    res.status(201).json(pago);
   } catch (error) {
-    res.status(500).json({ mensaje: "Error interno del servidor" });
+    const mensajes = {
+      TARJETA_INVALIDA: [400, "Tarjeta inválida"],
+      COTIZACION_NO_ENCONTRADA: [404, "Cotización no encontrada"],
+      COTIZACION_NO_PAGABLE: [409, "La cotización no se puede pagar"],
+      MONTO_INVALIDO: [400, "Monto inválido"],
+    };
+    const [status, mensaje] = mensajes[error.message] ?? [500, "Error interno del servidor"];
+    res.status(status).json({ mensaje });
   }
 };

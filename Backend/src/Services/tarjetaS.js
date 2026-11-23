@@ -13,7 +13,7 @@ export const obtenerTarjetas = async () => {
 export const obtenerTarjetaPorUser = async (id) => {
     return await prisma.tarjeta.findMany({
         where: {
-            idUsuario: id
+            usuarioId: parseInt(id)
         }
     });
 }

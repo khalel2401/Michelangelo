@@ -16,6 +16,7 @@ import personalRoutes from './src/Routes/personalR.js';
 import contratacionRoutes from './src/Routes/contratacionR.js';
 import cotizacionServicio from "./src/Routes/cotizacionServicioR.js";
 import tarjetaRoutes from "./src/Routes/tarjetaR.js";
+import pagoRoutes from "./src/Routes/pagoR.js";
 
 const prisma = new PrismaClient();
 const app = express();
@@ -34,6 +35,7 @@ app.use(cotizacionRoutes);
 app.use(contratacionRoutes);
 app.use(personalRoutes);
 app.use(tarjetaRoutes);
+app.use(pagoRoutes);
 
 app.use(localRoutes);
 app.use(articuloRoutes);

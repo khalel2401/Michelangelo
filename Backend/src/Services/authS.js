@@ -23,7 +23,8 @@ export const login = async (email, password) => {
 
 export const verificarToken = async (token) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const jwtSecret = process.env.JWT_SECRET || "michelangelo-dev-secret";
+        const decoded = jwt.verify(token, jwtSecret);
         const usuario = await getUsuarioById(decoded.id);
 
         if (!usuario) {
