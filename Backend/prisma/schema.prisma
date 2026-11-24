@@ -83,7 +83,8 @@ model Evento {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  valoraciones Valoracion[]
+  valoraciones           Valoracion[]
+  valoracionesPendientes ValoracionPendiente[]
 
   @@map("eventos")
 }
@@ -107,6 +108,7 @@ model Usuario {
 
   valoracionesHechas    Valoracion[] @relation("ValoracionAutor")
   valoracionesRecibidas Valoracion[] @relation("ValoracionTrabajador")
+  valoracionesPendientes ValoracionPendiente[]
 
   @@map("usuarios")
 }
@@ -137,6 +139,9 @@ model Personal {
   telefono       String?
   calificacion   Int?
   contrataciones Contratacion[]
+
+  valoraciones           Valoracion[]
+  valoracionesPendientes ValoracionPendiente[]
 }
 
 model Contratacion {
@@ -166,9 +171,34 @@ model Valoracion {
   trabajadorId Int?
   trabajador   Usuario? @relation("ValoracionTrabajador", fields: [trabajadorId], references: [id], onDelete: Cascade)
 
+  //personal contratado en un evento (tabla Personal)
+  personalId   Int?
+  personal     Personal? @relation(fields: [personalId], references: [id], onDelete: Cascade)
+
   @@unique([autorId, trabajadorId])
   @@unique([autorId, eventoId])
+  @@unique([autorId, personalId])
   @@index([trabajadorId])
   @@index([eventoId])
+  @@index([personalId])
   @@map("valoraciones")
+}
+
+
+model ValoracionPendiente {
+  id         Int       @id @default(autoincrement())
+  //evita duplicados: "a<autor>-e<evento>" o "a<autor>-p<personal>"
+  clave      String    @unique
+  createdAt  DateTime  @default(now())
+
+  autorId    Int
+  autor      Usuario   @relation(fields: [autorId], references: [id], onDelete: Cascade)
+  eventoId   Int
+  evento     Evento    @relation(fields: [eventoId], references: [id], onDelete: Cascade)
+  
+  personalId Int?
+  personal   Personal? @relation(fields: [personalId], references: [id], onDelete: Cascade)
+
+  @@index([autorId])
+  @@map("valoraciones_pendientes")
 }
